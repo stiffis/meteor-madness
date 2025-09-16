@@ -1,0 +1,602 @@
+%% bare_conf.tex
+%% V1.4b
+%% 2015/08/26
+%% by Michael Shell
+%% See:
+%% http://www.michaelshell.org/
+%% for current contact information.
+%%
+%% This is a skeleton file demonstrating the use of IEEEtran.cls
+%% (requires IEEEtran.cls version 1.8b or later) with an IEEE
+%% conference paper.
+%%
+%% Support sites:
+%% http://www.michaelshell.org/tex/ieeetran/
+%% http://www.ctan.org/pkg/ieeetran
+%% and
+%% http://www.ieee.org/
+
+%%*************************************************************************
+%% Legal Notice:
+%% This code is offered as-is without any warranty either expressed or
+%% implied; without even the implied warranty of MERCHANTABILITY or
+%% FITNESS FOR A PARTICULAR PURPOSE! 
+%% User assumes all risk.
+%% In no event shall the IEEE or any contributor to this code be liable for
+%% any damages or losses, including, but not limited to, incidental,
+%% consequential, or any other damages, resulting from the use or misuse
+%% of any information contained here.
+%%
+%% All comments are the opinions of their respective authors and are not
+%% necessarily endorsed by the IEEE.
+%%
+%% This work is distributed under the LaTeX Project Public License (LPPL)
+%% ( http://www.latex-project.org/ ) version 1.3, and may be freely used,
+%% distributed and modified. A copy of the LPPL, version 1.3, is included
+%% in the base LaTeX documentation of all distributions of LaTeX released
+%% 2003/12/01 or later.
+%% Retain all contribution notices and credits.
+%% ** Modified files should be clearly indicated as such, including  **
+%% ** renaming them and changing author support contact information. **
+%%*************************************************************************
+
+
+% *** Authors should verify (and, if needed, correct) their LaTeX system  ***
+% *** with the testflow diagnostic prior to trusting their LaTeX platform ***
+% *** with production work. The IEEE's font choices and paper sizes can   ***
+% *** trigger bugs that do not appear when using other class files.       ***                          ***
+% The testflow support page is at:
+% http://www.michaelshell.org/tex/testflow/
+
+
+
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{float}
+
+% Some Computer Society conferences also require the compsoc mode option,
+% but others use the standard conference format.
+%
+% If IEEEtran.cls has not been installed into the LaTeX system files,
+% manually specify the path to it like:
+% \documentclass[conference]{../sty/IEEEtran}
+
+
+
+
+
+% Some very useful LaTeX packages include:
+% (uncomment the ones you want to load)
+
+
+% *** MISC UTILITY PACKAGES ***
+%
+%\usepackage{ifpdf}
+% Heiko Oberdiek's ifpdf.sty is very useful if you need conditional
+% compilation based on whether the output is pdf or dvi.
+% usage:
+% \ifpdf
+%   % pdf code
+% \else
+%   % dvi code
+% \fi
+% The latest version of ifpdf.sty can be obtained from:
+% http://www.ctan.org/pkg/ifpdf
+% Also, note that IEEEtran.cls V1.7 and later provides a builtin
+% \ifCLASSINFOpdf conditional that works the same way.
+% When switching from latex to pdflatex and vice-versa, the compiler may
+% have to be run twice to clear warning/error messages.
+
+
+
+
+
+
+% *** CITATION PACKAGES ***
+%
+%\usepackage{cite}
+% cite.sty was written by Donald Arseneau
+% V1.6 and later of IEEEtran pre-defines the format of the cite.sty package
+% \cite{} output to follow that of the IEEE. Loading the cite package will
+% result in citation numbers being automatically sorted and properly
+% "compressed/ranged". e.g., [1], [9], [2], [7], [5], [6] without using
+% cite.sty will become [1], [2], [5]--[7], [9] using cite.sty. cite.sty's
+% \cite will automatically add leading space, if needed. Use cite.sty's
+% noadjust option (cite.sty V3.8 and later) if you want to turn this off
+% such as if a citation ever needs to be enclosed in parenthesis.
+% cite.sty is already installed on most LaTeX systems. Be sure and use
+% version 5.0 (2009-03-20) and later if using hyperref.sty.
+% The latest version can be obtained at:
+% http://www.ctan.org/pkg/cite
+% The documentation is contained in the cite.sty file itself.
+
+
+
+
+
+
+% *** GRAPHICS RELATED PACKAGES ***
+%
+\ifCLASSINFOpdf
+  % \usepackage[pdftex]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../pdf/}{../jpeg/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+\else
+  % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
+  % will default to the driver specified in the system graphics.cfg if no
+  % driver is specified.
+  % \usepackage[dvips]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../eps/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.eps}
+\fi
+% graphicx was written by David Carlisle and Sebastian Rahtz. It is
+% required if you want graphics, photos, etc. graphicx.sty is already
+% installed on most LaTeX systems. The latest version and documentation
+% can be obtained at: 
+% http://www.ctan.org/pkg/graphicx
+% Another good source of documentation is "Using Imported Graphics in
+% LaTeX2e" by Keith Reckdahl which can be found at:
+% http://www.ctan.org/pkg/epslatex
+%
+% latex, and pdflatex in dvi mode, support graphics in encapsulated
+% postscript (.eps) format. pdflatex in pdf mode supports graphics
+% in .pdf, .jpeg, .png and .mps (metapost) formats. Users should ensure
+% that all non-photo figures use a vector format (.eps, .pdf, .mps) and
+% not a bitmapped formats (.jpeg, .png). The IEEE frowns on bitmapped formats
+% which can result in "jaggedy"/blurry rendering of lines and letters as
+% well as large increases in file sizes.
+%
+% You can find documentation about the pdfTeX application at:
+% http://www.tug.org/applications/pdftex
+
+
+
+
+
+% *** MATH PACKAGES ***
+%
+%\usepackage{amsmath}
+% A popular package from the American Mathematical Society that provides
+% many useful and powerful commands for dealing with mathematics.
+%
+% Note that the amsmath package sets \interdisplaylinepenalty to 10000
+% thus preventing page breaks from occurring within multiline equations. Use:
+%\interdisplaylinepenalty=2500
+% after loading amsmath to restore such page breaks as IEEEtran.cls normally
+% does. amsmath.sty is already installed on most LaTeX systems. The latest
+% version and documentation can be obtained at:
+% http://www.ctan.org/pkg/amsmath
+
+
+
+
+
+% *** SPECIALIZED LIST PACKAGES ***
+%
+%\usepackage{algorithmic}
+% algorithmic.sty was written by Peter Williams and Rogerio Brito.
+% This package provides an algorithmic environment fo describing algorithms.
+% You can use the algorithmic environment in-text or within a figure
+% environment to provide for a floating algorithm. Do NOT use the algorithm
+% floating environment provided by algorithm.sty (by the same authors) or
+% algorithm2e.sty (by Christophe Fiorio) as the IEEE does not use dedicated
+% algorithm float types and packages that provide these will not provide
+% correct IEEE style captions. The latest version and documentation of
+% algorithmic.sty can be obtained at:
+% http://www.ctan.org/pkg/algorithms
+% Also of interest may be the (relatively newer and more customizable)
+% algorithmicx.sty package by Szasz Janos:
+% http://www.ctan.org/pkg/algorithmicx
+
+
+
+
+% *** ALIGNMENT PACKAGES ***
+%
+%\usepackage{array}
+% Frank Mittelbach's and David Carlisle's array.sty patches and improves
+% the standard LaTeX2e array and tabular environments to provide better
+% appearance and additional user controls. As the default LaTeX2e table
+% generation code is lacking to the point of almost being broken with
+% respect to the quality of the end results, all users are strongly
+% advised to use an enhanced (at the very least that provided by array.sty)
+% set of table tools. array.sty is already installed on most systems. The
+% latest version and documentation can be obtained at:
+% http://www.ctan.org/pkg/array
+
+
+% IEEEtran contains the IEEEeqnarray family of commands that can be used to
+% generate multiline equations as well as matrices, tables, etc., of high
+% quality.
+
+
+
+
+% *** SUBFIGURE PACKAGES ***
+%\ifCLASSOPTIONcompsoc
+%  \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+%\else
+%  \usepackage[caption=false,font=footnotesize]{subfig}
+%\fi
+% subfig.sty, written by Steven Douglas Cochran, is the modern replacement
+% for subfigure.sty, the latter of which is no longer maintained and is
+% incompatible with some LaTeX packages including fixltx2e. However,
+% subfig.sty requires and automatically loads Axel Sommerfeldt's caption.sty
+% which will override IEEEtran.cls' handling of captions and this will result
+% in non-IEEE style figure/table captions. To prevent this problem, be sure
+% and invoke subfig.sty's "caption=false" package option (available since
+% subfig.sty version 1.3, 2005/06/28) as this is will preserve IEEEtran.cls
+% handling of captions.
+% Note that the Computer Society format requires a larger sans serif font
+% than the serif footnote size font used in traditional IEEE formatting
+% and thus the need to invoke different subfig.sty package options depending
+% on whether compsoc mode has been enabled.
+%
+% The latest version and documentation of subfig.sty can be obtained at:
+% http://www.ctan.org/pkg/subfig
+
+
+
+
+% *** FLOAT PACKAGES ***
+%
+%\usepackage{fixltx2e}
+% fixltx2e, the successor to the earlier fix2col.sty, was written by
+% Frank Mittelbach and David Carlisle. This package corrects a few problems
+% in the LaTeX2e kernel, the most notable of which is that in current
+% LaTeX2e releases, the ordering of single and double column floats is not
+% guaranteed to be preserved. Thus, an unpatched LaTeX2e can allow a
+% single column figure to be placed prior to an earlier double column
+% figure.
+% Be aware that LaTeX2e kernels dated 2015 and later have fixltx2e.sty's
+% corrections already built into the system in which case a warning will
+% be issued if an attempt is made to load fixltx2e.sty as it is no longer
+% needed.
+% The latest version and documentation can be found at:
+% http://www.ctan.org/pkg/fixltx2e
+
+
+%\usepackage{stfloats}
+% stfloats.sty was written by Sigitas Tolusis. This package gives LaTeX2e
+% the ability to do double column floats at the bottom of the page as well
+% as the top. (e.g., "\begin{figure*}[!b]" is not normally possible in
+% LaTeX2e). It also provides a command:
+%\fnbelowfloat
+% to enable the placement of footnotes below bottom floats (the standard
+% LaTeX2e kernel puts them above bottom floats). This is an invasive package
+% which rewrites many portions of the LaTeX2e float routines. It may not work
+% with other packages that modify the LaTeX2e float routines. The latest
+% version and documentation can be obtained at:
+% http://www.ctan.org/pkg/stfloats
+% Do not use the stfloats baselinefloat ability as the IEEE does not allow
+% \baselineskip to stretch. Authors submitting work to the IEEE should note
+% that the IEEE rarely uses double column equations and that authors should try
+% to avoid such use. Do not be tempted to use the cuted.sty or midfloat.sty
+% packages (also by Sigitas Tolusis) as the IEEE does not format its papers in
+% such ways.
+% Do not attempt to use stfloats with fixltx2e as they are incompatible.
+% Instead, use Morten Hogholm'a dblfloatfix which combines the features
+% of both fixltx2e and stfloats:
+%
+% \usepackage{dblfloatfix}
+% The latest version can be found at:
+% http://www.ctan.org/pkg/dblfloatfix
+
+
+
+
+% *** PDF, URL AND HYPERLINK PACKAGES ***
+%
+%\usepackage{url}
+% url.sty was written by Donald Arseneau. It provides better support for
+% handling and breaking URLs. url.sty is already installed on most LaTeX
+% systems. The latest version and documentation can be obtained at:
+% http://www.ctan.org/pkg/url
+% Basically, \url{my_url_here}.
+
+
+
+
+% *** Do not adjust lengths that control margins, column widths, etc. ***
+% *** Do not use packages that alter fonts (such as pslatex).         ***
+% There should be no need to do such things with IEEEtran.cls V1.6 and later.
+% (Unless specifically asked to do so by the journal or conference you plan
+% to submit to, of course. )
+
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+
+\begin{document}
+%
+% paper title
+% Titles are generally capitalized except for words such as a, an, and, as,
+% at, but, by, for, in, nor, of, on, or, the, to and up, which are usually
+% not capitalized unless they are the first or last word of the title.
+% Linebreaks \\ can be used within to get better formatting as desired.
+% Do not put math or special symbols in the title.
+\title{SIAER(Simulador de Impactos de Asteroides y Evaluación de Riesgos): Una página web 
+para calcular las consecuencias medioambientales regionales del impacto de un asteroide en la Tierra}
+
+
+% author names and affiliations
+% use a multiple column layout for up to three different
+% affiliations
+\author{
+    \IEEEauthorblockN{Bendezu Pastrana, Tommy}
+    \IEEEauthorblockA{Dept. de Ing. Mecatrónica\\
+    Universidad Continental\\
+    Huancayo, Perú\\
+    tommyhanss007@gmail.com}
+
+\and
+
+    \IEEEauthorblockN{Meza Millan, Martin}
+    \IEEEauthorblockA{Dept. de Ing. Civil\\
+    Universidad Continental\\
+    Huancayo, Perú\\
+    mezamilland@gmail.com}
+
+\and
+
+    \IEEEauthorblockN{Ildefonso Santos, Steve}
+    \IEEEauthorblockA{Dept. de Computer Science\\
+    UTEC\\
+    Huancayo, Perú\\
+    steve.ildefonso@utec.edu.pe}
+
+\and
+
+    \IEEEauthorblockN{CUALQUIERA}
+    \IEEEauthorblockA{Dept. de \\
+    NS\\
+    , Perú\\
+    CORREO}
+}
+
+% conference papers do not typically use \thanks and this command
+% is locked out in conference mode. If really needed, such as for
+% the acknowledgment of grants, issue a \IEEEoverridecommandlockouts
+% after \documentclass
+
+% for over three affiliations, or if they all won't fit within the width
+% of the page, use this alternative format:
+% 
+%\author{\IEEEauthorblockN{Michael Shell\IEEEauthorrefmark{1},
+%Homer Simpson\IEEEauthorrefmark{2},
+%James Kirk\IEEEauthorrefmark{3}, 
+%Montgomery Scott\IEEEauthorrefmark{3} and
+%Eldon Tyrell\IEEEauthorrefmark{4}}
+%\IEEEauthorblockA{\IEEEauthorrefmark{1}School of Electrical and Computer Engineering\\
+%Georgia Institute of Technology,
+%Atlanta, Georgia 30332--0250\\ Email: see http://www.michaelshell.org/contact.html}
+%\IEEEauthorblockA{\IEEEauthorrefmark{2}Twentieth Century Fox, Springfield, USA\\
+%Email: homer@thesimpsons.com}
+%\IEEEauthorblockA{\IEEEauthorrefmark{3}Starfleet Academy, San Francisco, California 96678-2391\\
+%Telephone: (800) 555--1212, Fax: (888) 555--1212}
+%\IEEEauthorblockA{\IEEEauthorrefmark{4}Tyrell Inc., 123 Replicant Street, Los Angeles, California 90210--4321}}
+
+
+
+
+% use for special paper notices
+%\IEEEspecialpapernotice{(Invited Paper)}
+
+
+
+
+% make the title area
+\maketitle
+
+% As a general rule, do not put math, special symbols or citations
+% in the abstract
+\begin{abstract}
+
+    El NASA Space Apps Challenge 2025 plantea el reto \textit{"Meteor Madness"}, que 
+    busca desarrollar una herramienta para simular el impacto de asteroides en la tierra,
+    evaluando las consecuencias y asi, las autoridades pertinentes, puedan tomar medidas
+    preventivas. Este proyecto tiene como objetivo exponer una página web que permita a los
+    usuarios ingresar parámetros específicos de un asteroide, como su tamaño, velocidad y
+    ángulo de entrada, para calcular y visualizar las consecuencias medioambientales, este 
+    cálculo se basa en modelos científicos. La herramienta proporcionará estimaciones sobre la
+    extensión del área afectada, la magnitud de la onda expansiva, la generación de tsunamis
+    y otros efectos secundarios. Además, se incluirá una sección educativa que explique los
+    fundamentos científicos detrás de los impactos de asteroides y las medidas de mitigación.
+    El proyecto no solo tendrá un impacto directo en la seguridad planetaria, sino servirá 
+    como un punto de partida para futuras investigaciones en la predicción de fenómenos 
+    astronómicos peligrosos.
+
+\end{abstract}
+
+% no keywords
+
+
+
+
+% For peer review papers, you can put extra information on the cover
+% page as needed:
+% \ifCLASSOPTIONpeerreview
+% \begin{center} \bfseries EDICS Category: 3-BBND \end{center}
+% \fi
+%
+% For peerreview papers, this IEEEtran command inserts a page break and
+% creates the second title. It will be ignored for other modes.
+\IEEEpeerreviewmaketitle
+
+
+
+
+% REFERENCIAS BIBLIOGRAFICAS ---------------------
+% --- Secciones del documento ---
+\section{Introducción}
+
+El NASA International Space Apps Challenge 2025, a través del reto \textit{Meteor Madness}, invita a crear soluciones abiertas que ayuden a comprender los efectos de los impactos de meteoroides en la Tierra. En respuesta, este anteproyecto propone un simulador web educativo que permita explorar escenarios de impacto en tierra y en océano, estimando magnitudes clave y visualizando zonas potencialmente afectadas.
+
+El enfoque se apoya en modelos de escalamiento y parametrizaciones ampliamente utilizadas en la literatura para impactos atmosféricos (\textit{airburst}) y formación de cráteres, así como en estimaciones iniciales para la generación de tsunamis por impactos oceánicos \cite{collins2005,holsapple1993,wuennemann2010}. El prototipo prioriza la transparencia (supuestos explícitos, rangos de validez y límites del modelo), la reproducibilidad y la claridad visual, con el objetivo de facilitar tanto la educación como la toma de conciencia sobre el riesgo de impacto.
+
+\section{Objetivos}
+
+Objetivo general: desarrollar un prototipo web de código abierto que estime y visualice los efectos ambientales de impactos de meteoroides, a partir de parámetros físicos básicos y del tipo de blanco (tierra u océano).
+
+Objetivos específicos:
+\begin{itemize}
+    \item Implementar un núcleo de cálculo con fórmulas paramétricas para energía del impacto, atenuación atmosférica, umbrales de \textit{airburst}/cráter, diámetro de cráter, sobrepresión y carga térmica en función de la distancia, y un esquema inicial para tsunami por impacto oceánico, basados en \cite{collins2005,holsapple1993,wuennemann2010}.
+    \item Diseñar una interfaz simple con entradas de diámetro, densidad, velocidad, ángulo de entrada y tipo de blanco; incluir preajustes de ejemplo.
+    \item Representar resultados en un mapa o diagrama con anillos concéntricos (isóbaras/energía térmica) y una tabla resumen de magnitudes clave.
+    \item Documentar supuestos, rangos de validez e incertidumbres, junto con referencias científicas y fuentes de datos abiertos.
+    \item Preparar un conjunto de escenarios de demostración con datos abiertos (por ejemplo, objetos de catálogos de la NASA) y dejar puntos de integración para APIs públicas.
+    \item Entregar una demostración funcional, README con instrucciones y un breve video de presentación.
+\end{itemize}
+
+\section{Metodología}
+
+\subsection{Entradas y supuestos}
+Variables de entrada: diámetro del meteoroide $d$ (m), densidad $\rho_i$ (kg/m$^3$), velocidad a la entrada superior $v$ (m/s), ángulo de entrada $\theta$ (rad), tipo de blanco (tierra u océano), densidad del blanco $\rho_t$, gravedad $g$, resistencia a tracción del meteoroide $\sigma_t$, resistencia del blanco $Y$ y, para océano, profundidad local $h_w$.
+
+Suponemos atmósfera estándar con perfil exponencial: $\rho_a(z) = \rho_0 e^{-z/H}$, con $\rho_0$ densidad al nivel del mar y $H$ la altura de escala. En el MVP, el acoplamiento detallado viento/rotación se omite.
+
+\subsection{Masa y energía}
+\begin{align}
+    m &= \frac{\pi}{6} \, \rho_i \, d^3, \\
+    E_k &= \tfrac{1}{2} m v^2.
+\end{align}
+
+\subsection{Entrada atmosférica y ruptura (airburst)}
+Modelo simplificado inspirado en \cite{collins2005,chyba1993,popova2013}. El criterio de ruptura por presión dinámica es
+\begin{equation}
+    q(z) = \tfrac{1}{2} \, \rho_a(z) v^2 \geq \sigma_t.
+\end{equation}
+Con $\rho_a(z)$ exponencial, la altitud de ruptura aproximada es
+\begin{equation}
+    z_b \approx H \, \ln\!\left( \frac{\rho_0 v^2}{2\,\sigma_t} \right).
+\end{equation}
+Si la fragmentación y ablación depositan la mayor parte de la energía por encima del suelo, se considera un \emph{airburst}. Para un tratamiento más completo (arrastre, ablación y cambios de trayectoria) se usan las EDO clásicas de entrada \cite{collins2005,chyba1993}:
+\begin{align}
+    \frac{dv}{dt} &= -\frac{C_d \, \rho_a A \, v^2}{2 m} - g\,\sin\theta, \\
+    \frac{dm}{dt} &= -\frac{C_h \, \rho_a A \, v^3}{2 Q}, \\
+    \frac{d\theta}{dt} &= \frac{g\,\cos\theta}{v} - \frac{C_l \, \rho_a A \, v}{2 m},
+\end{align}
+con $A$ el área frontal, $Q$ el calor de ablación y $C_d, C_h, C_l$ coeficientes aerodinámicos.
+
+\subsection{Craterización: diámetro transitorio y final}
+Se emplea el escalamiento $\pi$ de Holsapple y Schmidt \cite{holsapple1993,melosh1989,housen2011}. En régimen gravitacional, una forma práctica (usada en herramientas tipo \cite{collins2005}) es
+\begin{equation}
+    D_t = K_d \, \left(\frac{\rho_i}{\rho_t}\right)^{1/3} d^{a} v^{b} g^{-c} \, \sin^{1/3}\!\theta,
+\end{equation}
+con exponentes típicos $a\approx0.78$, $b\approx0.44$, $c\approx0.22$ para blancos rocosos, y $K_d$ dependiente de litología. El diámetro final depende del régimen simple/complejo \cite{melosh1989}:
+\begin{align}
+    D_f &= K_s \, D_t && (D_t < D_*)\\
+    D_f &= K_c \, D_t^{\,\alpha} D_*^{\,1-\alpha} && (D_t \ge D_*)
+\end{align}
+con $D_*$ el diámetro de transición (\emph{Earth}: $\sim$3--4 km), y $K_s, K_c, \alpha$ constantes empíricas.
+
+El espesor de eyecta decae aproximadamente como ley potencial \cite{mcgetchin1973,housen2011}:
+\begin{equation}
+    t_{\text{ey}}(r) = K_e \, \rho_t^{-1} \, D_t^{\,\beta} \, r^{-3}, \quad r \ge R_t.
+\end{equation}
+
+\subsection{Sobrepresión de onda de choque}
+Para \emph{airbursts} o explosiones superficiales se usa escalamiento por energía equivalente TNT y la distancia escalada $Z = R/W^{1/3}$, con $W = \eta_p E_k$ y eficiencia $\eta_p$ \cite{kingery1984,ufc334002,collins2005}. La sobrepresión $\Delta P$ se obtiene de curvas de Kingery--Bulmash o de ajustes polinomiales estándar:
+\begin{equation}
+    \Delta P = f(Z), \quad Z = \frac{R}{W^{1/3}}.
+\end{equation}
+Se reportan radios para umbrales típicos (p.ej., 1, 3, 5, 10 psi) para visualización.
+
+\subsection{Radiación térmica}
+Se adopta un modelo de \emph{fireball} con eficiencia radiante $\eta_r$ \cite{glasstone1977,collins2005}. La fluencia térmica a distancia $R$ es
+\begin{equation}
+    F(R) = \eta_r \, \frac{E_k}{4\pi R^2} \, T_{\text{atm}}(R,\,z_b) \, \cos\iota,
+\end{equation}
+con $T_{\text{atm}}$ transmisión atmosférica efectiva y $\iota$ el ángulo de incidencia. Se comparan umbrales de efectos térmicos (p.ej., ignición de vegetación, quemaduras de 1./2./3. grado) \cite{glasstone1977}.
+
+\subsection{Tsunami por impacto oceánico}
+Para impactos en océano, la amplitud inicial $H_0$ se relaciona con la cavidad transitoria o con la energía acoplada en el agua \cite{ward2000,wuennemann2010}:
+\begin{equation}
+    H_0 \propto \left( \frac{E_w}{\rho_w g} \right)^{1/4}, \quad E_w = \eta_w E_k.
+\end{equation}
+La propagación se aproxima por atenuación geométrica y disipación:
+\begin{equation}
+    H(r) = H_0 \left( \frac{r_0}{r} \right)^p e^{-\kappa r}, \quad p\in[\tfrac{1}{2},1],
+\end{equation}
+ajustando $p$ al régimen próximo/lejos de la fuente y $\kappa$ a pérdidas dispersivas y de fondo.
+
+\subsection{Salidas del prototipo}
+Se calculan y visualizan: energía depositada y altitud de ruptura; diámetros $D_t$ y $D_f$ (si aplica); radios para umbrales de sobrepresión y de fluencia térmica; espesor de eyecta estimado; y, en océano, amplitudes $H(r)$ en anillos concéntricos. Cada resultado se acompaña de supuestos y rangos de validez.
+
+\section{Datos abiertos NASA}
+
+\section{Arquitectura y alcance}
+
+\section{Plan de trabajo (48 h) y entregables}
+
+\section{Riesgos y mitigaciones}
+
+% --- Fin de secciones ---
+% (Contenido por completar en cada sección.)
+
+% REFERENCIAS BIBLIOGRAFICAS ---------------------
+\begin{thebibliography}{00}
+
+    \bibitem{collins2005}
+    G. S. Collins, H. J. Melosh, and R. A. Marcus, ``Earth impact effects program: A web-based computer program for calculating the regional environmental consequences of a meteoroid impact on earth,'' \textit{Meteoritics \& Planetary Science}, vol. 40, no. 6, pp. 817--840, 2005. doi:10.1111/j.1945-5100.2005.tb00157.x
+
+    \bibitem{herrick2006}
+    R. R. Herrick, ``Updates regarding the resurfacing of venusian impact craters,'' in \textit{Lunar and Planet. Sci. Conf. XXXVII}, p. Abs. 1588, Lunar and Planetary Institute, Houston, Texas, 2006.
+
+    \bibitem{herrick1997}
+    R. R. Herrick, V. L. Sharpton, M. C. Malin, S. N. Lyons, and K. Feely, ``Morphology and Morphometry of Impact Craters,'' in \textit{Venus II: Geology, Geophysics, Atmosphere, and Solar Wind Environment}, S. W. Bougher, D. M. Hunten, and R. J. Phillips, Eds., p. 1015, 1997.
+
+    \bibitem{holsapple1993}
+    K. A. Holsapple, ``The scaling of impact processes in planetary sciences,'' \textit{Ann. Rev. Earth Planet. Sci.}, vol. 21, pp. 333--373, 1993.
+
+    \bibitem{mckinnon1985}
+    W. B. McKinnon and P. M. Schenk, ``Ejecta blanket scaling on the Moon and Mercury - inferences for projectile populations,'' in \textit{Lunar and Planet. Sci. Conf. Proceedings XVI}, pp. 544--545, Lunar and Planetary Institute, Houston, Texas, 1985.
+
+    \bibitem{wuennemann2010}
+    K. Wünnemann, G. S. Collins, and R. Weiss, ``Impact of a cosmic body into earth’s ocean and the generation of large tsunami waves: Insight from numerical modeling,'' \textit{Reviews of Geophysics}, vol. 48, no. 4, 2010. doi:10.1029/2009RG000308
+    
+    \bibitem{melosh1989}
+    H. J. Melosh, \textit{Impact Cratering: A Geologic Process}. Oxford University Press, 1989.
+
+    \bibitem{housen2011}
+    K. R. Housen and K. A. Holsapple, ``Ejecta from impact craters,'' \textit{Icarus}, vol. 211, pp. 856--875, 2011. doi:10.1016/j.icarus.2010.09.017
+
+    \bibitem{mcgetchin1973}
+    T. R. McGetchin, M. Settle, and J. W. Head, ``Lunar impact ejection and crater growth,'' \textit{Journal of Geophysical Research}, vol. 78, no. 11, pp. 10847--10863, 1973. doi:10.1029/JB078i023p10847
+
+    \bibitem{chyba1993}
+    C. F. Chyba, P. J. Thomas, and K. J. Zahnle, ``The 1908 Tunguska explosion: Atmospheric disruption of a stony asteroid,'' \textit{Nature}, vol. 361, pp. 40--44, 1993. doi:10.1038/361040a0
+
+    \bibitem{popova2013}
+    O. P. Popova et al., ``Chelyabinsk Airburst, Damage Assessment, Meteorite Recovery, and Characterization,'' \textit{Science}, vol. 342, no. 6162, pp. 1069--1073, 2013. doi:10.1126/science.1242642
+
+    \bibitem{kingery1984}
+    C. N. Kingery and G. Bulmash, ``Airblast Parameters from TNT Spherical Air Burst and Hemispherical Surface Burst,'' Technical Report ARBRL-TR-02555, U.S. Army Ballistic Research Laboratory, Aberdeen Proving Ground, 1984.
+
+    \bibitem{ufc334002}
+    UFC 3-340-02, ``Structures to Resist the Effects of Accidental Explosions,'' U.S. Department of Defense, 2008 (Change 2, 2014).
+
+    \bibitem{glasstone1977}
+    S. Glasstone and P. J. Dolan, \textit{The Effects of Nuclear Weapons}. U.S. Department of Defense and U.S. Department of Energy, 1977.
+
+    \bibitem{ward2000}
+    S. N. Ward and E. Asphaug, ``Asteroid impact tsunami: A probabilistic hazard assessment,'' \textit{Icarus}, vol. 145, pp. 64--78, 2000. doi:10.1006/icar.1999.6336
+
+\end{thebibliography}
+
+
+
+\end{document}
