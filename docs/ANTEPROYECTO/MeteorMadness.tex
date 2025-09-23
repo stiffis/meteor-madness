@@ -328,44 +328,44 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{SIAER (Simulador de Impactos de Asteroides y Evaluación de Riesgos): Una
-herramienta web para calcular las consecuencias medioambientales de impactos de
-asteroides en la Tierra}
+\title{SIAER(Simulador de Impactos de Asteroides y Evaluación de Riesgos): Una
+	herramienta web para calcular las consecuencias medioambientales de impactos de
+	asteroides en la Tierra}
 
 
 % author names and affiliations
 % use a multiple column layout for up to three different
 % affiliations
 \author{
-    \IEEEauthorblockN{Bendezu Pastrana, Tommy}
-    \IEEEauthorblockA{Dept. de Ing. Mecatrónica\\
-    Universidad Continental\\
-    Huancayo, Perú\\
-    tommyhanss007@gmail.com}
+	\IEEEauthorblockN{Bendezu Pastrana, Tommy}
+	\IEEEauthorblockA{Dept. de Ing. Mecatrónica\\
+		Universidad Continental\\
+		Huancayo, Perú\\
+		tommyhanss007@gmail.com}
 
-\and
+	\and
 
-    \IEEEauthorblockN{Meza Millan, Martin}
-    \IEEEauthorblockA{Dept. de Ing. Civil\\
-    Universidad Continental\\
-    Huancayo, Perú\\
-    mezamilland@gmail.com}
+	\IEEEauthorblockN{Meza Millan, Martin}
+	\IEEEauthorblockA{Dept. de Ing. Civil\\
+		Universidad Continental\\
+		Huancayo, Perú\\
+		mezamilland@gmail.com}
 
-\and
+	\and
 
-    \IEEEauthorblockN{Ildefonso Santos, Steve}
-    \IEEEauthorblockA{Dept. de Computer Science\\
-    UTEC\\
-    Huancayo, Perú\\
-    steve.ildefonso@utec.edu.pe}
+	\IEEEauthorblockN{Ildefonso Santos, Steve}
+	\IEEEauthorblockA{Dept. de Computer Science\\
+		UTEC\\
+		Huancayo, Perú\\
+		steve.ildefonso@utec.edu.pe}
 
-\and
+	\and
 
-    \IEEEauthorblockN{CUALQUIERA}
-    \IEEEauthorblockA{Dept. de \\
-    NS\\
-    , Perú\\
-    CORREO}
+	\IEEEauthorblockN{CUALQUIERA}
+	\IEEEauthorblockA{Dept. de \\
+		NS\\
+		, Perú\\
+		CORREO}
 }
 
 % conference papers do not typically use \thanks and this command
@@ -406,23 +406,23 @@ asteroides en la Tierra}
 % in the abstract
 \begin{abstract}
 
-El NASA Space Apps Challenge 2025 plantea el reto \textit{"Meteor Madness"}, que busca 
-desarrollar una herramienta para simular el impacto de asteroides en la Tierra,
-evaluando las consecuencias y ayudando a las autoridades pertinentes a tomar 
-medidas preventivas. Este proyecto tiene como objetivo crear una página web 
-interactiva que permite a los usuarios ingresar parámetros específicos de un 
-asteroide, como su tamaño, velocidad y ángulo de entrada, para calcular y 
-visualizar las consecuencias medioambientales. La herramienta integra datos 
-reales de la NASA Near-Earth Object (NEO) API y de USGS, lo que proporciona 
-una base científica sólida para los cálculos. Los resultados incluyen 
-estimaciones sobre la extensión del área afectada, la magnitud de la onda 
-expansiva, la generación de tsunamis y otros efectos secundarios. Además, se 
-incluye una sección educativa que explica los fundamentos científicos detrás de
-los impactos de asteroides y las medidas de mitigación. Este proyecto no solo 
-tiene un impacto directo en la seguridad planetaria, sino que también sirve 
-como un punto de partida para futuras investigaciones en la predicción de 
-fenómenos astronómicos peligrosos, apoyándose en datos reales y modelos 
-científicos.
+	El NASA Space Apps Challenge 2025 plantea el reto \textit{"Meteor Madness"}, que busca
+	desarrollar una herramienta para simular el impacto de asteroides en la Tierra,
+	evaluando las consecuencias y ayudando a las autoridades pertinentes a tomar
+	medidas preventivas. Este proyecto tiene como objetivo crear una página web
+	interactiva que permite a los usuarios ingresar parámetros específicos de un
+	asteroide, como su tamaño, velocidad y ángulo de entrada, para calcular y
+	visualizar las consecuencias medioambientales. La herramienta integra datos
+	reales de la NASA Near-Earth Object (NEO) API y de USGS, lo que proporciona
+	una base científica sólida para los cálculos. Los resultados incluyen
+	estimaciones sobre la extensión del área afectada, la magnitud de la onda
+	expansiva, la generación de tsunamis y otros efectos secundarios. Además, se
+	incluye una sección educativa que explica los fundamentos científicos detrás de
+	los impactos de asteroides y las medidas de mitigación. Este proyecto no solo
+	tiene un impacto directo en la seguridad planetaria, sino que también sirve
+	como un punto de partida para futuras investigaciones en la predicción de
+	fenómenos astronómicos peligrosos, apoyándose en datos reales y modelos
+	científicos.
 
 \end{abstract}
 
@@ -441,164 +441,190 @@ científicos.
 % creates the second title. It will be ignored for other modes.
 \IEEEpeerreviewmaketitle
 
-
-
-
-% REFERENCIAS BIBLIOGRAFICAS ---------------------
-% --- Secciones del documento ---
+% --- INTRODUCCION ---
 \section{Introducción}
 
-El NASA International Space Apps Challenge 2025, a través del reto \textit{Meteor Madness}, invita a crear soluciones abiertas que ayuden a comprender los efectos de los impactos de meteoroides en la Tierra. En respuesta, este anteproyecto propone un simulador web educativo que permita explorar escenarios de impacto en tierra y en océano, estimando magnitudes clave y visualizando zonas potencialmente afectadas.
+El NASA Space Apps Challenge 2025, a través del reto \textit{Meteor Madness},
+invita a la comunidad global a desarrollar soluciones innovadoras para entender
+y mitigar los riesgos que representan los asteroides cercanos a la Tierra.
+Aunque los impactos de asteroides son eventos poco frecuentes, su potencial
+destructivo es significativo, con efectos que incluyen tsunamis, terremotos y
+alteraciones atmosféricas. A lo largo de la historia, impactos de este tipo han
 
-El enfoque se apoya en modelos de escalamiento y parametrizaciones ampliamente utilizadas en la literatura para impactos atmosféricos (\textit{airburst}) y formación de cráteres, así como en estimaciones iniciales para la generación de tsunamis por impactos oceánicos \cite{collins2005,holsapple1993,wuennemann2010}. El prototipo prioriza la transparencia (supuestos explícitos, rangos de validez y límites del modelo), la reproducibilidad y la claridad visual, con el objetivo de facilitar tanto la educación como la toma de conciencia sobre el riesgo de impacto.
+tenido consecuencias devastadoras, como el evento de Chicxulub, que se cree que
+contribuyó a la extinción de los dinosaurios. Esta amenaza subraya la
+importancia de contar con herramientas que nos permitan comprender y evaluar
+estos riesgos \cite{ward2000,melosh1989}.
 
+Las herramientas interactivas de simulación juegan un papel crucial en la visualización de estos riesgos, ya que permiten explorar diferentes escenarios de impacto y sus consecuencias medioambientales. Estas herramientas no solo ayudan a concienciar al público y a los responsables de la toma de decisiones sobre la magnitud de los impactos, sino que también permiten probar estrategias de mitigación, como la desviación de asteroides. La capacidad de simular cómo los cambios en los parámetros de un asteroide (tamaño, velocidad, trayectoria) afectan el impacto puede proporcionar información valiosa para la planificación de la protección planetaria \cite{collins2005}.
+
+En respuesta a este reto, este anteproyecto propone el desarrollo de un simulador web educativo que permite calcular y visualizar las consecuencias medioambientales de su impacto. Integrando datos reales de la NASA Near-Earth Object (NEO) API y del USGS, el simulador proporcionará estimaciones sobre la extensión del área afectada, la magnitud de la onda expansiva, la formación de cráteres y la generación de tsunamis, todo basado en modelos científicos establecidos. Además, el simulador incluirá una sección educativa que explicará los fundamentos científicos detrás de los impactos de asteroides y las medidas de mitigación \cite{collins2005,wuennemann2010}.
+
+
+% --- OBJETIVOS ---
 \section{Objetivos}
 
-Objetivo general: desarrollar un prototipo web de código abierto que estime y visualice los efectos ambientales de impactos de meteoroides, a partir de parámetros físicos básicos y del tipo de blanco (tierra u océano).
+\textbf{Objetivo general}: Desarrollar una herramienta web interactiva que
+simule el impacto de asteroides cercanos a la Tierra, permitiendo a los usuarios
+visualizar las consecuencias medioambientales y explorar estrategias de
+mitigación, utilizando datos reales de la \textit{NASA} y el \textit{USGS}.
 
-Objetivos específicos:
-\begin{itemize}
-    \item Implementar un núcleo de cálculo con fórmulas paramétricas para energía del impacto, atenuación atmosférica, umbrales de \textit{airburst}/cráter, diámetro de cráter, sobrepresión y carga térmica en función de la distancia, y un esquema inicial para tsunami por impacto oceánico, basados en \cite{collins2005,holsapple1993,wuennemann2010}.
-    \item Diseñar una interfaz simple con entradas de diámetro, densidad, velocidad, ángulo de entrada y tipo de blanco; incluir preajustes de ejemplo.
-    \item Representar resultados en un mapa o diagrama con anillos concéntricos (isóbaras/energía térmica) y una tabla resumen de magnitudes clave.
-    \item Documentar supuestos, rangos de validez e incertidumbres, junto con referencias científicas y fuentes de datos abiertos.
-    \item Preparar un conjunto de escenarios de demostración con datos abiertos (por ejemplo, objetos de catálogos de la NASA) y dejar puntos de integración para APIs públicas.
-    \item Entregar una demostración funcional, README con instrucciones y un breve video de presentación.
-\end{itemize}
+\textbf{Objetivos específicos}:
+\begin{enumerate}
+	\item \textbf{Simular la trayectoria de asteroides cercanos a la Tierra}:
+	      \begin{itemize}
+		      \item{ Implementar un modelo orbital que permita calcular y
+		            visualizar la trayectoria de un asteroide basándose en
+		            parámetros Keplerianos.}
+	      \end{itemize}
 
+	\item \textbf{Visualizar los efectos medioambientales de un impacto}:
+	      \begin{itemize}
+		      \item{Calcular, mediante modelos científicos, y mostrar las
+		            consecuencias de un impacto de asteroide, tales como la
+		            formación de cráteres, la generación de tsunamis, la actividad
+		            sísmica asociada, utilizando datos y modelos científicos existentes.}
+	      \end{itemize}
+
+	\item \textbf{Integrar datos reales de la \textit{NASA} y el \textit{USGS}}:
+	      \begin{itemize}
+		      \item{Utilizar la NASA Near-Earth Object (NEO) API para obtener
+		            información sobre asteroides cercanos y la USGS Earthquake
+		            Catalog para modelar los efectos sísmicos, generando así una
+		            simulación realista y precisa.}
+	      \end{itemize}
+
+	\item \textbf{Incluir una sección educativa sobre impactos de asteroides}:
+	      \begin{itemize}
+
+		      \item{Desarrollar una sección educativa dentro de la herramienta
+		            que explique los fundamentos científicos detrás de los
+		            impactos de asteroides, las posibles consecuencias
+		            medioambientales y las estrategias de mitigación.}
+	      \end{itemize}
+	\item\textbf{Proveer una interfaz interactiva y accesible para usuarios no expertos}:
+	      \begin{itemize}
+		      \item{Crear una interfaz amigable que permita a los usuarios
+		            modificar parámetros (como el tamaño y la velocidad del
+		            asteroide) y ver los resultados en tiempo real, asegurando que la
+		            herramienta sea accesible tanto para científicos como para el
+		            público general.}
+
+
+	      \end{itemize}
+
+	\item\textbf{Evaluar y visualizar estrategias de mitigación de impactos}:
+	      \begin{itemize}
+		      \item{Implementar la simulación de estrategias de mitigación,
+		            como la desviación de asteroides, y permitir a los usuarios
+		            visualizar cómo estas estrategias afectan la trayectoria del
+		            asteroide y los efectos del impacto.}
+
+	      \end{itemize}
+\end{enumerate}
+
+% --- METODOLOGIA ---
 \section{Metodología}
+\subsection{Enfoque del Proyecto}
+El proyecto seguirá un enfoque \textbf{iterativo} dividido en varias fases
+clave, que se llevarán a cabo de forma paralela cuando sea posible, para
+maximizar la eficiencia. Usando la herramienta \textbf{GitHub} tendremos una
+evolución paralela en cada aspecto de la app(Frontend, Backend, etc) y
+luego se integrarán en un solo producto.
 
-\subsection{Entradas y supuestos}
-Variables de entrada: diámetro del meteoroide $d$ (m), densidad $\rho_i$ (kg/m$^3$), velocidad a la entrada superior $v$ (m/s), ángulo de entrada $\theta$ (rad), tipo de blanco (tierra u océano), densidad del blanco $\rho_t$, gravedad $g$, resistencia a tracción del meteoroide $\sigma_t$, resistencia del blanco $Y$ y, para océano, profundidad local $h_w$.
+\subsection{Desarrollo de la Simulación}
+La simulación se desarrollará en dos partes principales: la \textbf{trayectoria
+	de asteroide} y los \textbf{efectos del impacto}.
+\begin{itemize}
+	\item{\textbf{Simulación de la Trayectoria}: Basándonos en la metodología de
+	      diseño de órbitas elípticas de NASA Mission Visualization se definirán
+	      los elementos orbitales del asteroide (semi-eje mayor, excentricidad,
+	      inclinación, longitud del nodo ascendente y argumento del periastro)
+	      para inicializar la simulación. La propagación temporal se realizará
+	      resolviendo la ecuación de Kepler para obtener la anomalía excéntrica
+	      y, posteriormente, la anomalía verdadera, lo que permitirá calcular la
+	      posición y velocidad en un marco centrado en la Tierra. Con estas
+	      magnitudes se generará la trayectoria 3D y se estimará el punto de
+	      impacto considerando la rotación terrestre, la velocidad de llegada y
+	      diferentes ángulos de entrada. \cite{nasaEllipticalOrbit}}
+\end{itemize}
+\subsection{Interactividad y Visualización}
 
-Suponemos atmósfera estándar con perfil exponencial: $\rho_a(z) = \rho_0 e^{-z/H}$, con $\rho_0$ densidad al nivel del mar y $H$ la altura de escala. En el MVP, el acoplamiento detallado viento/rotación se omite.
+\subsection{Validación de Resultados}
 
-\subsection{Masa y energía}
-\begin{align}
-    m &= \frac{\pi}{6} \, \rho_i \, d^3, \\
-    E_k &= \tfrac{1}{2} m v^2.
-\end{align}
+\subsection{Optimización y Rendimiento}
 
-\subsection{Entrada atmosférica y ruptura (airburst)}
-Modelo simplificado inspirado en \cite{collins2005,chyba1993,popova2013}. El criterio de ruptura por presión dinámica es
-\begin{equation}
-    q(z) = \tfrac{1}{2} \, \rho_a(z) v^2 \geq \sigma_t.
-\end{equation}
-Con $\rho_a(z)$ exponencial, la altitud de ruptura aproximada es
-\begin{equation}
-    z_b \approx H \, \ln\!\left( \frac{\rho_0 v^2}{2\,\sigma_t} \right).
-\end{equation}
-Si la fragmentación y ablación depositan la mayor parte de la energía por encima del suelo, se considera un \emph{airburst}. Para un tratamiento más completo (arrastre, ablación y cambios de trayectoria) se usan las EDO clásicas de entrada \cite{collins2005,chyba1993}:
-\begin{align}
-    \frac{dv}{dt} &= -\frac{C_d \, \rho_a A \, v^2}{2 m} - g\,\sin\theta, \\
-    \frac{dm}{dt} &= -\frac{C_h \, \rho_a A \, v^3}{2 Q}, \\
-    \frac{d\theta}{dt} &= \frac{g\,\cos\theta}{v} - \frac{C_l \, \rho_a A \, v}{2 m},
-\end{align}
-con $A$ el área frontal, $Q$ el calor de ablación y $C_d, C_h, C_l$ coeficientes aerodinámicos.
+\subsection{Pruebas y Evaluación}
 
-\subsection{Craterización: diámetro transitorio y final}
-Se emplea el escalamiento $\pi$ de Holsapple y Schmidt \cite{holsapple1993,melosh1989,housen2011}. En régimen gravitacional, una forma práctica (usada en herramientas tipo \cite{collins2005}) es
-\begin{equation}
-    D_t = K_d \, \left(\frac{\rho_i}{\rho_t}\right)^{1/3} d^{a} v^{b} g^{-c} \, \sin^{1/3}\!\theta,
-\end{equation}
-con exponentes típicos $a\approx0.78$, $b\approx0.44$, $c\approx0.22$ para blancos rocosos, y $K_d$ dependiente de litología. El diámetro final depende del régimen simple/complejo \cite{melosh1989}:
-\begin{align}
-    D_f &= K_s \, D_t && (D_t < D_*)\\
-    D_f &= K_c \, D_t^{\,\alpha} D_*^{\,1-\alpha} && (D_t \ge D_*)
-\end{align}
-con $D_*$ el diámetro de transición (\emph{Earth}: $\sim$3--4 km), y $K_s, K_c, \alpha$ constantes empíricas.
+\subsection{Documentación y Presentación}
 
-El espesor de eyecta decae aproximadamente como ley potencial \cite{mcgetchin1973,housen2011}:
-\begin{equation}
-    t_{\text{ey}}(r) = K_e \, \rho_t^{-1} \, D_t^{\,\beta} \, r^{-3}, \quad r \ge R_t.
-\end{equation}
+% --- ARQUITECTURA---
+\section{Arquitectura}
 
-\subsection{Sobrepresión de onda de choque}
-Para \emph{airbursts} o explosiones superficiales se usa escalamiento por energía equivalente TNT y la distancia escalada $Z = R/W^{1/3}$, con $W = \eta_p E_k$ y eficiencia $\eta_p$ \cite{kingery1984,ufc334002,collins2005}. La sobrepresión $\Delta P$ se obtiene de curvas de Kingery--Bulmash o de ajustes polinomiales estándar:
-\begin{equation}
-    \Delta P = f(Z), \quad Z = \frac{R}{W^{1/3}}.
-\end{equation}
-Se reportan radios para umbrales típicos (p.ej., 1, 3, 5, 10 psi) para visualización.
-
-\subsection{Radiación térmica}
-Se adopta un modelo de \emph{fireball} con eficiencia radiante $\eta_r$ \cite{glasstone1977,collins2005}. La fluencia térmica a distancia $R$ es
-\begin{equation}
-    F(R) = \eta_r \, \frac{E_k}{4\pi R^2} \, T_{\text{atm}}(R,\,z_b) \, \cos\iota,
-\end{equation}
-con $T_{\text{atm}}$ transmisión atmosférica efectiva y $\iota$ el ángulo de incidencia. Se comparan umbrales de efectos térmicos (p.ej., ignición de vegetación, quemaduras de 1./2./3. grado) \cite{glasstone1977}.
-
-\subsection{Tsunami por impacto oceánico}
-Para impactos en océano, la amplitud inicial $H_0$ se relaciona con la cavidad transitoria o con la energía acoplada en el agua \cite{ward2000,wuennemann2010}:
-\begin{equation}
-    H_0 \propto \left( \frac{E_w}{\rho_w g} \right)^{1/4}, \quad E_w = \eta_w E_k.
-\end{equation}
-La propagación se aproxima por atenuación geométrica y disipación:
-\begin{equation}
-    H(r) = H_0 \left( \frac{r_0}{r} \right)^p e^{-\kappa r}, \quad p\in[\tfrac{1}{2},1],
-\end{equation}
-ajustando $p$ al régimen próximo/lejos de la fuente y $\kappa$ a pérdidas dispersivas y de fondo.
-
-\subsection{Salidas del prototipo}
-Se calculan y visualizan: energía depositada y altitud de ruptura; diámetros $D_t$ y $D_f$ (si aplica); radios para umbrales de sobrepresión y de fluencia térmica; espesor de eyecta estimado; y, en océano, amplitudes $H(r)$ en anillos concéntricos. Cada resultado se acompaña de supuestos y rangos de validez.
-
+% --- DATOS ABIERTOS NASA ---
 \section{Datos abiertos NASA}
 
-\section{Arquitectura y alcance}
+% --- ALCANCE ---
+\section{Alcance}
 
+% --- PLAN DE TRABAJO Y ENTREGABLES ---
 \section{Plan de trabajo (48 h) y entregables}
 
-\section{Riesgos y mitigaciones}
+% --- CONCLUSIONES ---
+\section{Conclusiones}
 
-% --- Fin de secciones ---
-% (Contenido por completar en cada sección.)
 
-% REFERENCIAS BIBLIOGRAFICAS ---------------------
+
+% --- REFERENCIAS BIBLIOGRAFICAS ---
 \begin{thebibliography}{00}
 
-    \bibitem{collins2005}
-    G. S. Collins, H. J. Melosh, and R. A. Marcus, ``Earth impact effects program: A web-based computer program for calculating the regional environmental consequences of a meteoroid impact on earth,'' \textit{Meteoritics \& Planetary Science}, vol. 40, no. 6, pp. 817--840, 2005. doi:10.1111/j.1945-5100.2005.tb00157.x
+	\bibitem{collins2005}
+	G. S. Collins, H. J. Melosh, and R. A. Marcus, ``Earth impact effects program: A web-based computer program for calculating the regional environmental consequences of a meteoroid impact on earth,'' \textit{Meteoritics \& Planetary Science}, vol. 40, no. 6, pp. 817--840, 2005. doi:10.1111/j.1945-5100.2005.tb00157.x
 
-    \bibitem{herrick2006}
-    R. R. Herrick, ``Updates regarding the resurfacing of venusian impact craters,'' in \textit{Lunar and Planet. Sci. Conf. XXXVII}, p. Abs. 1588, Lunar and Planetary Institute, Houston, Texas, 2006.
+	\bibitem{herrick2006}
+	R. R. Herrick, ``Updates regarding the resurfacing of venusian impact craters,'' in \textit{Lunar and Planet. Sci. Conf. XXXVII}, p. Abs. 1588, Lunar and Planetary Institute, Houston, Texas, 2006.
 
-    \bibitem{herrick1997}
-    R. R. Herrick, V. L. Sharpton, M. C. Malin, S. N. Lyons, and K. Feely, ``Morphology and Morphometry of Impact Craters,'' in \textit{Venus II: Geology, Geophysics, Atmosphere, and Solar Wind Environment}, S. W. Bougher, D. M. Hunten, and R. J. Phillips, Eds., p. 1015, 1997.
+	\bibitem{herrick1997}
+	R. R. Herrick, V. L. Sharpton, M. C. Malin, S. N. Lyons, and K. Feely, ``Morphology and Morphometry of Impact Craters,'' in \textit{Venus II: Geology, Geophysics, Atmosphere, and Solar Wind Environment}, S. W. Bougher, D. M. Hunten, and R. J. Phillips, Eds., p. 1015, 1997.
 
-    \bibitem{holsapple1993}
-    K. A. Holsapple, ``The scaling of impact processes in planetary sciences,'' \textit{Ann. Rev. Earth Planet. Sci.}, vol. 21, pp. 333--373, 1993.
+	\bibitem{holsapple1993}
+	K. A. Holsapple, ``The scaling of impact processes in planetary sciences,'' \textit{Ann. Rev. Earth Planet. Sci.}, vol. 21, pp. 333--373, 1993.
 
-    \bibitem{mckinnon1985}
-    W. B. McKinnon and P. M. Schenk, ``Ejecta blanket scaling on the Moon and Mercury - inferences for projectile populations,'' in \textit{Lunar and Planet. Sci. Conf. Proceedings XVI}, pp. 544--545, Lunar and Planetary Institute, Houston, Texas, 1985.
+	\bibitem{mckinnon1985}
+	W. B. McKinnon and P. M. Schenk, ``Ejecta blanket scaling on the Moon and Mercury - inferences for projectile populations,'' in \textit{Lunar and Planet. Sci. Conf. Proceedings XVI}, pp. 544--545, Lunar and Planetary Institute, Houston, Texas, 1985.
 
-    \bibitem{wuennemann2010}
-    K. Wünnemann, G. S. Collins, and R. Weiss, ``Impact of a cosmic body into earth’s ocean and the generation of large tsunami waves: Insight from numerical modeling,'' \textit{Reviews of Geophysics}, vol. 48, no. 4, 2010. doi:10.1029/2009RG000308
-    
-    \bibitem{melosh1989}
-    H. J. Melosh, \textit{Impact Cratering: A Geologic Process}. Oxford University Press, 1989.
+	\bibitem{wuennemann2010}
+	K. Wünnemann, G. S. Collins, and R. Weiss, ``Impact of a cosmic body into earth’s ocean and the generation of large tsunami waves: Insight from numerical modeling,'' \textit{Reviews of Geophysics}, vol. 48, no. 4, 2010. doi:10.1029/2009RG000308
 
-    \bibitem{housen2011}
-    K. R. Housen and K. A. Holsapple, ``Ejecta from impact craters,'' \textit{Icarus}, vol. 211, pp. 856--875, 2011. doi:10.1016/j.icarus.2010.09.017
+	\bibitem{melosh1989}
+	H. J. Melosh, \textit{Impact Cratering: A Geologic Process}. Oxford University Press, 1989.
 
-    \bibitem{mcgetchin1973}
-    T. R. McGetchin, M. Settle, and J. W. Head, ``Lunar impact ejection and crater growth,'' \textit{Journal of Geophysical Research}, vol. 78, no. 11, pp. 10847--10863, 1973. doi:10.1029/JB078i023p10847
+	\bibitem{housen2011}
+	K. R. Housen and K. A. Holsapple, ``Ejecta from impact craters,'' \textit{Icarus}, vol. 211, pp. 856--875, 2011. doi:10.1016/j.icarus.2010.09.017
 
-    \bibitem{chyba1993}
-    C. F. Chyba, P. J. Thomas, and K. J. Zahnle, ``The 1908 Tunguska explosion: Atmospheric disruption of a stony asteroid,'' \textit{Nature}, vol. 361, pp. 40--44, 1993. doi:10.1038/361040a0
+	\bibitem{mcgetchin1973}
+	T. R. McGetchin, M. Settle, and J. W. Head, ``Lunar impact ejection and crater growth,'' \textit{Journal of Geophysical Research}, vol. 78, no. 11, pp. 10847--10863, 1973. doi:10.1029/JB078i023p10847
 
-    \bibitem{popova2013}
-    O. P. Popova et al., ``Chelyabinsk Airburst, Damage Assessment, Meteorite Recovery, and Characterization,'' \textit{Science}, vol. 342, no. 6162, pp. 1069--1073, 2013. doi:10.1126/science.1242642
+	\bibitem{chyba1993}
+	C. F. Chyba, P. J. Thomas, and K. J. Zahnle, ``The 1908 Tunguska explosion: Atmospheric disruption of a stony asteroid,'' \textit{Nature}, vol. 361, pp. 40--44, 1993. doi:10.1038/361040a0
 
-    \bibitem{kingery1984}
-    C. N. Kingery and G. Bulmash, ``Airblast Parameters from TNT Spherical Air Burst and Hemispherical Surface Burst,'' Technical Report ARBRL-TR-02555, U.S. Army Ballistic Research Laboratory, Aberdeen Proving Ground, 1984.
+	\bibitem{popova2013}
+	O. P. Popova et al., ``Chelyabinsk Airburst, Damage Assessment, Meteorite Recovery, and Characterization,'' \textit{Science}, vol. 342, no. 6162, pp. 1069--1073, 2013. doi:10.1126/science.1242642
 
-    \bibitem{ufc334002}
-    UFC 3-340-02, ``Structures to Resist the Effects of Accidental Explosions,'' U.S. Department of Defense, 2008 (Change 2, 2014).
+	\bibitem{kingery1984}
+	C. N. Kingery and G. Bulmash, ``Airblast Parameters from TNT Spherical Air Burst and Hemispherical Surface Burst,'' Technical Report ARBRL-TR-02555, U.S. Army Ballistic Research Laboratory, Aberdeen Proving Ground, 1984.
 
-    \bibitem{glasstone1977}
-    S. Glasstone and P. J. Dolan, \textit{The Effects of Nuclear Weapons}. U.S. Department of Defense and U.S. Department of Energy, 1977.
+	\bibitem{ufc334002}
+	UFC 3-340-02, ``Structures to Resist the Effects of Accidental Explosions,'' U.S. Department of Defense, 2008 (Change 2, 2014).
 
-    \bibitem{ward2000}
-    S. N. Ward and E. Asphaug, ``Asteroid impact tsunami: A probabilistic hazard assessment,'' \textit{Icarus}, vol. 145, pp. 64--78, 2000. doi:10.1006/icar.1999.6336
+	\bibitem{glasstone1977}
+	S. Glasstone and P. J. Dolan, \textit{The Effects of Nuclear Weapons}. U.S. Department of Defense and U.S. Department of Energy, 1977.
+
+	\bibitem{ward2000}
+	S. N. Ward and E. Asphaug, ``Asteroid impact tsunami: A probabilistic hazard assessment,'' \textit{Icarus}, vol. 145, pp. 64--78, 2000. doi:10.1006/icar.1999.6336
+
+	\bibitem{nasaEllipticalOrbit}
+	NASA Goddard Space Flight Center, ``Elliptical Orbit Design,'' Mission Visualization \url{https://nasa.github.io/mission-viz/RMarkdown/Elliptical_Orbit_Design.html}, accessed Oct. 2024.
 
 \end{thebibliography}
 
