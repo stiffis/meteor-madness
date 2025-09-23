@@ -869,7 +869,72 @@ Para garantizar la seguridad y estabilidad del sistema, se implementarán las si
 
 % --- DATOS ABIERTOS NASA ---
 \section{Datos abiertos (NASA)}
+El desarrollo de este proyecto se basa en la integración de
+\textbf{datos abiertos} proporcionados por \textbf{NASA} y \textbf{USGS}, lo
+que permite crear simulaciones precisas y realistas sobre los impactos de
+asteroides cercanos a la Tierra. Estas fuentes de datos proporcionan
+información esencial sobre los \textbf{asteroides} y los
+\textbf{efectos geológicos} relacionados con un impacto, y su integración
+permite una visualización más detallada y precisa de los riesgos asociados.
 
+\subsection{1. Uso de la \textbf{API de NASA NEO}}
+La \textbf{API de NASA Near-Earth Object (NEO)} proporciona acceso a una
+vasta base de datos sobre \textbf{asteroides cercanos a la Tierra} (NEOs).
+Esta API incluye información crítica como los parámetros orbitales de los
+asteroides, su tamaño, velocidad, y las fechas de aproximación cercanas a la
+Tierra. Para nuestro proyecto, estos datos se utilizarán para calcular y
+simular la \textbf{trayectoria orbital} de los asteroides, lo cual es
+fundamental para predecir su impacto en la Tierra.
+
+\begin{itemize}
+	\item \textbf{Datos Utilizados}:
+	      \begin{itemize}
+		      \item \textbf{Parámetros Orbitales}: Semi-eje mayor, excentricidad,
+		            inclinación, entre otros.
+		      \item \textbf{Tamaño del Asteroide}: Para estimar la energía cinética
+		            del impacto.
+		      \item \textbf{Fecha y Distancia de Aproximación}: Para simular la
+		            trayectoria en el tiempo y predecir el impacto.
+	      \end{itemize}
+\end{itemize}
+
+La API de NASA proporciona los datos necesarios para crear simulaciones
+precisas y determinar la zona de impacto y los posibles efectos secundarios del asteroide.
+
+\subsection{2. Uso de la API de USGS Earthquake Catalog}
+La \textbf{API de USGS Earthquake Catalog} ofrece acceso a un catálogo
+global de \textbf{datos sísmicos}, incluyendo información sobre la ubicación, magnitud y profundidad de los terremotos. Estos datos serán fundamentales para modelar los efectos sísmicos generados por un impacto de asteroide en la Tierra. Además, se utilizarán los \textbf{modelos de propagación sísmica} para simular las ondas sísmicas generadas por el impacto.
+
+\begin{itemize}
+	\item \textbf{Datos Utilizados}:
+	      \begin{itemize}
+		      \item \textbf{Magnitud de los Terremotos}: Para estimar la fuerza de
+		            las ondas sísmicas.
+		      \item \textbf{Ubicación y Profundidad}: Para modelar la propagación de
+		            las ondas sísmicas en el terreno afectado.
+		      \item \textbf{Impacto en Zonas Geográficas}: Para simular los efectos
+		            en áreas cercanas al lugar de impacto.
+	      \end{itemize}
+\end{itemize}
+
+\subsection{3. Integración y Transparencia de Datos}
+La integración de estos datos será clave para asegurar que las simulaciones
+sean lo más precisas posible. Durante el desarrollo del proyecto, se asegurará
+que los datos sean procesados de manera \textbf{transparente}, permitiendo que
+los usuarios comprendan cómo se obtienen los datos y cómo afectan los
+resultados de las simulaciones. Además, se implementarán mecanismos para
+verificar la \textbf{precisión} y \textbf{actualización} de los datos en
+tiempo real, utilizando la \textbf{API de NASA NEO} para obtener la
+información más actualizada sobre asteroides cercanos y la
+\textbf{API de USGS} para obtener los últimos registros sísmicos.
+
+\subsection{4. Aplicación en la Simulación}
+Los datos obtenidos a través de estas APIs se integrarán en el \textbf{backend}
+del sistema para realizar los cálculos de la trayectoria y los efectos del
+impacto. El \textbf{frontend} se encargará de mostrar estos resultados en
+tiempo real, permitiendo a los usuarios explorar los diferentes escenarios de
+impacto y visualizar cómo los cambios en los parámetros afectan las áreas de
+impacto y las consecuencias medioambientales.
 
 % --- ALCANCE ---
 \section{Alcance}
@@ -1056,7 +1121,4 @@ trabajo y los entregables esperados en cada fase.
 	NASA Goddard Space Flight Center, ``Elliptical Orbit Design,'' Mission Visualization \url{https://nasa.github.io/mission-viz/RMarkdown/Elliptical_Orbit_Design.html}, accessed Oct. 2024.
 
 \end{thebibliography}
-
-
-
 \end{document}
