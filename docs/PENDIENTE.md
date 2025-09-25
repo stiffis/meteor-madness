@@ -1,0 +1,3 @@
+- Create prototypes, both for the backend and the frontend
+- Find a way to allocate the backend
+- Add README
