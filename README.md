@@ -108,51 +108,163 @@ MeteorMadness/
 - **API**: REST con validación y presets
 - **Testing**: Scripts automatizados de prueba
 
-## 🚀 Inicio Rápido
+## 🚀 Instalación y Uso
 
-### Backend
+### 📋 Prerequisitos
 
+- **Python 3.8+** con pip
+- **Node.js 18+** con npm
+- **Git** para clonar el repositorio
+
+### 🔧 Instalación Completa
+
+#### 1. Clonar el Repositorio
 ```bash
-# Navegar al backend
+git clone <repository-url>
+cd MeteorMadness
+```
+
+#### 2. Configurar Backend (Python/Flask)
+```bash
+# Navegar al directorio backend
 cd backend
 
+# Crear entorno virtual
+python -m venv venv
+
 # Activar entorno virtual
+# En Linux/Mac:
 source venv/bin/activate
+# En Windows:
+# venv\Scripts\activate
 
-# Probar configuración
+# Instalar dependencias
+pip install -r requirements.txt
+
+# Verificar instalación
 python test_setup.py
-
-# Iniciar servidor de desarrollo
-python app.py
-# o usar: ./start_dev.sh
 ```
 
-### Frontend
-
+#### 3. Configurar Frontend (React/Three.js)
 ```bash
-# Navegar al frontend
-cd frontend
+# Navegar al directorio frontend
+cd frontend/siaer
 
-# Iniciar servidor de desarrollo
-npm run dev
-# o usar: ./start_dev.sh
+# Instalar dependencias
+npm install
+
+# Verificar instalación
+npm run build
 ```
 
-### Simulación Original
+### 🎮 Uso de la Aplicación
+
+#### **Opción 1: Aplicación Web Completa (Recomendado)**
+
+1. **Iniciar Backend**:
+```bash
+cd backend
+source venv/bin/activate  # Linux/Mac
+python app.py
+```
+El backend estará disponible en: `http://localhost:5000`
+
+2. **Iniciar Frontend** (en otra terminal):
+```bash
+cd frontend/siaer
+npm run dev
+```
+El frontend estará disponible en: `http://localhost:5173`
+
+3. **Usar la Aplicación**:
+   - Abre tu navegador en `http://localhost:5173`
+   - Modifica los elementos orbitales con los sliders
+   - Prueba los presets (ISS, Molniya, CRASH)
+   - Controla la animación con Play/Pause/Reset
+
+#### **Opción 2: Simulación Python Original**
 
 ```bash
 # Navegar a simulación
 cd simultion_trajectory
 
 # Activar entorno virtual
-source orbital_env/bin/activate
+source orbital_env/bin/activate  # Linux/Mac
 
-# Simulación interactiva
+# Simulación interactiva con controles
 python interactive_orbital_sim.py
 
-# Simulación básica
+# Simulación básica con gráficos
 python orbital_simulation.py
 ```
+
+### 🛠️ Scripts de Desarrollo
+
+#### Backend
+```bash
+cd backend
+./start_dev.sh    # Inicia servidor con configuración automática
+python test_api.py # Prueba todos los endpoints
+```
+
+#### Frontend  
+```bash
+cd frontend/siaer
+./start_dev.sh    # Inicia servidor con verificación de backend
+npm run build     # Construye versión de producción
+npm run preview   # Vista previa de la build
+```
+
+### 🔍 Verificación de Instalación
+
+#### Backend
+```bash
+cd backend
+python test_setup.py
+# Debería mostrar: "🎉 ¡Todos los tests pasaron! El backend está listo."
+```
+
+#### Frontend
+```bash
+cd frontend/siaer
+npm run dev
+# Debería abrir automáticamente http://localhost:5173
+```
+
+### 🐛 Solución de Problemas
+
+#### Backend no inicia
+```bash
+# Verificar Python y dependencias
+python --version
+pip list
+
+# Reinstalar dependencias
+pip install -r requirements.txt --force-reinstall
+```
+
+#### Frontend no carga
+```bash
+# Limpiar cache y reinstalar
+rm -rf node_modules package-lock.json
+npm install
+
+# Verificar Node.js
+node --version  # Debe ser 18+
+```
+
+#### Error de conexión Frontend-Backend
+- Verificar que el backend esté corriendo en `http://localhost:5000`
+- Comprobar que no haya firewall bloqueando el puerto
+- Revisar la consola del navegador para errores CORS
+
+### 📱 Uso Básico
+
+1. **Modificar Órbitas**: Usa los sliders en el panel izquierdo para cambiar elementos orbitales
+2. **Presets**: Haz clic en ISS, Molniya, etc. para cargar órbitas famosas
+3. **Animación**: Usa Play/Pause para ver el satélite orbitando
+4. **Cámara**: Arrastra para rotar, rueda para zoom, clic derecho para pan
+5. **Información**: Observa los datos orbitales en tiempo real en el panel de control
 
 ## 📡 API Endpoints
 
