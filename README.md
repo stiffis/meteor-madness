@@ -1,6 +1,6 @@
-# 🚀 MeteorMadness
+# 🚀 SIAER - Simulador de Impactos de Asteroides y Evaluación de Riesgos
 
-Proyecto de simulación orbital avanzada con backend Flask, frontend React + Three.js y simulación basada en las ecuaciones de Kepler.
+Proyecto **EN DESARROLLO**. Herramienta web interactiva que simula impactos de asteroides en la Tierra y evalúa las consecuencias medioambientales, integrando datos reales de NASA y USGS.
 
 ## 📁 Estructura del Proyecto
 
@@ -30,34 +30,74 @@ MeteorMadness/
     └── README.md              # Documentación detallada
 ```
 
-## 🎯 Estado Actual
+## 🎯 Estado Actual del Desarrollo
 
-### ✅ Completado
+### ✅ **Completado (Fase 1 - Simulación Orbital)**
 
-1. **Backend Flask Completo**
-   - API REST con endpoints para simulación orbital
-   - Validación de elementos orbitales keplerianos
-   - 6 presets predefinidos (ISS, Geoestacionaria, Molniya, etc.)
-   - Análisis orbital completo (periapsis, apoapsis, detección de impactos)
-   - Integración con simulación existente
+1. **Simulación de Trayectorias Orbitales**
+   - ✅ Implementación completa de ecuaciones de Kepler
+   - ✅ Propagación orbital con elementos keplerianos
+   - ✅ Visualización 3D interactiva con Three.js
+   - ✅ 6 presets educativos (ISS, Geoestacionaria, Molniya, etc.)
+   - ✅ Detección de impactos con la Tierra
 
-2. **Frontend React + Three.js Completo**
-   - Interfaz web moderna con React 18 + Vite
-   - Visualización 3D interactiva con Three.js
-   - Panel de control completo para elementos orbitales
-   - Animación en tiempo real de satélites
-   - Integración total con API del backend
+2. **Backend Flask Funcional**
+   - ✅ API REST para simulación orbital
+   - ✅ Validación de elementos orbitales
+   - ✅ Integración con simulación Python existente
+   - ✅ Análisis orbital (periapsis, apoapsis, períodos)
 
-3. **Simulación Orbital Avanzada**
-   - Implementación de las ecuaciones de Kepler
-   - Visualización 3D interactiva (Python + Web)
-   - Animación en tiempo real
-   - Múltiples presets educativos
+3. **Frontend React + Three.js**
+   - ✅ Interfaz web moderna y responsive
+   - ✅ Panel de control para elementos orbitales
+   - ✅ Animación en tiempo real de satélites
+   - ✅ Controles de velocidad y navegación temporal
 
-4. **Estructura de Proyecto Completa**
-   - Separación clara backend/frontend
-   - Documentación completa
-   - Scripts de desarrollo y testing
+### 🔄 **En Desarrollo (Fase 2 - Efectos de Impacto)**
+
+1. **Simulación de Efectos de Impacto** ⚠️ **PENDIENTE**
+   - ❌ Cálculo de formación de cráteres
+   - ❌ Simulación de ondas expansivas
+   - ❌ Modelado de tsunamis (impactos oceánicos)
+   - ❌ Efectos sísmicos y geológicos
+   - ❌ Evaluación de daños por zonas
+
+2. **Integración con APIs Externas** ⚠️ **PENDIENTE**
+   - ❌ NASA Near-Earth Object (NEO) API
+   - ❌ USGS Earthquake Catalog API
+   - ❌ Datos reales de asteroides cercanos
+   - ❌ Información sísmica histórica
+
+3. **Funcionalidades Avanzadas** ⚠️ **PENDIENTE**
+   - ❌ Mapas 2D de zonas afectadas
+   - ❌ Cálculo de energía cinética y equivalente TNT
+   - ❌ Simulación de estrategias de mitigación
+   - ❌ Sección educativa sobre impactos de asteroides
+
+### 📋 **Próximas Prioridades (Basadas en Anteproyecto)**
+
+#### **Objetivo 1: Efectos Medioambientales del Impacto**
+- [ ] Implementar modelos de formación de cráteres (Collins et al., 2005)
+- [ ] Calcular ondas expansivas usando escalado Kingery-Bulmash
+- [ ] Simular tsunamis con modelos Ward y Asphaug (2000)
+- [ ] Evaluar efectos térmicos y sísmicos
+
+#### **Objetivo 2: Integración de Datos Reales**
+- [ ] Conectar con NASA NEO API para asteroides cercanos
+- [ ] Integrar USGS Earthquake Catalog para efectos sísmicos
+- [ ] Implementar validación con casos históricos (Tunguska, Chelyabinsk)
+
+#### **Objetivo 3: Interfaz Interactiva Avanzada**
+- [ ] Mapas 2D con D3.js para visualizar zonas afectadas
+- [ ] Sliders para parámetros de asteroide (tamaño, velocidad, ángulo)
+- [ ] Visualización de estrategias de mitigación
+- [ ] Exportación de datos (GeoJSON, CSV)
+
+#### **Objetivo 4: Componente Educativo**
+- [ ] Sección explicativa sobre fundamentos científicos
+- [ ] Casos de estudio históricos interactivos
+- [ ] Glosario y referencias científicas
+- [ ] Medidas de protección planetaria
 
 ### 🔧 Tecnologías
 
@@ -189,15 +229,36 @@ curl -X POST http://localhost:5000/api/orbital/simulate \
 - **Información en Tiempo Real**: Período, altitudes, tiempo transcurrido
 - **Presets Rápidos**: Carga instantánea de órbitas famosas
 
-## 🔬 Próximos Pasos
+## 🏗️ Arquitectura y Metodología (Según Anteproyecto)
 
-### Posibles Mejoras
-1. **Base de Datos**: Almacenar simulaciones históricas
-2. **Autenticación**: Sistema de usuarios
-3. **Más Cuerpos**: Luna, planetas, asteroides
-4. **Perturbaciones**: Efectos gravitatorios adicionales
-5. **Exportación**: Datos en CSV, JSON, KML
-6. **Mobile App**: Versión móvil nativa
+### **Enfoque Científico**
+El proyecto implementa metodologías científicas validadas para la simulación de impactos de asteroides:
+
+1. **Modelos Físicos Validados**
+   - Ecuaciones de Kepler para propagación orbital
+   - Earth Impact Effects Program (Collins et al., 2005)
+   - Escalado Kingery-Bulmash para ondas expansivas
+   - Modelos Ward-Asphaug para tsunamis
+
+2. **Integración de Datos Reales**
+   - NASA Near-Earth Object (NEO) API
+   - USGS Earthquake Catalog
+   - Validación con casos históricos
+
+3. **Arquitectura Cliente-Servidor**
+   - **Frontend**: React + Vite + Three.js + D3.js
+   - **Backend**: Flask + Python (NumPy, SciPy, AstroPy)
+   - **APIs**: RESTful con datos en tiempo real
+
+### **Fase de Desarrollo Actual vs Objetivo Final**
+
+| Componente | Estado Actual | Objetivo Final |
+|------------|---------------|----------------|
+| **Trayectoria Orbital** | ✅ Completo | ✅ Ecuaciones de Kepler |
+| **Efectos de Impacto** | ❌ No iniciado | 🎯 Cráteres, ondas, tsunamis |
+| **APIs Externas** | ❌ No integradas | 🎯 NASA NEO + USGS |
+| **Mapas 2D** | ❌ No implementado | 🎯 D3.js + GeoJSON |
+| **Sección Educativa** | ❌ No iniciado | 🎯 Fundamentos científicos |
 
 ## 🤝 Contribución
 
@@ -208,13 +269,23 @@ El proyecto está completamente estructurado para contribuciones:
 - **Simulación**: Algoritmos modulares
 - **Documentación**: Completa y actualizada
 
-## 📚 Referencias
+## 📚 Referencias Científicas
 
+### **Validación con Casos Históricos**
+- **Tunguska (1908)**: Evento de estallido atmosférico en Siberia
+- **Chelyabinsk (2013)**: Meteorito y onda expansiva documentados
+- **Chicxulub**: Impacto asociado con extinción masiva K-Pg
+
+### **APIs y Datos Reales**
+- **NASA NEO API**: Near-Earth Object database para asteroides cercanos
+- **USGS Earthquake Catalog**: Datos sísmicos globales para modelado
+- **NASA Mission Visualization**: Metodología de diseño orbital
+
+### **Frameworks y Tecnologías**
 - [NASA Mission Visualization - Elliptical Orbit Design](https://nasa.github.io/mission-viz/RMarkdown/Elliptical_Orbit_Design.html)
 - [Three.js Documentation](https://threejs.org/docs/)
 - [React Three Fiber](https://docs.pmnd.rs/react-three-fiber)
-- Mecánica orbital clásica
-- Elementos orbitales keplerianos
+- [D3.js](https://d3js.org/) - Visualización de datos y mapas 2D
 
 ## 📄 Licencia
 
@@ -222,12 +293,24 @@ Proyecto de código abierto bajo licencia MIT.
 
 ---
 
-## 🎉 ¡Proyecto Completado!
+## ⚡ Estado del Proyecto
 
-✅ **Backend Flask** - API REST completa  
-✅ **Frontend React + Three.js** - Interfaz web moderna  
-✅ **Simulación Orbital** - Ecuaciones de Kepler implementadas  
-✅ **Visualización 3D** - Tanto en Python como en Web  
-✅ **Documentación** - Completa para todos los componentes
+### 🏆 **Fase 1 Completada: Simulación Orbital**
+✅ **Trayectorias de Asteroides** - Ecuaciones de Kepler implementadas  
+✅ **Visualización 3D** - Three.js con animación en tiempo real  
+✅ **Backend Flask** - API REST funcional  
+✅ **Frontend React** - Interfaz moderna e interactiva  
 
-**MeteorMadness** es ahora un simulador orbital completo listo para uso educativo y desarrollo posterior.
+### 🚧 **Fase 2 En Desarrollo: Efectos de Impacto**
+⚠️ **Modelos de Impacto** - Cráteres, ondas expansivas, tsunamis  
+⚠️ **APIs NASA/USGS** - Datos reales de asteroides y efectos sísmicos  
+⚠️ **Mapas de Daño** - Visualización 2D de zonas afectadas  
+⚠️ **Componente Educativo** - Fundamentos científicos  
+
+**SIAER** está en desarrollo activo. La simulación orbital está completa y funcional, mientras que los efectos de impacto y la integración con datos reales están en fase de implementación.
+
+### 📈 **Progreso Actual: ~40% Completado**
+- ✅ Simulación orbital y visualización 3D
+- 🔄 Efectos de impacto (próxima prioridad)
+- 📋 APIs externas y datos reales
+- 📋 Sección educativa y documentación científica
