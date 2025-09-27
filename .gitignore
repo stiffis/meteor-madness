@@ -157,3 +157,6 @@ Pipfile.lock
 # Local configuration overrides
 local_config.py
 config_local.py
+
+# Context
+.context
