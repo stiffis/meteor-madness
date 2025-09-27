@@ -1,0 +1,159 @@
+# MeteorMadness - Project .gitignore
+
+# ================================
+# FRONTEND (Node.js/React)
+# ================================
+
+# Dependencies
+frontend/*/node_modules/
+frontend/siaer/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+frontend/*/dist/
+frontend/*/build/
+frontend/*/*.local
+
+# Environment files
+frontend/*/.env
+frontend/*/.env.local
+frontend/*/.env.development.local
+frontend/*/.env.test.local
+frontend/*/.env.production.local
+
+# Vite specific
+frontend/*/dist-ssr
+frontend/*/*.tsbuildinfo
+
+# ================================
+# BACKEND (Python/Flask)
+# ================================
+
+# Python virtual environments
+backend/venv/
+backend/.venv/
+backend/env/
+backend/.env/
+
+# Python bytecode
+backend/__pycache__/
+backend/*/__pycache__/
+backend/*/*/__pycache__/
+*.py[cod]
+*$py.class
+
+# Python distribution / packaging
+backend/.Python
+backend/build/
+backend/develop-eggs/
+backend/dist/
+backend/downloads/
+backend/eggs/
+backend/.eggs/
+backend/lib/
+backend/lib64/
+backend/parts/
+backend/sdist/
+backend/var/
+backend/wheels/
+backend/pip-wheel-metadata/
+backend/share/python-wheels/
+*.egg-info/
+backend/.installed.cfg
+*.egg
+MANIFEST
+
+# Flask specific
+backend/instance/
+backend/.webassets-cache
+
+# Environment files
+backend/.env
+backend/.flaskenv
+
+# ================================
+# SIMULATION (Python)
+# ================================
+
+# Virtual environments
+simultion_trajectory/orbital_env/
+simultion_trajectory/.venv/
+simultion_trajectory/venv/
+
+# Python bytecode
+simultion_trajectory/__pycache__/
+simultion_trajectory/*.py[cod]
+
+# ================================
+# GENERAL
+# ================================
+
+# Logs
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Coverage reports
+coverage/
+*.lcov
+.nyc_output
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional caches
+.npm
+.eslintcache
+.node_repl_history
+
+# Package files
+*.tgz
+
+# Three.js/Blender files
+*.blend1
+*.blend2
+
+# Documentation builds (if any)
+docs/_build/
+
+# Pytest
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# Local configuration overrides
+local_config.py
+config_local.py
