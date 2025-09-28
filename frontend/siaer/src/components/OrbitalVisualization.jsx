@@ -73,23 +73,31 @@ function Earth() {
 }
 
 // Componente para la trayectoria orbital
-function OrbitalTrajectory({ positions, currentIndex, showComplete = true }) {
+function OrbitalTrajectory({ positions, currentIndex, showComplete = true, trailLength = 100 }) {
   if (!positions || positions.length === 0) return null;
 
-  // Convertir posiciones a Vector3 de Three.js
   const points = positions.map(
     (pos) => new THREE.Vector3(pos[0], pos[1], pos[2]),
   );
 
-  // Puntos hasta la posición actual para el trail
-  const currentPoints =
-    currentIndex !== null && currentIndex >= 0
-      ? points.slice(0, currentIndex + 1)
-      : points;
+  const trailPoints = points.slice(Math.max(0, currentIndex - trailLength), currentIndex + 1);
+
+  const geometry = new THREE.BufferGeometry().setFromPoints(trailPoints);
+
+  const colors = new Float32Array(trailPoints.length * 3);
+  const startColor = new THREE.Color(0x00ff88);
+  const endColor = new THREE.Color(0x004422);
+
+  for (let i = 0; i < trailPoints.length; i++) {
+    const t = i / (trailPoints.length - 1);
+    const color = startColor.clone().lerp(endColor, 1 - t);
+    color.toArray(colors, i * 3);
+  }
+
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
   return (
     <group>
-      {/* Trayectoria completa (sutil) */}
       {showComplete && (
         <Line
           points={points}
@@ -100,15 +108,10 @@ function OrbitalTrajectory({ positions, currentIndex, showComplete = true }) {
         />
       )}
 
-      {/* Trayectoria recorrida (resaltada) */}
-      {currentPoints.length > 1 && (
-        <Line
-          points={currentPoints}
-          color="#00FF88"
-          lineWidth={6}
-          transparent
-          opacity={0.9}
-        />
+      {trailPoints.length > 1 && (
+        <line geometry={geometry}>
+          <lineBasicMaterial vertexColors={true} lineWidth={24} transparent opacity={0.9} />
+        </line>
       )}
     </group>
   );
@@ -168,6 +171,18 @@ function InfoText({ text, position, color = "white" }) {
       {text}
     </Text>
   );
+}
+
+function Skybox() {
+  const { scene } = useThree();
+  const texture = useLoader(THREE.TextureLoader, "/textures/space-skybox.jpg");
+
+  useEffect(() => {
+    texture.mapping = THREE.EquirectangularReflectionMapping;
+    scene.background = texture;
+  }, [scene, texture]);
+
+  return null;
 }
 
 // Componente principal de escena 3D
@@ -263,7 +278,7 @@ export default function OrbitalVisualization({
   showInfo = true,
 }) {
   return (
-    <div className={`w-full h-full bg-black ${className}`}>
+    <div className={`w-full h-full ${className}`}>
       <Canvas
         camera={{
           fov: 50,
@@ -272,6 +287,7 @@ export default function OrbitalVisualization({
           position: [15000, 15000, 15000],
         }}
       >
+        <Skybox />
         {/* Iluminación */}
         <ambientLight intensity={0.3} />
         <directionalLight
