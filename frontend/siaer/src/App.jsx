@@ -19,6 +19,11 @@ function App() {
     Omega: 0,     // Longitud del nodo ascendente (grados)
     M0: 0         // Anomalía media inicial (grados)
   });
+  
+  const [simParams, setSimParams] = useState({
+    duration: 7200, // 2 horas
+    timestep: 60,   // 1 minuto
+  });
 
   const [simulationData, setSimulationData] = useState(null);
   const [presets, setPresets] = useState({});
@@ -50,7 +55,7 @@ function App() {
     }, 500); // Debounce de 500ms
 
     return () => clearTimeout(timeoutId);
-  }, [elements, connectionStatus]);
+  }, [elements, simParams, connectionStatus]);
 
   // Manejo de la animación
   useEffect(() => {
@@ -124,8 +129,8 @@ function App() {
     try {
       const result = await MeteorMadnessAPI.simulate({
         elements,
-        duration: 7200, // 2 horas
-        timestep: 60    // 1 minuto
+        duration: simParams.duration,
+        timestep: simParams.timestep
       });
 
       if (result.success) {
@@ -147,6 +152,10 @@ function App() {
   // Manejadores de eventos
   const handleElementsChange = useCallback((newElements) => {
     setElements(newElements);
+  }, []);
+  
+  const handleSimParamsChange = useCallback((newParams) => {
+    setSimParams(newParams);
   }, []);
 
   const handlePresetSelect = useCallback((presetKey, presetElements) => {
@@ -267,6 +276,8 @@ function App() {
           onPresetSelect={handlePresetSelect}
           simulationData={simulationData}
           isLoading={isLoading}
+          simParams={simParams}
+          onSimParamsChange={handleSimParamsChange}
           className="w-80 flex-shrink-0"
         />
 

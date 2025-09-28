@@ -67,6 +67,8 @@ export default function ControlPanel({
   onPresetSelect,
   simulationData,
   isLoading = false,
+  simParams,
+  onSimParamsChange,
   className = ""
 }) {
   const [localElements, setLocalElements] = useState({
@@ -90,6 +92,11 @@ export default function ControlPanel({
     const newElements = { ...localElements, [key]: value };
     setLocalElements(newElements);
     onElementsChange(newElements);
+  };
+  
+  const handleSimParamChange = (key, value) => {
+    const newParams = { ...simParams, [key]: value };
+    onSimParamsChange(newParams);
   };
 
   // Manejar selección de preset
@@ -216,6 +223,33 @@ export default function ControlPanel({
             step={1}
             unit="°"
             onChange={(value) => handleElementChange('M0', value)}
+            disabled={isLoading}
+          />
+        </div>
+
+        {/* Parámetros de Simulación */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-gray-200 mb-4">
+            Parámetros de Simulación
+          </h3>
+          <OrbitalSlider
+            label="Duración de Simulación"
+            value={simParams.duration / 3600} // Convertir a horas
+            min={1}
+            max={48}
+            step={1}
+            unit="horas"
+            onChange={(value) => handleSimParamChange('duration', value * 3600)}
+            disabled={isLoading}
+          />
+          <OrbitalSlider
+            label="Paso de Tiempo"
+            value={simParams.timestep / 60} // Convertir a minutos
+            min={1}
+            max={120}
+            step={1}
+            unit="minutos"
+            onChange={(value) => handleSimParamChange('timestep', value * 60)}
             disabled={isLoading}
           />
         </div>
