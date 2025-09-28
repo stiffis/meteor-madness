@@ -104,6 +104,7 @@ function App() {
         setError('No se puede conectar con el backend');
       }
     } catch (err) {
+      console.error('Error al verificar el backend:', err);
       setConnectionStatus('error');
       setError('Backend no disponible en http://localhost:5000');
     }
@@ -142,6 +143,7 @@ function App() {
         setSimulationData(null);
       }
     } catch (err) {
+      console.error('Error al ejecutar la simulación:', err);
       setError('Error de comunicación con el backend');
       setSimulationData(null);
     } finally {

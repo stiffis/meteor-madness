@@ -2,37 +2,78 @@
  * Componente de visualización 3D de órbitas usando Three.js
  */
 
-import React, { useRef, useEffect, useState } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import React, { Suspense, useRef, useEffect, useState } from "react";
+import { Canvas, useFrame, useThree, useLoader } from "@react-three/fiber";
 import { OrbitControls, Line, Sphere, Text } from "@react-three/drei";
 import * as THREE from "three";
+
+const EARTH_TEXTURE_URL =
+  import.meta.env.VITE_EARTH_TEXTURE_URL ||
+  "/textures/earth-daymap.jpg";
+
+const EARTH_CLOUDS_TEXTURE_URL =
+  import.meta.env.VITE_EARTH_CLOUDS_URL ||
+  "/textures/earth-clouds.png";
 
 // Componente para la Tierra
 function Earth() {
   const earthRef = useRef();
+  const cloudRef = useRef();
 
-  useFrame(() => {
+  const earthTexture = useLoader(THREE.TextureLoader, EARTH_TEXTURE_URL, (loader) => {
+    loader.setCrossOrigin("anonymous");
+  });
+
+  const cloudsTexture = useLoader(THREE.TextureLoader, EARTH_CLOUDS_TEXTURE_URL, (loader) => {
+    loader.setCrossOrigin("anonymous");
+  });
+
+  useEffect(() => {
+    if (earthTexture) {
+      earthTexture.colorSpace = THREE.SRGBColorSpace;
+    }
+
+    if (cloudsTexture) {
+      cloudsTexture.colorSpace = THREE.SRGBColorSpace;
+    }
+  }, [earthTexture, cloudsTexture]);
+
+  useFrame((_, delta) => {
     if (earthRef.current) {
-      earthRef.current.rotation.y += 0.002; // Rotación lenta de la Tierra
+      earthRef.current.rotation.y += delta * 0.05; // Rotación lenta de la Tierra
+    }
+
+    if (cloudRef.current) {
+      cloudRef.current.rotation.y += delta * 0.08; // Nubes ligeramente más rápidas
     }
   });
 
   return (
-    <Sphere ref={earthRef} args={[6371, 32, 32]} position={[0, 0, 0]}>
-      <meshPhongMaterial
-        color="#4A90E2"
-        transparent
-        opacity={0.8}
-        shininess={100}
-      />
-    </Sphere>
+    <group>
+      <Sphere ref={earthRef} args={[6371, 64, 64]} position={[0, 0, 0]}>
+        <meshPhongMaterial
+          map={earthTexture}
+          shininess={12}
+          specular={new THREE.Color("#111822")}
+        />
+      </Sphere>
+
+      {cloudsTexture && (
+        <Sphere ref={cloudRef} args={[6430, 64, 64]} position={[0, 0, 0]}>
+          <meshPhongMaterial
+            map={cloudsTexture}
+            transparent
+            opacity={0.35}
+            depthWrite={false}
+          />
+        </Sphere>
+      )}
+    </group>
   );
 }
 
 // Componente para la trayectoria orbital
 function OrbitalTrajectory({ positions, currentIndex, showComplete = true }) {
-  const lineRef = useRef();
-
   if (!positions || positions.length === 0) return null;
 
   // Convertir posiciones a Vector3 de Three.js
@@ -148,7 +189,9 @@ function OrbitalScene({
   if (!simulationData?.trajectory?.positions) {
     return (
       <group>
-        <Earth />
+        <Suspense fallback={null}>
+          <Earth />
+        </Suspense>
         <InfoText
           text="Cargando simulación..."
           position={[0, 10000, 0]}
@@ -169,7 +212,9 @@ function OrbitalScene({
   return (
     <group>
       {/* Tierra */}
-      <Earth />
+      <Suspense fallback={null}>
+        <Earth />
+      </Suspense>
 
       {/* Trayectoria orbital */}
       {showTrajectory && (

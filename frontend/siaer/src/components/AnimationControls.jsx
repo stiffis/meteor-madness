@@ -2,7 +2,7 @@
  * Controles de animación para la simulación orbital
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 // Componente de botón de control
 function ControlButton({ onClick, disabled, children, className = "", title }) {
