@@ -115,9 +115,9 @@ export default function AnimationControls({
     currentFrame >= (impactInfo.impact_index || 0);
 
   return (
-    <div className={`bg-gray-900 border-t border-gray-700 p-4 ${className}`}>
+    <div className={`bg-gray-900 border-t border-gray-700 px-3 py-3 ${className}`}>
       {/* Controles principales */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-3">
         {/* Grupo de controles de reproducción */}
         <div className="flex items-center space-x-2">
           <ControlButton
@@ -160,7 +160,7 @@ export default function AnimationControls({
       </div>
 
       {/* Barra de progreso */}
-      <div className="mb-4">
+      <div className="mb-3">
         <ProgressBar
           current={currentFrame}
           total={totalFrames}
@@ -170,7 +170,7 @@ export default function AnimationControls({
       </div>
 
       {/* Control de velocidad */}
-      <div className="mb-4">
+      <div className="mb-3">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-gray-400">Velocidad de Animación</span>
         </div>
@@ -183,7 +183,7 @@ export default function AnimationControls({
 
       {/* Información extendida */}
       {showInfo && simulationData && (
-        <div className="border-t border-gray-700 pt-4">
+        <div className="border-t border-gray-700 pt-3">
           <div className="grid grid-cols-2 gap-4 text-xs">
             {/* Información temporal */}
             <div>

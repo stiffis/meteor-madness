@@ -261,13 +261,10 @@ function App() {
             <img
               src="/logo.svg"
               alt="SIAER logo"
-              className="h-10 w-10 mr-3"
+              className="h-12 w-12 mr-4"
             />
             <div>
-              <h1 className="text-2xl font-bold text-white">SIAER</h1>
-              <p className="text-sm text-gray-200 font-normal">
-                Simulador Orbital 3D
-              </p>
+              <h1 className="text-3xl font-bold text-white tracking-wide">SIAER</h1>
             </div>
           </div>
 
