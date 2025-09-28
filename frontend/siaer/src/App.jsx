@@ -30,6 +30,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState('connecting');
+  const [isPanelOpen, setIsPanelOpen] = useState(true);
 
   // Estados de animación
   const [isPlaying, setIsPlaying] = useState(false);
@@ -188,6 +189,10 @@ function App() {
     setAnimationSpeed(speed);
   }, []);
 
+  const togglePanel = useCallback(() => {
+    setIsPanelOpen(prev => !prev);
+  }, []);
+
   // Retry connection
   const retryConnection = () => {
     setConnectionStatus('connecting');
@@ -238,29 +243,49 @@ function App() {
 
   const totalFrames = simulationData?.trajectory?.positions?.length || 0;
 
+  const bottomPanelStyle = {
+    left: isPanelOpen
+      ? 'max(1rem, min(calc(20rem + 1.5rem), calc(100% - 10rem)))'
+      : '1rem',
+    right: '1rem',
+    transition: 'left 0.3s ease-in-out, right 0.3s ease-in-out'
+  };
+
   // Render principal
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col">
+    <div className="h-screen bg-gray-900 flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="bg-gray-800 border-b border-gray-700 p-4">
+      <header className="fixed top-0 left-0 right-0 z-30 p-4 bg-transparent">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-white flex items-center">
-            🚀 MeteorMadness
-            <span className="text-sm text-gray-400 ml-3 font-normal">
-              Simulador Orbital 3D
-            </span>
-          </h1>
-          
+          <div className="flex items-center">
+            <img
+              src="/logo.svg"
+              alt="SIAER logo"
+              className="h-10 w-10 mr-3"
+            />
+            <div>
+              <h1 className="text-2xl font-bold text-white">SIAER</h1>
+              <p className="text-sm text-gray-200 font-normal">
+                Simulador Orbital 3D
+              </p>
+            </div>
+          </div>
+
           <div className="flex items-center space-x-4">
-            {/* Estado de conexión */}
-            <div className="flex items-center text-sm text-green-400">
-              <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+            <button
+              type="button"
+              onClick={togglePanel}
+              aria-pressed={isPanelOpen}
+              className="px-3 py-2 bg-gray-700/70 hover:bg-gray-600/80 border border-gray-500/60 rounded-lg text-sm text-white transition-colors"
+            >
+              {isPanelOpen ? 'Ocultar panel' : 'Mostrar panel'}
+            </button>
+            <div className="flex items-center text-sm text-green-300">
+              <div className="w-2 h-2 bg-green-300 rounded-full mr-2"></div>
               Backend conectado
             </div>
-            
-            {/* Error */}
             {error && (
-              <div className="text-sm text-red-400 max-w-md truncate">
+              <div className="text-sm text-red-300 max-w-md truncate">
                 ⚠️ {error}
               </div>
             )}
@@ -269,51 +294,62 @@ function App() {
       </header>
 
       {/* Layout principal */}
-      <div className="flex-1 flex">
-        {/* Panel de controles */}
-        <ControlPanel
-          elements={elements}
-          onElementsChange={handleElementsChange}
-          presets={presets}
-          onPresetSelect={handlePresetSelect}
-          simulationData={simulationData}
-          isLoading={isLoading}
-          simParams={simParams}
-          onSimParamsChange={handleSimParamsChange}
-          className="w-80 flex-shrink-0"
-        />
+      <main className="flex-1 flex flex-col">
+        <div className="flex-1 relative">
+          <OrbitalVisualization
+            simulationData={simulationData}
+            currentFrame={currentFrame}
+            isPlaying={isPlaying}
+            showTrajectory={true}
+            showInfo={true}
+            className="h-full w-full"
+          />
 
-        {/* Área de visualización */}
-        <div className="flex-1 flex flex-col">
-          {/* Visualización 3D */}
-          <div className="flex-1">
-            <OrbitalVisualization
-              simulationData={simulationData}
-              currentFrame={currentFrame}
+          <div className="pointer-events-none absolute inset-0 z-20 flex">
+            <div
+              className={`mt-24 mb-6 ml-4 w-80 max-h-[calc(100%-7rem)] overflow-y-auto rounded-2xl border border-gray-700/60 bg-gray-900/60 backdrop-blur-md shadow-lg transition-all duration-300 ease-in-out transform ${
+                isPanelOpen
+                  ? 'pointer-events-auto translate-x-0 opacity-100'
+                  : 'pointer-events-none -translate-x-[calc(100%+1.5rem)] opacity-0'
+              }`}
+            >
+              <ControlPanel
+                elements={elements}
+                onElementsChange={handleElementsChange}
+                presets={presets}
+                onPresetSelect={handlePresetSelect}
+                simulationData={simulationData}
+                isLoading={isLoading}
+                simParams={simParams}
+                onSimParamsChange={handleSimParamsChange}
+                className="w-full h-full bg-transparent border-none"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="pointer-events-none fixed bottom-6 z-20 flex justify-center"
+          style={bottomPanelStyle}
+        >
+          <div className="pointer-events-auto mx-4 w-full max-w-5xl rounded-2xl border border-gray-700/60 bg-gray-900/60 backdrop-blur-md shadow-lg">
+            <AnimationControls
               isPlaying={isPlaying}
-              showTrajectory={true}
-              showInfo={true}
-              className="h-full"
+              onPlay={handlePlay}
+              onPause={handlePause}
+              onReset={handleReset}
+              currentFrame={currentFrame}
+              totalFrames={totalFrames}
+              onFrameSeek={handleFrameSeek}
+              speed={animationSpeed}
+              onSpeedChange={handleSpeedChange}
+              simulationData={simulationData}
+              disabled={isLoading || !simulationData}
+              className="bg-transparent border-none"
             />
           </div>
-
-          {/* Controles de animación */}
-          <AnimationControls
-            isPlaying={isPlaying}
-            onPlay={handlePlay}
-            onPause={handlePause}
-            onReset={handleReset}
-            currentFrame={currentFrame}
-            totalFrames={totalFrames}
-            onFrameSeek={handleFrameSeek}
-            speed={animationSpeed}
-            onSpeedChange={handleSpeedChange}
-            simulationData={simulationData}
-            disabled={isLoading || !simulationData}
-            className="h-auto"
-          />
         </div>
-      </div>
+      </main>
     </div>
   );
 }
