@@ -31,6 +31,8 @@ function App() {
   const [error, setError] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState('connecting');
   const [isPanelOpen, setIsPanelOpen] = useState(true);
+  const [isIntroVisible, setIsIntroVisible] = useState(true);
+  const [isIntroFading, setIsIntroFading] = useState(false);
 
   // Estados de animación
   const [isPlaying, setIsPlaying] = useState(false);
@@ -40,6 +42,8 @@ function App() {
   // Referencias
   const animationRef = useRef(null);
   const lastFrameTimeRef = useRef(0);
+  const introDismissedRef = useRef(false);
+  const introFadeTimeoutRef = useRef(null);
 
   // Verificar conexión con backend al inicio
   useEffect(() => {
@@ -93,6 +97,14 @@ function App() {
     };
   }, [isPlaying, animationSpeed, simulationData]);
 
+  useEffect(() => {
+    return () => {
+      if (introFadeTimeoutRef.current) {
+        clearTimeout(introFadeTimeoutRef.current);
+      }
+    };
+  }, []);
+
   // Funciones de API
   const checkBackendConnection = async () => {
     try {
@@ -122,6 +134,20 @@ function App() {
     }
   };
 
+  const dismissIntro = useCallback(() => {
+    if (introDismissedRef.current) {
+      return;
+    }
+
+    introDismissedRef.current = true;
+    setIsIntroFading(true);
+    introFadeTimeoutRef.current = setTimeout(() => {
+      setIsIntroVisible(false);
+      setIsIntroFading(false);
+      introFadeTimeoutRef.current = null;
+    }, 600);
+  }, []);
+
   const runSimulation = async () => {
     if (connectionStatus !== 'connected') return;
     
@@ -139,14 +165,17 @@ function App() {
         setSimulationData(result.data.data);
         setCurrentFrame(0);
         setIsPlaying(false);
+        dismissIntro();
       } else {
         setError(result.error?.error || 'Error en la simulación');
         setSimulationData(null);
+        dismissIntro();
       }
     } catch (err) {
       console.error('Error al ejecutar la simulación:', err);
       setError('Error de comunicación con el backend');
       setSimulationData(null);
+      dismissIntro();
     } finally {
       setIsLoading(false);
     }
@@ -254,6 +283,17 @@ function App() {
   // Render principal
   return (
     <div className="h-screen bg-gray-900 flex flex-col overflow-hidden">
+      {isIntroVisible && (
+        <div
+          className={`fixed inset-0 z-40 flex flex-col items-center justify-center bg-gray-900 transition-opacity duration-700 ${isIntroFading ? 'opacity-0' : 'opacity-100'}`}
+        >
+          <div className="flex flex-col items-center space-y-4 text-white">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
+            <h1 className="text-2xl font-semibold tracking-widest">SIAER</h1>
+            <p className="text-sm text-gray-300 uppercase tracking-[0.3em]">Inicializando simulación...</p>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-30 p-4 bg-transparent">
         <div className="flex items-center justify-between">
