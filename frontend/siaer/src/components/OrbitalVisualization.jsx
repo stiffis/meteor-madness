@@ -2,31 +2,37 @@
  * Componente de visualización 3D de órbitas usando Three.js
  */
 
-import React, { Suspense, useRef, useEffect, useState } from "react";
+import React, { Suspense, useRef, useEffect, useState, useMemo } from "react";
 import { Canvas, useFrame, useThree, useLoader } from "@react-three/fiber";
 import { OrbitControls, Line, Sphere, Text } from "@react-three/drei";
 import * as THREE from "three";
 
 const EARTH_TEXTURE_URL =
-  import.meta.env.VITE_EARTH_TEXTURE_URL ||
-  "/textures/earth-daymap.jpg";
+  import.meta.env.VITE_EARTH_TEXTURE_URL || "/textures/earth-daymap.jpg";
 
 const EARTH_CLOUDS_TEXTURE_URL =
-  import.meta.env.VITE_EARTH_CLOUDS_URL ||
-  "/textures/earth-clouds.png";
+  import.meta.env.VITE_EARTH_CLOUDS_URL || "/textures/earth-clouds.png";
 
 // Componente para la Tierra
 function Earth() {
   const earthRef = useRef();
   const cloudRef = useRef();
 
-  const earthTexture = useLoader(THREE.TextureLoader, EARTH_TEXTURE_URL, (loader) => {
-    loader.setCrossOrigin("anonymous");
-  });
+  const earthTexture = useLoader(
+    THREE.TextureLoader,
+    EARTH_TEXTURE_URL,
+    (loader) => {
+      loader.setCrossOrigin("anonymous");
+    },
+  );
 
-  const cloudsTexture = useLoader(THREE.TextureLoader, EARTH_CLOUDS_TEXTURE_URL, (loader) => {
-    loader.setCrossOrigin("anonymous");
-  });
+  const cloudsTexture = useLoader(
+    THREE.TextureLoader,
+    EARTH_CLOUDS_TEXTURE_URL,
+    (loader) => {
+      loader.setCrossOrigin("anonymous");
+    },
+  );
 
   useEffect(() => {
     if (earthTexture) {
@@ -73,28 +79,53 @@ function Earth() {
 }
 
 // Componente para la trayectoria orbital
-function OrbitalTrajectory({ positions, currentIndex, showComplete = true, trailLength = 100 }) {
-  if (!positions || positions.length === 0) return null;
+function OrbitalTrajectory({
+  positions,
+  currentIndex,
+  showComplete = true,
+  trailLength = 100,
+}) {
+  const hasPositions = Array.isArray(positions) && positions.length > 0;
 
-  const points = positions.map(
-    (pos) => new THREE.Vector3(pos[0], pos[1], pos[2]),
-  );
+  const points = useMemo(() => {
+    if (!hasPositions) return [];
+    return positions.map((pos) => new THREE.Vector3(pos[0], pos[1], pos[2]));
+  }, [positions, hasPositions]);
 
-  const trailPoints = points.slice(Math.max(0, currentIndex - trailLength), currentIndex + 1);
+  const trailPoints = useMemo(() => {
+    if (!hasPositions) return [];
+    return points.slice(
+      Math.max(0, currentIndex - trailLength),
+      currentIndex + 1,
+    );
+  }, [points, hasPositions, currentIndex, trailLength]);
 
-  const geometry = new THREE.BufferGeometry().setFromPoints(trailPoints);
+  const tronTrail = useMemo(() => {
+    if (trailPoints.length < 2) {
+      return null;
+    }
 
-  const colors = new Float32Array(trailPoints.length * 3);
-  const startColor = new THREE.Color(0x00ff88);
-  const endColor = new THREE.Color(0x004422);
+    const curve = new THREE.CatmullRomCurve3(trailPoints);
+    const segments = Math.max(128, trailPoints.length * 6);
 
-  for (let i = 0; i < trailPoints.length; i++) {
-    const t = i / (trailPoints.length - 1);
-    const color = startColor.clone().lerp(endColor, 1 - t);
-    color.toArray(colors, i * 3);
-  }
+    const coreRadius = 60;
+    const glowRadius = 120;
 
-  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    return {
+      core: new THREE.TubeGeometry(curve, segments, coreRadius, 24, false),
+      glow: new THREE.TubeGeometry(curve, segments, glowRadius, 24, false),
+    };
+  }, [trailPoints]);
+
+  useEffect(() => {
+    if (!tronTrail) return undefined;
+    return () => {
+      tronTrail.core.dispose();
+      tronTrail.glow.dispose();
+    };
+  }, [tronTrail]);
+
+  if (!hasPositions) return null;
 
   return (
     <group>
@@ -102,16 +133,33 @@ function OrbitalTrajectory({ positions, currentIndex, showComplete = true, trail
         <Line
           points={points}
           color="#888888"
-          lineWidth={2}
+          lineWidth={4}
           transparent
           opacity={0.3}
         />
       )}
 
-      {trailPoints.length > 1 && (
-        <line geometry={geometry}>
-          <lineBasicMaterial vertexColors={true} lineWidth={24} transparent opacity={0.9} />
-        </line>
+      {tronTrail && trailPoints.length > 1 && (
+        <group>
+          <mesh geometry={tronTrail.glow}>
+            <meshBasicMaterial
+              color="#00fff6"
+              transparent
+              opacity={0.07}
+              blending={THREE.AdditiveBlending}
+              depthWrite={false}
+            />
+          </mesh>
+          <mesh geometry={tronTrail.core}>
+            <meshStandardMaterial
+              color="#00fff6"
+              emissive="#00fff6"
+              emissiveIntensity={1.1}
+              metalness={0.05}
+              roughness={0.25}
+            />
+          </mesh>
+        </group>
       )}
     </group>
   );
