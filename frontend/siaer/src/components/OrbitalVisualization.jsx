@@ -339,13 +339,18 @@ export default function OrbitalVisualization({
       >
         <Skybox />
         {/* Iluminación */}
-        <ambientLight intensity={0.3} />
+        <ambientLight intensity={0.35} color="#ffe4c4" />
         <directionalLight
           position={[10000, 10000, 5000]}
-          intensity={1}
+          intensity={0.95}
+          color="#ffd1a1"
           castShadow
         />
-        <pointLight position={[0, 0, 0]} intensity={0.5} color="orange" />
+        <pointLight
+          position={[0, 0, 0]}
+          intensity={0.55}
+          color="#ff9f5c"
+        />
 
         {/* Controles de cámara */}
         <OrbitControls
