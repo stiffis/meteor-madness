@@ -31,6 +31,7 @@
 - [ ] Sistema de autenticación
 - [ ] Rate limiting para la API
 - [ ] Documentación automática (Swagger/OpenAPI)
+- [ ] Integración del API CNEOS Scout para alertas tempranas NEO
 
 ### Simulación
 - [ ] Más cuerpos celestes (Luna, planetas)
