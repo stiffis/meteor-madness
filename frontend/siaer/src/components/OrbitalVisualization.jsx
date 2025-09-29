@@ -227,6 +227,7 @@ function Skybox() {
 
   useEffect(() => {
     texture.mapping = THREE.EquirectangularReflectionMapping;
+    texture.colorSpace = THREE.SRGBColorSpace;
     scene.background = texture;
   }, [scene, texture]);
 
@@ -328,6 +329,7 @@ export default function OrbitalVisualization({
   return (
     <div className={`w-full h-full ${className}`}>
       <Canvas
+        gl={{ outputColorSpace: THREE.SRGBColorSpace }}
         camera={{
           fov: 50,
           near: 1,
