@@ -241,14 +241,22 @@ function OrbitalScene({
   isPlaying,
   showTrajectory = true,
   showInfo = true,
+  cameraDistance,
+  cameraFar,
 }) {
   const { camera } = useThree();
 
   useEffect(() => {
-    // Configurar cámara inicial
-    camera.position.set(15000, 15000, 15000);
+    const distance = cameraDistance || 15000;
+    const farPlane = Math.max(100000, cameraFar || distance * 8);
+
+    camera.position.set(distance, distance, distance);
     camera.lookAt(0, 0, 0);
-  }, [camera]);
+    if (camera.far !== farPlane) {
+      camera.far = farPlane;
+      camera.updateProjectionMatrix();
+    }
+  }, [camera, cameraDistance, cameraFar]);
 
   if (!simulationData?.trajectory?.positions) {
     return (
@@ -326,15 +334,46 @@ export default function OrbitalVisualization({
   showTrajectory = true,
   showInfo = true,
 }) {
+  const maxSceneDistance = useMemo(() => {
+    const positions = simulationData?.trajectory?.positions;
+    if (!positions || positions.length === 0) return 15000;
+
+    let maxDistance = 0;
+    for (const pos of positions) {
+      if (!Array.isArray(pos)) continue;
+      const distance = Math.hypot(pos[0], pos[1], pos[2]);
+      if (distance > maxDistance) {
+        maxDistance = distance;
+      }
+    }
+    return Math.max(15000, maxDistance);
+  }, [simulationData]);
+
+  const cameraDistance = useMemo(() => {
+    return Math.max(15000, maxSceneDistance * 1.05);
+  }, [maxSceneDistance]);
+
+  const cameraFar = useMemo(() => {
+    return Math.max(100000, cameraDistance * 6);
+  }, [cameraDistance]);
+
+  const controlsMaxDistance = useMemo(() => {
+    return Math.max(50000, cameraFar * 0.9);
+  }, [cameraFar]);
+
+  const controlsMinDistance = useMemo(() => {
+    return 1000;
+  }, []);
+
   return (
     <div className={`w-full h-full ${className}`}>
       <Canvas
-        gl={{ outputColorSpace: THREE.SRGBColorSpace }}
+        gl={{ outputColorSpace: THREE.SRGBColorSpace, logarithmicDepthBuffer: true }}
         camera={{
           fov: 50,
           near: 1,
-          far: 100000,
-          position: [15000, 15000, 15000],
+          far: cameraFar,
+          position: [cameraDistance, cameraDistance, cameraDistance],
         }}
       >
         <Skybox />
@@ -357,9 +396,11 @@ export default function OrbitalVisualization({
           enablePan={true}
           enableZoom={true}
           enableRotate={true}
-          zoomSpeed={0.5}
+          zoomSpeed={1.2}
           panSpeed={0.5}
           rotateSpeed={0.3}
+          minDistance={controlsMinDistance}
+          maxDistance={controlsMaxDistance}
         />
 
         {/* Escena orbital */}
@@ -369,6 +410,8 @@ export default function OrbitalVisualization({
           isPlaying={isPlaying}
           showTrajectory={showTrajectory}
           showInfo={showInfo}
+          cameraDistance={cameraDistance}
+          cameraFar={cameraFar}
         />
       </Canvas>
     </div>

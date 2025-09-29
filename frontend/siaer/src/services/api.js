@@ -131,6 +131,60 @@ export class MeteorMadnessAPI {
       return { success: false, error: error.message };
     }
   }
+
+  /**
+   * Busca objetos NEO usando el backend (proxy SBDB Query)
+   * @param {string} query - Texto de búsqueda
+   * @param {number} [limit=10] - Límite de resultados
+   */
+  static async searchNeoObjects(query, limit = 10) {
+    if (!query || !query.trim()) {
+      return { success: true, data: { results: [], count: 0 } };
+    }
+
+    try {
+      const response = await api.get('/api/neo/search', {
+        params: { q: query.trim(), limit }
+      });
+      return { success: true, data: response.data.data };
+    } catch (error) {
+      const errorData = error.response?.data || { error: error.message };
+      return { success: false, error: errorData };
+    }
+  }
+
+  /**
+   * Obtiene los datos detallados de un NEO desde el backend
+   * @param {string} designation - Identificador/designación del NEO
+   */
+  static async getNeoObject(designation) {
+    if (!designation) {
+      return { success: false, error: { error: 'Designación requerida' } };
+    }
+
+    try {
+      const response = await api.get('/api/neo/object', {
+        params: { designation }
+      });
+      return { success: true, data: response.data.data };
+    } catch (error) {
+      const errorData = error.response?.data || { error: error.message };
+      return { success: false, error: errorData };
+    }
+  }
+
+  /**
+   * Obtiene el estado orbital aproximado de los planetas del sistema solar
+   */
+  static async getSolarSystemState() {
+    try {
+      const response = await api.get('/api/solar/system');
+      return { success: true, data: response.data.data };
+    } catch (error) {
+      const errorData = error.response?.data || { error: error.message };
+      return { success: false, error: errorData };
+    }
+  }
 }
 
 export default MeteorMadnessAPI;
