@@ -47,8 +47,8 @@ class OrbitalService:
             errors.append("Semi-major axis (a) must be positive")
         elif a < self.earth_radius:
             errors.append(f"Semi-major axis (a) must be greater than Earth radius ({self.earth_radius} km)")
-        elif a > 100000:  # Límite práctico
-            errors.append("Semi-major axis (a) is too large (max 100,000 km)")
+        elif a > 1e9:  # Límite práctico para este simulador (~6.7 AU)
+            errors.append("Semi-major axis (a) is too large (max 1e9 km)")
         
         # Excentricidad debe estar entre 0 y 1 (órbitas elípticas)
         if e < 0 or e >= 1:

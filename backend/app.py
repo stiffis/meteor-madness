@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 # Importar nuestros servicios
 from services.orbital_service import OrbitalService
 from services.simulation_service import SimulationService
+from services.solar_system_service import SolarSystemService
 from services.nasa_neo_service import NasaNeoService
 
 # Cargar variables de entorno
@@ -32,6 +33,7 @@ app.config['PORT'] = int(os.getenv('FLASK_PORT', 5000))
 orbital_service = OrbitalService()
 simulation_service = SimulationService()
 nasa_neo_service = NasaNeoService()
+solar_system_service = SolarSystemService()
 
 @app.route('/')
 def home():
@@ -46,7 +48,9 @@ def home():
             "/api/orbital/simulate": "POST - Ejecutar simulación orbital",
             "/api/orbital/elements": "POST - Validar elementos orbitales",
             "/api/orbital/presets": "GET - Obtener presets predefinidos",
-            "/api/neo/object": "GET - Obtener datos de un NEO desde NASA"
+            "/api/neo/search": "GET - Buscar objetos NEO (proxy SBDB)",
+            "/api/neo/object": "GET - Obtener datos de un NEO desde NASA",
+            "/api/solar/system": "GET - Estados orbitales aproximados del sistema solar"
         }
     })
 
@@ -223,6 +227,43 @@ def get_neo_object():
         "data": result.data,
     })
 
+
+@app.route('/api/neo/search', methods=['GET'])
+def search_neo_objects():
+    """Busca objetos NEO usando el proxy de la SBDB (sbdb.api)."""
+
+    query = request.args.get('q') or request.args.get('query') or request.args.get('sstr')
+    limit_param = request.args.get('limit', 10)
+
+    try:
+        limit = int(limit_param)
+    except (TypeError, ValueError):
+        limit = 10
+
+    result = nasa_neo_service.search_objects(query, limit)
+
+    if not result.success:
+        return jsonify({
+            "success": False,
+            "error": result.error,
+        }), result.status_code
+
+    return jsonify({
+        "success": True,
+        "data": result.data,
+    })
+
+
+@app.route('/api/solar/system', methods=['GET'])
+def get_solar_system_state():
+    """Devuelve estados orbitales aproximados para los planetas del sistema solar."""
+
+    data = solar_system_service.get_planet_states()
+    return jsonify({
+        "success": True,
+        "data": data,
+    })
+
 # === MANEJO DE ERRORES ===
 
 @app.errorhandler(404)
@@ -235,7 +276,9 @@ def not_found(error):
             "/api/orbital/simulate",
             "/api/orbital/elements", 
             "/api/orbital/presets",
-            "/api/neo/object"
+            "/api/neo/search",
+            "/api/neo/object",
+            "/api/solar/system"
         ]
     }), 404
 
@@ -262,7 +305,9 @@ if __name__ == '__main__':
     print("   POST /api/orbital/simulate - Ejecutar simulación")
     print("   POST /api/orbital/elements - Validar elementos orbitales")
     print("   GET  /api/orbital/presets - Obtener presets")
+    print("   GET  /api/neo/search - Buscar objetos NEO (SBDB Query)")
     print("   GET  /api/neo/object - Obtener datos de NEO desde NASA")
+    print("   GET  /api/solar/system - Estados orbitales del sistema solar")
     print()
     
     app.run(

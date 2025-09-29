@@ -26,6 +26,16 @@ class NeoLookupResult:
     error: Optional[str] = None
 
 
+@dataclass
+class NeoSearchResult:
+    """Salida de la búsqueda de objetos NEO."""
+
+    success: bool
+    status_code: int
+    data: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
+
+
 class NasaNeoService:
     """Cliente simple para la Small-Body Database API (sbdb.api)."""
 
@@ -89,6 +99,113 @@ class NasaNeoService:
         processed = self._build_response(payload)
         return NeoLookupResult(success=True, status_code=200, data=processed)
 
+    def search_objects(self, query: str, limit: int = 10) -> NeoSearchResult:
+        """Busca objetos NEO usando el endpoint genérico sbdb.api."""
+
+        sanitized = (query or "").strip()
+        if not sanitized:
+            return NeoSearchResult(
+                success=False,
+                status_code=400,
+                error="Query parameter 'q' is required",
+            )
+
+        safe_limit = max(1, min(int(limit), 25)) if isinstance(limit, (int, float)) else 10
+
+        search_term = sanitized
+        if "*" not in search_term:
+            search_term = f"*{search_term}*"
+
+        params = {
+            "sstr": search_term,
+            "neo": "1",
+        }
+
+        try:
+            response = self.session.get(self.BASE_URL, params=params, timeout=self.timeout)
+        except requests.RequestException as exc:
+            return NeoSearchResult(
+                success=False,
+                status_code=503,
+                error=f"Failed to contact NASA SBDB service: {exc}",
+            )
+
+        payload = self._safe_json(response)
+
+        if response.status_code == 404:
+            return NeoSearchResult(
+                success=True,
+                status_code=200,
+                data={"count": 0, "results": []},
+            )
+
+        if response.status_code not in (200, 300):
+            return NeoSearchResult(
+                success=False,
+                status_code=response.status_code,
+                error=payload.get("message") or f"NASA SBDB responded with status {response.status_code}",
+            )
+
+        if "object" in payload:
+            processed = self._build_response(payload)
+            object_info = processed.get("object", {})
+            if not self._coerce_bool(object_info.get("neo")):
+                return NeoSearchResult(
+                    success=True,
+                    status_code=200,
+                    data={"count": 0, "results": []},
+                )
+
+            entry = self._search_entry_from_processed(processed)
+            return NeoSearchResult(
+                success=True,
+                status_code=200,
+                data={"count": 1, "results": [entry]},
+            )
+
+        matches = payload.get("list", [])
+        if matches:
+            results = []
+            for item in matches[:safe_limit]:
+                designation = item.get("pdes")
+                entry = {
+                    "designation": designation,
+                    "full_name": item.get("name"),
+                    "moid_au": self._coerce_number(item.get("moid")),
+                    "orbit_class": item.get("class"),
+                }
+
+                detail = self.fetch_object(designation) if designation else None
+                if detail and detail.success and detail.data:
+                    entry.update(self._search_entry_from_processed(detail.data))
+                else:
+                    entry["pha"] = None
+                    entry["absolute_magnitude_h"] = None
+
+                results.append(entry)
+
+            return NeoSearchResult(
+                success=True,
+                status_code=200,
+                data={
+                    "count": payload.get("count", len(matches)),
+                    "results": results,
+                },
+            )
+
+        if payload.get("message"):
+            return NeoSearchResult(
+                success=False,
+                status_code=400,
+                error=payload.get("message"),
+            )
+
+        return NeoSearchResult(
+            success=False,
+            status_code=500,
+            error="Unexpected response from NASA SBDB",
+        )
+
     # ------------------------------------------------------------------
     # Helpers privados
 
@@ -115,11 +232,14 @@ class NasaNeoService:
                 "pha": object_info.get("pha"),
                 "orbit_class": object_info.get("orbit_class"),
                 "alternate_designations": object_info.get("alts"),
+                "spkid": object_info.get("spkid"),
             },
             "orbit": {
                 "epoch": self._normalize_epoch(orbit_section.get("epoch")),
                 "elements": elements_dict,
                 "residuals": orbit_section.get("residuals"),
+                "moid": self._coerce_number(orbit_section.get("moid")),
+                "moid_jup": self._coerce_number(orbit_section.get("moid_jup")),
             },
             "physical": physical_dict or None,
             "simulation_elements": simulation_ready,
@@ -171,6 +291,24 @@ class NasaNeoService:
             return value
 
     @staticmethod
+    def _coerce_bool(value: Any) -> Optional[bool]:
+        if value in (None, "", "null"):
+            return None
+
+        if isinstance(value, bool):
+            return value
+
+        if isinstance(value, (int, float)):
+            return bool(value)
+
+        value_str = str(value).strip().lower()
+        if value_str in {"y", "yes", "true", "1"}:
+            return True
+        if value_str in {"n", "no", "false", "0"}:
+            return False
+        return None
+
+    @staticmethod
     def _normalize_epoch(epoch_section: Optional[Any]) -> Optional[Dict[str, Any]]:
         if not epoch_section:
             return None
@@ -215,9 +353,41 @@ class NasaNeoService:
             "omega": float(elements["w"]),
             "Omega": float(elements["om"]),
             "M0": float(elements["ma"]),
+            "mu": 1.32712440018e11,  # Constante gravitacional solar (km^3/s^2)
         }
 
         return simulation_elements, []
 
+    @staticmethod
+    def _safe_json(response: requests.Response) -> Dict[str, Any]:
+        try:
+            data = response.json()
+            return data if isinstance(data, dict) else {}
+        except ValueError:
+            return {}
 
-__all__ = ["NasaNeoService", "NeoLookupResult"]
+    def _search_entry_from_processed(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        object_info = data.get("object", {}) or {}
+        orbit_info = data.get("orbit", {}) or {}
+        physical_info = data.get("physical") or {}
+
+        if isinstance(physical_info, dict):
+            absolute_magnitude = physical_info.get("H")
+        else:
+            absolute_magnitude = None
+
+        entry = {
+            "designation": object_info.get("designation"),
+            "full_name": object_info.get("full_name") or object_info.get("designation"),
+            "spkid": object_info.get("spkid"),
+            "neo": self._coerce_bool(object_info.get("neo")),
+            "pha": self._coerce_bool(object_info.get("pha")),
+            "absolute_magnitude_h": self._coerce_number(absolute_magnitude),
+            "orbit_class": object_info.get("orbit_class"),
+            "moid_au": self._coerce_number(orbit_info.get("moid")),
+        }
+
+        return entry
+
+
+__all__ = ["NasaNeoService", "NeoLookupResult", "NeoSearchResult"]
