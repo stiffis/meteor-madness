@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 # Importar nuestros servicios
 from services.orbital_service import OrbitalService
 from services.simulation_service import SimulationService
+from services.nasa_neo_service import NasaNeoService
 
 # Cargar variables de entorno
 load_dotenv()
@@ -30,6 +31,7 @@ app.config['PORT'] = int(os.getenv('FLASK_PORT', 5000))
 # Inicializar servicios
 orbital_service = OrbitalService()
 simulation_service = SimulationService()
+nasa_neo_service = NasaNeoService()
 
 @app.route('/')
 def home():
@@ -43,7 +45,8 @@ def home():
             "/health": "Estado de salud del servidor",
             "/api/orbital/simulate": "POST - Ejecutar simulación orbital",
             "/api/orbital/elements": "POST - Validar elementos orbitales",
-            "/api/orbital/presets": "GET - Obtener presets predefinidos"
+            "/api/orbital/presets": "GET - Obtener presets predefinidos",
+            "/api/neo/object": "GET - Obtener datos de un NEO desde NASA"
         }
     })
 
@@ -190,6 +193,36 @@ def get_presets():
             "details": str(e)
         }), 500
 
+
+@app.route('/api/neo/object', methods=['GET'])
+def get_neo_object():
+    """Proxy hacia la API de la NASA para obtener datos de un NEO."""
+
+    identifier = (
+        request.args.get('sstr')
+        or request.args.get('designation')
+        or request.args.get('neo_id')
+    )
+
+    if not identifier:
+        return jsonify({
+            "success": False,
+            "error": "Query parameter 'designation' (o 'neo_id'/'sstr') es requerido",
+        }), 400
+
+    result = nasa_neo_service.fetch_object(identifier)
+
+    if not result.success:
+        return jsonify({
+            "success": False,
+            "error": result.error,
+        }), result.status_code
+
+    return jsonify({
+        "success": True,
+        "data": result.data,
+    })
+
 # === MANEJO DE ERRORES ===
 
 @app.errorhandler(404)
@@ -201,7 +234,8 @@ def not_found(error):
             "/health",
             "/api/orbital/simulate",
             "/api/orbital/elements", 
-            "/api/orbital/presets"
+            "/api/orbital/presets",
+            "/api/neo/object"
         ]
     }), 404
 
@@ -228,6 +262,7 @@ if __name__ == '__main__':
     print("   POST /api/orbital/simulate - Ejecutar simulación")
     print("   POST /api/orbital/elements - Validar elementos orbitales")
     print("   GET  /api/orbital/presets - Obtener presets")
+    print("   GET  /api/neo/object - Obtener datos de NEO desde NASA")
     print()
     
     app.run(
