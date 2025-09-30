@@ -34,10 +34,13 @@ function App() {
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const [isIntroVisible, setIsIntroVisible] = useState(true);
   const [isIntroFading, setIsIntroFading] = useState(false);
+  const [introProgress, setIntroProgress] = useState(5);
+  const [isIntroReady, setIsIntroReady] = useState(false);
+  const [introLoadDurationMs, setIntroLoadDurationMs] = useState(null);
   const [neoSearchResults, setNeoSearchResults] = useState([]);
   const [isSearchingNeo, setIsSearchingNeo] = useState(false);
   const [neoSearchError, setNeoSearchError] = useState(null);
-  const [viewMode, setViewMode] = useState('orbit');
+  const [viewMode, setViewMode] = useState('solar');
   const [solarSystemData, setSolarSystemData] = useState(null);
   const [isLoadingSolar, setIsLoadingSolar] = useState(false);
   const [solarError, setSolarError] = useState(null);
@@ -58,6 +61,8 @@ function App() {
   const lastFrameTimeRef = useRef(0);
   const introDismissedRef = useRef(false);
   const introFadeTimeoutRef = useRef(null);
+  const introSessionRef = useRef({ id: 0, autoDismiss: false, active: true, completed: false });
+  const introStartTimeRef = useRef(Date.now());
   const neoSearchRequestIdRef = useRef(0);
   const solarSearchTimeoutRef = useRef(null);
 
@@ -124,8 +129,6 @@ function App() {
   useEffect(() => {
     if (viewMode === 'solar') {
       setIsPlaying(false);
-      setIsIntroVisible(false);
-      setIsIntroFading(false);
       setNeoSearchResults([]);
       setNeoSearchError(null);
       setIsSearchingNeo(false);
@@ -133,6 +136,72 @@ function App() {
       setSolarNeoError(null);
     }
   }, [viewMode]);
+
+  useEffect(() => {
+    if (!isIntroVisible || isIntroReady || introProgress >= 100) {
+      return;
+    }
+
+    const intervalId = setInterval(() => {
+      setIntroProgress(prev => {
+        if (prev >= 90) {
+          return prev;
+        }
+
+        const increment = Math.random() * 6 + 4;
+        return Math.min(prev + increment, 90);
+      });
+    }, 240);
+
+    return () => clearInterval(intervalId);
+  }, [introProgress, isIntroVisible, isIntroReady]);
+
+  useEffect(() => {
+    if (isIntroReady || introProgress < 100) {
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      setIsIntroReady(true);
+    }, 320);
+
+    return () => clearTimeout(timeoutId);
+  }, [introProgress, isIntroReady]);
+
+  const startIntro = useCallback((autoDismiss = false) => {
+    const nextId = introSessionRef.current.id + 1;
+    introSessionRef.current = {
+      id: nextId,
+      autoDismiss,
+      active: true,
+      completed: false,
+    };
+
+    introStartTimeRef.current = Date.now();
+    introDismissedRef.current = false;
+
+    if (introFadeTimeoutRef.current) {
+      clearTimeout(introFadeTimeoutRef.current);
+      introFadeTimeoutRef.current = null;
+    }
+
+    setIntroProgress(5);
+    setIntroLoadDurationMs(null);
+    setIsIntroReady(false);
+    setIsIntroFading(false);
+    setIsIntroVisible(true);
+  }, []);
+
+  const markIntroLoaded = useCallback((sessionId) => {
+    const session = introSessionRef.current;
+    if (!session.active || session.completed || session.id !== sessionId) {
+      return;
+    }
+
+    session.completed = true;
+    setIntroProgress(100);
+    setIntroLoadDurationMs(Date.now() - introStartTimeRef.current);
+  }, []);
 
 // Funciones de API
 const checkBackendConnection = async () => {
@@ -163,9 +232,10 @@ const checkBackendConnection = async () => {
     }
   };
 
-  const loadSolarSystemData = useCallback(async () => {
+  const loadSolarSystemData = useCallback(async (sessionId = introSessionRef.current.id) => {
     if (connectionStatus !== 'connected') {
       setSolarError('Backend no disponible para consultar el sistema solar');
+      markIntroLoaded(sessionId);
       return;
     }
 
@@ -183,14 +253,39 @@ const checkBackendConnection = async () => {
       setSolarError(err.message || 'Error de comunicación al obtener el sistema solar');
     } finally {
       setIsLoadingSolar(false);
+      markIntroLoaded(sessionId);
     }
-  }, [connectionStatus]);
+  }, [connectionStatus, markIntroLoaded]);
 
   useEffect(() => {
     if (viewMode === 'solar' && connectionStatus === 'connected' && !solarSystemData && !isLoadingSolar) {
-      loadSolarSystemData();
+      loadSolarSystemData(introSessionRef.current.id);
     }
   }, [viewMode, connectionStatus, solarSystemData, isLoadingSolar, loadSolarSystemData]);
+
+  const handleViewModeChange = useCallback((mode) => {
+    if (!mode || mode === viewMode) {
+      return false;
+    }
+
+    startIntro(true);
+    setViewMode(mode);
+
+    const sessionId = introSessionRef.current.id;
+
+    if (connectionStatus !== 'connected') {
+      markIntroLoaded(sessionId);
+      return true;
+    }
+
+    if (mode === 'solar') {
+      if (solarSystemData) {
+        markIntroLoaded(sessionId);
+      }
+    }
+
+    return true;
+  }, [connectionStatus, markIntroLoaded, solarSystemData, startIntro, viewMode]);
 
   const handleSolarSpeedChange = useCallback((event) => {
     setSolarTimeScale(Number(event.target.value));
@@ -289,22 +384,71 @@ const checkBackendConnection = async () => {
   }, [solarSearchQuery, viewMode, handleNeoSearch]);
 
   const dismissIntro = useCallback(() => {
-    if (introDismissedRef.current) {
+    if (introDismissedRef.current || !isIntroReady) {
       return;
     }
 
     introDismissedRef.current = true;
+    introSessionRef.current.active = false;
+    introSessionRef.current.autoDismiss = false;
     setIsIntroFading(true);
     introFadeTimeoutRef.current = setTimeout(() => {
       setIsIntroVisible(false);
       setIsIntroFading(false);
       introFadeTimeoutRef.current = null;
     }, 600);
-  }, []);
+  }, [isIntroReady]);
+
+  useEffect(() => {
+    if (!isIntroReady) {
+      return;
+    }
+
+    if (introSessionRef.current.autoDismiss && introSessionRef.current.active && !introDismissedRef.current) {
+      dismissIntro();
+    }
+  }, [dismissIntro, isIntroReady]);
+
+  useEffect(() => {
+    if (!isIntroVisible || introDismissedRef.current || !isIntroReady || introSessionRef.current.autoDismiss) {
+      return;
+    }
+
+    const handleScrollDismiss = () => {
+      dismissIntro();
+    };
+
+    const handleWheel = (event) => {
+      if (!event) {
+        return;
+      }
+
+      if (event.deltaY === 0 && event.deltaX === 0) {
+        return;
+      }
+
+      handleScrollDismiss();
+    };
+
+    const handleTouch = () => {
+      handleScrollDismiss();
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: true });
+    window.addEventListener('touchmove', handleTouch, { passive: true });
+    window.addEventListener('scroll', handleScrollDismiss, { passive: true });
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchmove', handleTouch);
+      window.removeEventListener('scroll', handleScrollDismiss);
+    };
+  }, [dismissIntro, isIntroReady, isIntroVisible]);
 
   const runSimulation = async () => {
     if (connectionStatus !== 'connected' || viewMode !== 'orbit') return;
 
+    const sessionId = introSessionRef.current.id;
     setIsLoading(true);
     setError(null);
     
@@ -319,19 +463,17 @@ const checkBackendConnection = async () => {
         setSimulationData(result.data.data);
         setCurrentFrame(0);
         setIsPlaying(false);
-        dismissIntro();
       } else {
         setError(result.error?.error || 'Error en la simulación');
         setSimulationData(null);
-        dismissIntro();
       }
     } catch (err) {
       console.error('Error al ejecutar la simulación:', err);
       setError('Error de comunicación con el backend');
       setSimulationData(null);
-      dismissIntro();
     } finally {
       setIsLoading(false);
+      markIntroLoaded(sessionId);
     }
   };
 
@@ -450,7 +592,7 @@ const checkBackendConnection = async () => {
       return;
     }
 
-    setViewMode('orbit');
+    handleViewModeChange('orbit');
     setError(null);
     let triggeredSimulation = false;
 
@@ -487,7 +629,7 @@ const checkBackendConnection = async () => {
         setIsLoading(false);
       }
     }
-  }, [connectionStatus, viewMode, solarSystemData]);
+  }, [connectionStatus, handleViewModeChange, viewMode, solarSystemData]);
 
   const handleRetrySolar = useCallback(() => {
     loadSolarSystemData();
@@ -576,6 +718,11 @@ const checkBackendConnection = async () => {
   const solarSpeedPresets = [1, 60, 3600, 86400, 604800, 2592000];
   const solarTimeScaleLabel = formatSolarScale(solarTimeScale);
   const solarGeneratedLabel = solarGeneratedAt ? new Date(solarGeneratedAt).toLocaleString() : null;
+  const introLoadDurationLabel = introLoadDurationMs != null
+    ? introLoadDurationMs >= 1000
+      ? `${(introLoadDurationMs / 1000).toFixed(introLoadDurationMs >= 5000 ? 0 : 1)} s`
+      : `${Math.round(introLoadDurationMs)} ms`
+    : null;
 
   const bottomPanelStyle = viewMode === 'orbit'
     ? {
@@ -598,11 +745,29 @@ const checkBackendConnection = async () => {
         <div
           className={`fixed inset-0 z-40 flex flex-col items-center justify-center bg-gray-900 transition-opacity duration-700 ${isIntroFading ? 'opacity-0' : 'opacity-100'}`}
         >
-          <div className="flex flex-col items-center space-y-4 text-white">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
+          <div className="flex flex-col items-center space-y-6 text-white px-6">
             <h1 className="text-2xl font-semibold tracking-widest">SIAER</h1>
-            <p className="text-sm text-gray-300 uppercase tracking-[0.3em]">Inicializando simulación...</p>
+            <div className="w-72 max-w-xs">
+              <p className="text-xs text-gray-300 uppercase tracking-[0.3em] text-center mb-4">Inicializando simulación...</p>
+              <div className="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-blue-500 transition-all duration-300 ease-out"
+                  style={{ width: `${Math.min(introProgress, 100)}%` }}
+                ></div>
+              </div>
+              <p className="mt-3 text-xs text-gray-400 text-center uppercase tracking-[0.2em]">
+                {Math.round(Math.min(introProgress, 100))}%
+              </p>
+            </div>
+            {isIntroReady && (
+              <p className="text-xs text-gray-400 uppercase tracking-[0.2em]">Desplázate hacia arriba o abajo para comenzar</p>
+            )}
           </div>
+          {introLoadDurationLabel && (
+            <div className="absolute bottom-6 left-6 text-xs text-gray-500 uppercase tracking-[0.2em]">
+              Tiempo de carga: {introLoadDurationLabel}
+            </div>
+          )}
         </div>
       )}
       {/* Header */}
@@ -623,7 +788,7 @@ const checkBackendConnection = async () => {
             <div className="flex items-center space-x-2 bg-gray-800/60 border border-gray-600/50 rounded-lg px-2 py-1">
               <button
                 type="button"
-                onClick={() => setViewMode('orbit')}
+                onClick={() => handleViewModeChange('orbit')}
                 className={`px-3 py-1 text-sm rounded-md transition-colors ${
                   viewMode === 'orbit'
                     ? 'bg-blue-500 text-white'
@@ -634,7 +799,7 @@ const checkBackendConnection = async () => {
               </button>
               <button
                 type="button"
-                onClick={() => setViewMode('solar')}
+                onClick={() => handleViewModeChange('solar')}
                 className={`px-3 py-1 text-sm rounded-md transition-colors ${
                   viewMode === 'solar'
                     ? 'bg-purple-500 text-white'
