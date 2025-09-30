@@ -888,44 +888,44 @@ const checkBackendConnection = async () => {
 
           {viewMode === 'solar' && (
             <div className="pointer-events-none absolute top-24 right-6 z-30 flex flex-col w-80 max-w-full">
-              <div className="pointer-events-auto bg-gray-900/70 border border-purple-700/40 rounded-2xl shadow-lg backdrop-blur-md p-4 space-y-3">
+              <div className="pointer-events-auto bg-transparent border border-transparent rounded-2xl p-4 space-y-3 text-gray-100">
                 <div>
-                  <h3 className="text-sm font-semibold text-purple-200 mb-2">Buscador NEO</h3>
+                  <h3 className="text-sm font-semibold text-gray-100 mb-2">Buscador NEO</h3>
                   <input
                     type="text"
                     value={solarSearchQuery}
                     onChange={(e) => setSolarSearchQuery(e.target.value)}
                     placeholder="Nombre o designación (ej. Apophis)"
-                    className="w-full px-3 py-2 bg-gray-800 border border-purple-700/60 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 bg-white/10 border border-white/10 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-400"
                   />
                 </div>
                 {neoSearchError && (
-                  <div className="text-xs text-red-300">
+                  <div className="text-xs text-red-400">
                     {typeof neoSearchError === 'string' ? neoSearchError : neoSearchError.error}
                   </div>
                 )}
                 {isSearchingNeo && (
-                  <div className="text-xs text-gray-400">Buscando objetos cercanos...</div>
+                  <div className="text-xs text-gray-300">Buscando objetos cercanos...</div>
                 )}
                 {isLoadingSolarNeo && (
-                  <div className="text-xs text-purple-200">Cargando órbita seleccionada...</div>
+                  <div className="text-xs text-purple-300">Cargando órbita seleccionada...</div>
                 )}
                 {solarNeoError && (
-                  <div className="text-xs text-red-300">{solarNeoError}</div>
+                  <div className="text-xs text-red-400">{solarNeoError}</div>
                 )}
                 {!isSearchingNeo && neoSearchResults.length > 0 && (
-                  <div className="max-h-60 overflow-y-auto border border-purple-700/40 rounded-lg divide-y divide-gray-700">
+                  <div className="max-h-60 overflow-y-auto border border-transparent rounded-lg divide-y divide-transparent">
                     {neoSearchResults.map((item) => (
                       <button
                         key={item.designation || item.full_name}
                         onClick={() => handleNeoSelect(item)}
-                        className="w-full text-left px-3 py-2 bg-gray-800 hover:bg-purple-800/40 transition-colors text-sm text-gray-100"
+                        className="w-full text-left px-3 py-2 bg-transparent hover:bg-white/10 transition-colors text-sm text-gray-100"
                         type="button"
                       >
                         <div className="font-semibold">
                           {item.full_name || item.designation}
                         </div>
-                        <div className="text-xs text-gray-400 flex flex-wrap gap-2 mt-1">
+                        <div className="text-xs text-gray-300 flex flex-wrap gap-2 mt-1">
                           {item.moid_au !== undefined && (
                             <span>MOID: {item.moid_au}</span>
                           )}
@@ -941,11 +941,11 @@ const checkBackendConnection = async () => {
                   </div>
                 )}
                 {!isSearchingNeo && !neoSearchResults.length && solarSearchQuery.trim() !== '' && !neoSearchError && (
-                  <div className="text-xs text-gray-400">Sin resultados para "{solarSearchQuery}"</div>
+                  <div className="text-xs text-gray-300">Sin resultados para "{solarSearchQuery}"</div>
                 )}
                 {solarNeoInfo && (
-                  <div className="text-xs text-gray-200 bg-gray-800/80 border border-purple-700/40 rounded-lg p-3 space-y-1">
-                    <div className="text-sm text-purple-200 font-semibold">NEO en vista:</div>
+                  <div className="text-xs text-gray-200 bg-transparent border border-transparent rounded-lg p-3 space-y-1">
+                    <div className="text-sm text-gray-100 font-semibold">NEO en vista:</div>
                     <div>{solarNeoInfo.fullName || solarNeoInfo.designation}</div>
                     {solarNeoInfo.moidAu !== undefined && solarNeoInfo.moidAu !== null && (
                       <div>MOID: {solarNeoInfo.moidAu} au</div>
@@ -960,14 +960,14 @@ const checkBackendConnection = async () => {
                       <button
                         type="button"
                         onClick={handleClearSolarNeo}
-                        className="px-3 py-1 text-[11px] rounded-md border border-purple-600 text-purple-200 hover:bg-purple-700/40"
+                        className="px-3 py-1 text-[11px] rounded-md border border-purple-500 text-purple-200 hover:bg-purple-900/50"
                       >
                         Quitar órbita NEO
                       </button>
                     </div>
                   </div>
                 )}
-                <div className="text-[11px] text-gray-500">
+                <div className="text-[11px] text-gray-300">
                   Seleccionar un NEO añadirá su órbita a la vista del sistema solar.
                 </div>
               </div>
@@ -977,7 +977,7 @@ const checkBackendConnection = async () => {
           {viewMode === 'orbit' && (
             <div className="pointer-events-none absolute inset-0 z-20 flex">
               <div
-                className={`mt-24 mb-6 ml-4 w-80 max-h-[calc(100%-7rem)] overflow-y-auto rounded-2xl border border-gray-700/60 bg-gray-900/60 backdrop-blur-md shadow-lg transition-all duration-300 ease-in-out transform ${
+                className={`mt-24 mb-6 ml-4 w-80 max-h-[calc(100%-7rem)] overflow-y-auto rounded-2xl border border-transparent bg-transparent transition-all duration-300 ease-in-out transform ${
                   isPanelOpen
                     ? 'pointer-events-auto translate-x-0 opacity-100'
                     : 'pointer-events-none -translate-x-[calc(100%+1.5rem)] opacity-0'
@@ -992,7 +992,7 @@ const checkBackendConnection = async () => {
                   isLoading={isLoading}
                   simParams={simParams}
                   onSimParamsChange={handleSimParamsChange}
-                  className="w-full h-full bg-transparent border-none"
+                  className="w-full h-full"
                 />
               </div>
             </div>
@@ -1004,7 +1004,7 @@ const checkBackendConnection = async () => {
             className="pointer-events-none fixed bottom-6 z-20 flex justify-center"
             style={bottomPanelStyle}
           >
-            <div className="pointer-events-auto mx-4 w-full max-w-5xl rounded-2xl border border-gray-700/60 bg-gray-900/60 backdrop-blur-md shadow-lg">
+            <div className="pointer-events-auto mx-4 w-full max-w-5xl rounded-2xl border border-transparent bg-transparent">
               <AnimationControls
                 isPlaying={isPlaying}
                 onPlay={handlePlay}
@@ -1017,7 +1017,7 @@ const checkBackendConnection = async () => {
                 onSpeedChange={handleSpeedChange}
                 simulationData={simulationData}
                 disabled={isLoading || !simulationData}
-                className="bg-transparent border-none"
+                className="rounded-2xl"
               />
             </div>
           </div>
@@ -1028,10 +1028,10 @@ const checkBackendConnection = async () => {
             className="pointer-events-none fixed bottom-6 z-20 flex justify-center w-full"
             style={{ left: '1rem', right: '1rem', transition: 'left 0.3s ease-in-out, right 0.3s ease-in-out' }}
           >
-            <div className="pointer-events-auto mx-4 w-full max-w-4xl rounded-2xl border border-purple-700/50 bg-gray-900/70 backdrop-blur-md shadow-lg px-6 py-4">
+            <div className="pointer-events-auto mx-4 w-full max-w-4xl rounded-2xl border border-transparent bg-transparent px-6 py-4">
               <div className="flex flex-col gap-3 text-sm text-gray-200">
                 <div className="flex items-center justify-between flex-wrap gap-3">
-                  <span className="font-semibold text-purple-200">Velocidad de simulación</span>
+                  <span className="font-semibold text-gray-100">Velocidad de simulación</span>
                   <span className="text-gray-300">
                     1 s real = <span className="text-purple-300 font-semibold">{solarTimeScaleLabel}</span> simulados ({solarTimeScale.toLocaleString()} s)
                   </span>
@@ -1043,7 +1043,7 @@ const checkBackendConnection = async () => {
                   step={1}
                   value={solarTimeScale}
                   onChange={handleSolarSpeedChange}
-                  className="w-full h-2 bg-purple-900/40 rounded-lg appearance-none cursor-pointer"
+                  className={`slider-range ${isLoadingSolar ? 'slider-range--disabled' : ''}`}
                 />
                 <div className="flex items-center flex-wrap gap-2">
                   {solarSpeedPresets.map((preset) => (
@@ -1053,8 +1053,8 @@ const checkBackendConnection = async () => {
                       onClick={() => handleSolarSpeedPreset(preset)}
                       className={`px-3 py-1 rounded-md border transition-colors ${
                         solarTimeScale === preset
-                          ? 'bg-purple-600 border-purple-400 text-white'
-                          : 'bg-transparent border-purple-700 text-purple-200 hover:bg-purple-700/40'
+                          ? 'bg-purple-600 border-purple-500 text-white'
+                          : 'bg-transparent border-white/10 text-gray-200 hover:bg-white/10'
                       }`}
                     >
                       {formatSolarScale(preset)}
@@ -1062,8 +1062,8 @@ const checkBackendConnection = async () => {
                   ))}
                 </div>
                 {solarGeneratedLabel && (
-                  <div className="text-xs text-gray-400">
-                    Datos generados: <span className="text-gray-200">{solarGeneratedLabel}</span>
+                  <div className="text-xs text-gray-300">
+                    Datos generados: <span className="text-gray-100">{solarGeneratedLabel}</span>
                   </div>
                 )}
               </div>

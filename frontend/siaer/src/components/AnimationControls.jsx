@@ -11,9 +11,9 @@ function ControlButton({ onClick, disabled, children, className = "", title }) {
       onClick={onClick}
       disabled={disabled}
       title={title}
-      className={`px-4 py-2 bg-gray-700 hover:bg-gray-600 
-                  disabled:bg-gray-800 disabled:opacity-50 
-                  border border-gray-600 rounded-lg transition-colors
+      className={`px-4 py-2 bg-transparent hover:bg-white/10 
+                  disabled:bg-transparent disabled:text-gray-500 disabled:border-transparent
+                  border border-transparent rounded-lg transition-colors
                   text-white font-medium text-sm
                   ${className}`}
     >
@@ -26,7 +26,7 @@ function ControlButton({ onClick, disabled, children, className = "", title }) {
 function SpeedSlider({ speed, onSpeedChange, disabled }) {
   return (
     <div className="flex items-center space-x-2">
-      <span className="text-xs text-gray-400">Lento</span>
+      <span className="text-xs text-gray-300">Lento</span>
       <input
         type="range"
         min={0.1}
@@ -35,10 +35,10 @@ function SpeedSlider({ speed, onSpeedChange, disabled }) {
         value={speed}
         onChange={(e) => onSpeedChange(parseFloat(e.target.value))}
         disabled={disabled}
-        className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+        className={`slider-range flex-1 ${disabled ? 'slider-range--disabled' : ''}`}
       />
-      <span className="text-xs text-gray-400">Rápido</span>
-      <span className="text-xs text-gray-300 min-w-[3rem] text-right">
+      <span className="text-xs text-gray-300">Rápido</span>
+      <span className="text-xs text-gray-200 min-w-[3rem] text-right">
         {speed.toFixed(1)}x
       </span>
     </div>
@@ -62,26 +62,26 @@ function ProgressBar({ current, total, onSeek, disabled }) {
 
   return (
     <div className="flex items-center space-x-3">
-      <span className="text-xs text-gray-400 min-w-[4rem]">
+      <span className="text-xs text-gray-300 min-w-[4rem]">
         {Math.floor(current / 60).toString().padStart(2, '0')}:{(current % 60).toString().padStart(2, '0')}
       </span>
       
       <div 
-        className="flex-1 h-3 bg-gray-700 rounded-lg cursor-pointer relative overflow-hidden"
+        className="flex-1 h-3 bg-transparent rounded-lg cursor-pointer relative overflow-hidden"
         onClick={handleClick}
       >
         <div 
-          className="h-full bg-blue-500 transition-all duration-100 rounded-lg"
+          className="h-full bg-white/50 transition-all duration-100 rounded-lg"
           style={{ width: `${percentage}%` }}
         />
         {/* Marcador de posición actual */}
         <div 
-          className="absolute top-0 w-1 h-full bg-white opacity-75"
+          className="absolute top-0 w-1 h-full bg-white/80 opacity-80"
           style={{ left: `${percentage}%`, transform: 'translateX(-50%)' }}
         />
       </div>
       
-      <span className="text-xs text-gray-400 min-w-[4rem] text-right">
+      <span className="text-xs text-gray-300 min-w-[4rem] text-right">
         {Math.floor(total / 60).toString().padStart(2, '0')}:{(total % 60).toString().padStart(2, '0')}
       </span>
     </div>
@@ -115,7 +115,7 @@ export default function AnimationControls({
     currentFrame >= (impactInfo.impact_index || 0);
 
   return (
-    <div className={`bg-gray-900 border-t border-gray-700 px-3 py-3 ${className}`}>
+    <div className={`bg-transparent border-t border-transparent px-3 py-3 text-gray-100 ${className}`}>
       {/* Controles principales */}
       <div className="flex items-center justify-between mb-3">
         {/* Grupo de controles de reproducción */}
@@ -146,13 +146,13 @@ export default function AnimationControls({
             </div>
           )}
           
-          <div className="text-sm text-gray-400">
+          <div className="text-sm text-gray-300">
             Frame: {currentFrame + 1}/{totalFrames}
           </div>
           
           <button
             onClick={() => setShowInfo(!showInfo)}
-            className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+            className="text-xs text-gray-400 hover:text-gray-200 transition-colors"
           >
             {showInfo ? '🔽 Menos info' : '🔼 Más info'}
           </button>
@@ -172,7 +172,7 @@ export default function AnimationControls({
       {/* Control de velocidad */}
       <div className="mb-3">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-400">Velocidad de Animación</span>
+          <span className="text-sm text-gray-200">Velocidad de Animación</span>
         </div>
         <SpeedSlider
           speed={speed}
@@ -183,16 +183,16 @@ export default function AnimationControls({
 
       {/* Información extendida */}
       {showInfo && simulationData && (
-        <div className="border-t border-gray-700 pt-3">
+        <div className="border-t border-gray-800 pt-3">
           <div className="grid grid-cols-2 gap-4 text-xs">
             {/* Información temporal */}
             <div>
-              <h4 className="text-gray-300 font-semibold mb-2">⏱️ Tiempo</h4>
-              <div className="space-y-1 text-gray-400">
+              <h4 className="text-gray-100 font-semibold mb-2">⏱️ Tiempo</h4>
+              <div className="space-y-1 text-gray-300">
                 <div>Actual: {(currentTime / 3600).toFixed(2)} h</div>
                 <div>Total: {(totalTime / 3600).toFixed(2)} h</div>
                 {impactInfo?.will_impact && (
-                  <div className="text-red-400">
+                  <div className="text-rose-400">
                     Impacto en: {(impactInfo.impact_time / 3600).toFixed(2)} h
                   </div>
                 )}
@@ -201,8 +201,8 @@ export default function AnimationControls({
 
             {/* Información orbital */}
             <div>
-              <h4 className="text-gray-300 font-semibold mb-2">🛰️ Órbita</h4>
-              <div className="space-y-1 text-gray-400">
+              <h4 className="text-gray-100 font-semibold mb-2">🛰️ Órbita</h4>
+              <div className="space-y-1 text-gray-300">
                 {simulationData.orbital_info && (
                   <>
                     <div>
@@ -223,8 +223,8 @@ export default function AnimationControls({
           {/* Análisis de la simulación */}
           {simulationData.analysis && (
             <div className="mt-4">
-              <h4 className="text-gray-300 font-semibold mb-2">📊 Análisis</h4>
-              <div className="grid grid-cols-3 gap-4 text-xs text-gray-400">
+              <h4 className="text-gray-100 font-semibold mb-2">📊 Análisis</h4>
+              <div className="grid grid-cols-3 gap-4 text-xs text-gray-300">
                 <div>
                   <div>Alt. mín: {simulationData.analysis.min_altitude.toFixed(0)} km</div>
                   <div>Alt. máx: {simulationData.analysis.max_altitude.toFixed(0)} km</div>
@@ -235,11 +235,11 @@ export default function AnimationControls({
                 </div>
                 <div>
                   {impactInfo?.will_impact ? (
-                    <div className="text-red-400">
+                    <div className="text-rose-400">
                       ⚠️ Impacto detectado
                     </div>
                   ) : (
-                    <div className="text-green-400">
+                    <div className="text-emerald-300">
                       ✅ Órbita estable
                     </div>
                   )}
