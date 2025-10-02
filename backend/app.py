@@ -50,7 +50,8 @@ def home():
             "/api/orbital/presets": "GET - Obtener presets predefinidos",
             "/api/neo/search": "GET - Buscar objetos NEO (proxy SBDB)",
             "/api/neo/object": "GET - Obtener datos de un NEO desde NASA",
-            "/api/solar/system": "GET - Estados orbitales aproximados del sistema solar"
+            "/api/solar/system": "GET - Estados orbitales aproximados del sistema solar",
+            "/api/impactor/2025": "GET - Datos del meteorito IMPACTOR-2025"
         }
     })
 
@@ -264,6 +265,57 @@ def get_solar_system_state():
         "data": data,
     })
 
+
+@app.route('/api/impactor/2025', methods=['GET'])
+def get_impactor_2025():
+    """Obtiene los datos del meteorito IMPACTOR-2025."""
+    
+    try:
+        # Datos del meteorito IMPACTOR-2025
+        impactor_data = {
+            "name": "IMPACTOR-2025",
+            "designation": "IMPACTOR-2025",
+            "full_name": "IMPACTOR-2025",
+            "description": "Meteorito hipotético con trayectoria de impacto potencial",
+            "color": "#ff4444",
+            "orbitColor": "#ff6666",
+            "radiusKm": 0.5,  # Pequeño para visualización
+            "semiMajorAxisKm": 373922988.41,  # a ≈ 373,922,988.41 km
+            "eccentricity": 0.6,  # e = 0.6
+            "inclinationDeg": 3.0,  # i = 3.0°
+            "longitudeOfAscendingNodeDeg": 12.64,  # Ω = 12.64°
+            "argumentOfPeriapsisDeg": 0.0,  # ω = 0.0°
+            "meanAnomalyDeg": -1.0,  # M₀ = -1.0°
+            "orbitalPeriodDays": 1443.36,  # P ≈ 1443.36 días
+            "isNeo": True,
+            "pha": True,  # Potencialmente peligroso
+            "moid_au": 0.02,  # Distancia mínima de intersección orbital muy pequeña
+            "absolute_magnitude_h": 18.5,  # Magnitud estimada
+            "orbit_class": "Apollo",
+            "warning": "⚠️ Objeto con trayectoria de impacto potencial - ÓRBITA MUY PELIGROSA",
+            "simulation_elements": {
+                "a": 373922988.41,
+                "e": 0.6,
+                "i": 3.0,
+                "omega": 0.0,
+                "Omega": 12.64,
+                "M0": -1.0,
+                "mu": 1.32712440018e11  # Constante gravitacional solar
+            }
+        }
+        
+        return jsonify({
+            "success": True,
+            "data": impactor_data
+        })
+        
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": "Error al obtener datos de IMPACTOR-2025",
+            "details": str(e)
+        }), 500
+
 # === MANEJO DE ERRORES ===
 
 @app.errorhandler(404)
@@ -278,7 +330,8 @@ def not_found(error):
             "/api/orbital/presets",
             "/api/neo/search",
             "/api/neo/object",
-            "/api/solar/system"
+            "/api/solar/system",
+            "/api/impactor/2025"
         ]
     }), 404
 
@@ -308,6 +361,7 @@ if __name__ == '__main__':
     print("   GET  /api/neo/search - Buscar objetos NEO (SBDB Query)")
     print("   GET  /api/neo/object - Obtener datos de NEO desde NASA")
     print("   GET  /api/solar/system - Estados orbitales del sistema solar")
+    print("   GET  /api/impactor/2025 - Datos del meteorito IMPACTOR-2025")
     print()
     
     app.run(
