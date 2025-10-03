@@ -1,10 +1,18 @@
-import React, { useMemo, useRef, useEffect, useState } from 'react';
-import { Canvas, useFrame, useThree, useLoader } from '@react-three/fiber';
-import { OrbitControls, Line, Text, Stars, Billboard, Sphere } from '@react-three/drei';
-import * as THREE from 'three';
+import React, { useMemo, useRef, useEffect, useState } from "react";
+import { Canvas, useFrame, useThree, useLoader } from "@react-three/fiber";
+import {
+  OrbitControls,
+  Line,
+  Text,
+  Stars,
+  Billboard,
+  Sphere,
+} from "@react-three/drei";
+import * as THREE from "three";
 
 const SCALE_FACTOR = 1 / 1_000_000; // Reducir unidades para la visualización
 const SUN_RADIUS_KM = 695_700;
+const TWO_PI = Math.PI * 2;
 
 const degToRad = THREE.MathUtils.degToRad;
 
@@ -32,7 +40,7 @@ function calculateOrbitalVelocity(elements, trueAnomaly) {
     magnitude,
     tangential,
     radial,
-    distance
+    distance,
   };
 }
 
@@ -46,52 +54,69 @@ function calculateVelocityVector(elements, trueAnomaly) {
   const xVel = velocity.radial * cosNu - velocity.tangential * sinNu;
   const yVel = velocity.radial * sinNu + velocity.tangential * cosNu;
   const zVel = 0;
-  
+
   // Aplicar rotaciones orbitales
   const omega = degToRad(elements.argumentOfPeriapsisDeg);
   const inclination = degToRad(elements.inclinationDeg);
   const Omega = degToRad(elements.longitudeOfAscendingNodeDeg);
-  
+
   // Rotación por argumento del periapsis
   const cosOmega = Math.cos(omega);
   const sinOmega = Math.sin(omega);
   const x1 = xVel * cosOmega - yVel * sinOmega;
   const y1 = xVel * sinOmega + yVel * cosOmega;
   const z1 = zVel;
-  
+
   // Rotación por inclinación
   const cosI = Math.cos(inclination);
   const sinI = Math.sin(inclination);
   const x2 = x1;
   const y2 = y1 * cosI - z1 * sinI;
   const z2 = y1 * sinI + z1 * cosI;
-  
+
   // Rotación por longitud del nodo ascendente
   const cosBigOmega = Math.cos(Omega);
   const sinBigOmega = Math.sin(Omega);
   const x = x2 * cosBigOmega - y2 * sinBigOmega;
   const y = x2 * sinBigOmega + y2 * cosBigOmega;
   const z = z2;
-  
+
   return [x, y, z];
 }
 
 function calculateEntryAngle(relativeVelocity, relativePosition) {
   // Normalizar vectores
-  const velMag = Math.sqrt(relativeVelocity[0]**2 + relativeVelocity[1]**2 + relativeVelocity[2]**2);
-  const posMag = Math.sqrt(relativePosition[0]**2 + relativePosition[1]**2 + relativePosition[2]**2);
-  
+  const velMag = Math.sqrt(
+    relativeVelocity[0] ** 2 +
+    relativeVelocity[1] ** 2 +
+    relativeVelocity[2] ** 2,
+  );
+  const posMag = Math.sqrt(
+    relativePosition[0] ** 2 +
+    relativePosition[1] ** 2 +
+    relativePosition[2] ** 2,
+  );
+
   if (velMag === 0 || posMag === 0) return 90;
-  
-  const velUnit = [relativeVelocity[0]/velMag, relativeVelocity[1]/velMag, relativeVelocity[2]/velMag];
-  const posUnit = [relativePosition[0]/posMag, relativePosition[1]/posMag, relativePosition[2]/posMag];
-  
+
+  const velUnit = [
+    relativeVelocity[0] / velMag,
+    relativeVelocity[1] / velMag,
+    relativeVelocity[2] / velMag,
+  ];
+  const posUnit = [
+    relativePosition[0] / posMag,
+    relativePosition[1] / posMag,
+    relativePosition[2] / posMag,
+  ];
+
   // Producto punto
-  const dotProduct = velUnit[0]*posUnit[0] + velUnit[1]*posUnit[1] + velUnit[2]*posUnit[2];
-  
+  const dotProduct =
+    velUnit[0] * posUnit[0] + velUnit[1] * posUnit[1] + velUnit[2] * posUnit[2];
+
   // Ángulo en grados
   const angle = Math.acos(Math.abs(dotProduct)) * (180 / Math.PI);
-  
+
   return angle;
 }
 
@@ -100,8 +125,8 @@ function isEarthBody(body) {
     return false;
   }
 
-  const name = typeof body.name === 'string' ? body.name.toLowerCase() : '';
-  if (name === 'tierra') {
+  const name = typeof body.name === "string" ? body.name.toLowerCase() : "";
+  if (name === "tierra") {
     return true;
   }
 
@@ -185,12 +210,15 @@ function computePlanetPosition(planet, elapsedSeconds) {
   const meanMotion = (2 * Math.PI) / (planet.orbitalPeriodDays * 86400);
   const M0 = degToRad(planet.meanAnomalyDeg || 0);
   const meanAnomaly = M0 + meanMotion * elapsedSeconds;
-  const normalizedM = ((meanAnomaly % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  const normalizedM =
+    ((meanAnomaly % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
   const eccentricAnomaly = solveKepler(normalizedM, planet.eccentricity);
-  const trueAnomaly = 2 * Math.atan2(
-    Math.sqrt(1 + planet.eccentricity) * Math.sin(eccentricAnomaly / 2),
-    Math.sqrt(1 - planet.eccentricity) * Math.cos(eccentricAnomaly / 2),
-  );
+  const trueAnomaly =
+    2 *
+    Math.atan2(
+      Math.sqrt(1 + planet.eccentricity) * Math.sin(eccentricAnomaly / 2),
+      Math.sqrt(1 - planet.eccentricity) * Math.cos(eccentricAnomaly / 2),
+    );
 
   return orbitalToCartesian(planet, trueAnomaly);
 }
@@ -209,7 +237,7 @@ function PlanetOrbit({ planet }) {
   return (
     <Line
       points={points}
-      color={planet.orbitColor || planet.color || '#888888'}
+      color={planet.orbitColor || planet.color || "#888888"}
       lineWidth={2.5}
       transparent
       opacity={0.85}
@@ -224,57 +252,131 @@ function SolarTimeController({ timeScale, simulationTimeRef }) {
   return null;
 }
 
+function FocusCameraController({
+  focusPlanet,
+  simulationTimeRef,
+  cameraDistanceMultiplier,
+  followEnabled,
+  controlsRef,
+}) {
+  const camera = useThree((state) => state.camera);
+  const focusVector = useRef(new THREE.Vector3());
+  const initialisedRef = useRef(false);
+  const previousFocusRef = useRef(new THREE.Vector3());
+  const deltaRef = useRef(new THREE.Vector3());
+
+  useEffect(() => {
+    initialisedRef.current = false;
+  }, [focusPlanet, followEnabled]);
+
+  useFrame(() => {
+    const controls = controlsRef?.current;
+    if (!followEnabled || !focusPlanet || !controls) {
+      return;
+    }
+
+    const elapsed = simulationTimeRef.current;
+    const [x, y, z] = computePlanetPosition(focusPlanet, elapsed);
+    focusVector.current.set(x, y, z);
+
+    if (!initialisedRef.current) {
+      const orbitDistance =
+        Math.max(focusPlanet.semiMajorAxisKm || 0, 1) * SCALE_FACTOR;
+      const planetRadius =
+        Math.max(focusPlanet.radiusKm || 0, 1) * SCALE_FACTOR;
+      const baseDistance = Math.max(
+        orbitDistance * cameraDistanceMultiplier,
+        planetRadius * 25,
+        10,
+      );
+
+      camera.position.set(
+        focusVector.current.x + baseDistance,
+        focusVector.current.y + baseDistance * 0.05,
+        focusVector.current.z,
+      );
+      previousFocusRef.current.copy(focusVector.current);
+      initialisedRef.current = true;
+    } else {
+      const delta = deltaRef.current;
+      delta.copy(focusVector.current).sub(previousFocusRef.current);
+      camera.position.add(delta);
+    }
+
+    controls.target.copy(focusVector.current);
+    controls.update();
+    previousFocusRef.current.copy(focusVector.current);
+  });
+
+  return null;
+}
+
 // Componente para detectar colisiones reales entre objetos
-function CollisionDetector({ planets, neoObjects, onCollision, simulationTimeRef }) {
+function CollisionDetector({
+  planets,
+  neoObjects,
+  onCollision,
+  simulationTimeRef,
+}) {
   const lastCollisionTimeRef = useRef({});
-  
+
   useFrame(() => {
     const elapsed = simulationTimeRef.current;
     const allObjects = [...planets, ...neoObjects];
-    
+
     // Verificar colisiones entre todos los pares de objetos
     for (let i = 0; i < allObjects.length; i++) {
       for (let j = i + 1; j < allObjects.length; j++) {
         const obj1 = allObjects[i];
         const obj2 = allObjects[j];
-        
+
         // Calcular posiciones actuales (en unidades escaladas)
         const pos1Scaled = computePlanetPosition(obj1, elapsed);
         const pos2Scaled = computePlanetPosition(obj2, elapsed);
-        
+
         // Convertir a coordenadas reales (km)
         const pos1Real = [
           pos1Scaled[0] / SCALE_FACTOR,
           pos1Scaled[1] / SCALE_FACTOR,
-          pos1Scaled[2] / SCALE_FACTOR
+          pos1Scaled[2] / SCALE_FACTOR,
         ];
         const pos2Real = [
           pos2Scaled[0] / SCALE_FACTOR,
           pos2Scaled[1] / SCALE_FACTOR,
-          pos2Scaled[2] / SCALE_FACTOR
+          pos2Scaled[2] / SCALE_FACTOR,
         ];
-        
+
         // Calcular distancia real entre objetos (km)
         const distanceReal = Math.sqrt(
           Math.pow(pos1Real[0] - pos2Real[0], 2) +
           Math.pow(pos1Real[1] - pos2Real[1], 2) +
-          Math.pow(pos1Real[2] - pos2Real[2], 2)
+          Math.pow(pos1Real[2] - pos2Real[2], 2),
         );
-        
+
         // Umbral de colisión = suma de radios de los objetos
         const collisionThreshold = (obj1.radiusKm || 0) + (obj2.radiusKm || 0);
-        
+
         // Crear clave única para este par de objetos
         const collisionKey = `${obj1.name}-${obj2.name}`;
-        const lastCollisionTime = lastCollisionTimeRef.current[collisionKey] || 0;
-        
+        const lastCollisionTime =
+          lastCollisionTimeRef.current[collisionKey] || 0;
+
         // Detectar colisión atmosférica si están dentro del umbral
-        if (distanceReal < collisionThreshold && elapsed - lastCollisionTime > 2.0) {
+        if (
+          distanceReal < collisionThreshold &&
+          elapsed - lastCollisionTime > 2.0
+        ) {
           lastCollisionTimeRef.current[collisionKey] = elapsed;
-          
+
           // Calcular información detallada de la colisión
-          const collisionData = calculateCollisionDetails(obj1, obj2, pos1Real, pos2Real, elapsed);
-          
+          const collisionData = calculateCollisionDetails(
+            obj1,
+            obj2,
+            pos1Real,
+            pos2Real,
+            elapsed,
+          );
+
           // Reportar colisión con información completa
           onCollision({
             object1: obj1,
@@ -284,13 +386,13 @@ function CollisionDetector({ planets, neoObjects, onCollision, simulationTimeRef
             time: elapsed,
             position1: pos1Real,
             position2: pos2Real,
-            ...collisionData
+            ...collisionData,
           });
         }
       }
     }
   });
-  
+
   return null;
 }
 
@@ -299,37 +401,37 @@ function calculateCollisionDetails(obj1, obj2, pos1, pos2, elapsed) {
   // Calcular anomalía verdadera para ambos objetos
   const trueAnomaly1 = calculateTrueAnomaly(obj1, elapsed);
   const trueAnomaly2 = calculateTrueAnomaly(obj2, elapsed);
-  
+
   // Calcular velocidades orbitales
   const vel1 = calculateVelocityVector(obj1, trueAnomaly1);
   const vel2 = calculateVelocityVector(obj2, trueAnomaly2);
-  
+
   // Velocidad relativa
   const relativeVelocity = [
     vel1[0] - vel2[0],
     vel1[1] - vel2[1],
-    vel1[2] - vel2[2]
+    vel1[2] - vel2[2],
   ];
-  
+
   // Posición relativa
   const relativePosition = [
     pos1[0] - pos2[0],
     pos1[1] - pos2[1],
-    pos1[2] - pos2[2]
+    pos1[2] - pos2[2],
   ];
 
   const relativeSpeed = Math.sqrt(
-    relativeVelocity[0]**2 +
-    relativeVelocity[1]**2 +
-    relativeVelocity[2]**2
+    relativeVelocity[0] ** 2 +
+    relativeVelocity[1] ** 2 +
+    relativeVelocity[2] ** 2,
   );
-  
+
   // Calcular ángulo de entrada atmosférica
   const entryAngle = calculateEntryAngle(relativeVelocity, relativePosition);
-  
+
   // Clasificar tipo de impacto
   const impactType = classifyImpact(entryAngle, relativeSpeed);
-  
+
   // Determinar tipo de colisión
   let collisionType = "CLOSE_APPROACH";
   const atmosphereHeight = ATMOSPHERE_HEIGHT_KM;
@@ -338,9 +440,9 @@ function calculateCollisionDetails(obj1, obj2, pos1, pos2, elapsed) {
     const otherBody = isEarthBody(obj1) ? obj2 : obj1;
     const otherRadius = Number(otherBody?.radiusKm) || 0;
     const centerDistance = Math.sqrt(
-      relativePosition[0]**2 +
-      relativePosition[1]**2 +
-      relativePosition[2]**2
+      relativePosition[0] ** 2 +
+      relativePosition[1] ** 2 +
+      relativePosition[2] ** 2,
     );
 
     if (centerDistance <= EARTH_RADIUS_KM + otherRadius) {
@@ -349,14 +451,14 @@ function calculateCollisionDetails(obj1, obj2, pos1, pos2, elapsed) {
       collisionType = "ATMOSPHERIC_ENTRY";
     }
   }
-  
+
   return {
     entryAngle: entryAngle,
     relativeVelocity: relativeSpeed,
     impactType: impactType,
     collisionType: collisionType,
     velocity1: vel1,
-    velocity2: vel2
+    velocity2: vel2,
   };
 }
 
@@ -365,17 +467,20 @@ function calculateTrueAnomaly(obj, elapsed) {
   const meanMotion = (2 * Math.PI) / (obj.orbitalPeriodDays * 86400);
   const M0 = degToRad(obj.meanAnomalyDeg || 0);
   const meanAnomaly = M0 + meanMotion * elapsed;
-  const normalizedM = ((meanAnomaly % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-  
+  const normalizedM =
+    ((meanAnomaly % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+
   // Resolver ecuación de Kepler
   const eccentricAnomaly = solveKepler(normalizedM, obj.eccentricity);
-  
+
   // Convertir a anomalía verdadera
-  const trueAnomaly = 2 * Math.atan2(
-    Math.sqrt(1 + obj.eccentricity) * Math.sin(eccentricAnomaly / 2),
-    Math.sqrt(1 - obj.eccentricity) * Math.cos(eccentricAnomaly / 2)
-  );
-  
+  const trueAnomaly =
+    2 *
+    Math.atan2(
+      Math.sqrt(1 + obj.eccentricity) * Math.sin(eccentricAnomaly / 2),
+      Math.sqrt(1 - obj.eccentricity) * Math.cos(eccentricAnomaly / 2),
+    );
+
   return trueAnomaly;
 }
 
@@ -383,48 +488,48 @@ function calculateTrueAnomaly(obj, elapsed) {
 function CollisionEffect({ collision, onComplete }) {
   const meshRef = useRef();
   const [opacity, setOpacity] = useState(1);
-  
+
   useEffect(() => {
     if (!collision) return;
-    
+
     // Animación de explosión
     const duration = 2000; // 2 segundos
     const startTime = Date.now();
-    
+
     const animate = () => {
       const elapsed = Date.now() - startTime;
       const progress = elapsed / duration;
-      
+
       if (progress >= 1) {
         setOpacity(0);
         onComplete();
         return;
       }
-      
+
       // Efecto de fade out
       setOpacity(1 - progress);
-      
+
       // Escalar el efecto
       if (meshRef.current) {
         const scale = 1 + progress * 3; // Crece 3x
         meshRef.current.scale.set(scale, scale, scale);
       }
-      
+
       requestAnimationFrame(animate);
     };
-    
+
     requestAnimationFrame(animate);
   }, [collision, onComplete]);
-  
+
   if (!collision) return null;
-  
+
   return (
     <group position={collision.position1}>
       <mesh ref={meshRef}>
         <sphereGeometry args={[0.1, 16, 16]} />
-        <meshBasicMaterial 
-          color="#ff4444" 
-          transparent 
+        <meshBasicMaterial
+          color="#ff4444"
+          transparent
           opacity={opacity}
           emissive="#ff0000"
           emissiveIntensity={0.5}
@@ -433,9 +538,9 @@ function CollisionEffect({ collision, onComplete }) {
       {/* Efecto de partículas */}
       <mesh>
         <sphereGeometry args={[0.05, 8, 8]} />
-        <meshBasicMaterial 
-          color="#ffaa00" 
-          transparent 
+        <meshBasicMaterial
+          color="#ffaa00"
+          transparent
           opacity={opacity * 0.7}
         />
       </mesh>
@@ -457,20 +562,96 @@ function computeLabelVisibility(planet, camera, maxOrbitDistance) {
   return 1 - (normalizedCamera - fadeStart) / (fadeEnd - fadeStart);
 }
 
-function PlanetBody({ planet, maxOrbitDistance, simulationTimeRef }) {
+function PlanetBody({
+  planet,
+  maxOrbitDistance,
+  simulationTimeRef,
+  labelsAlwaysVisible = false,
+}) {
   const groupRef = useRef();
   const billboardRef = useRef();
   const ringRef = useRef();
   const textRef = useRef();
   const isNeo = Boolean(planet.isNeo);
   const isImpactor = Boolean(planet.isImpactor);
-  const indicatorRadius = isImpactor ? 0.4 : (isNeo ? 0.35 : 0.45);
-  const labelOffset = isImpactor ? 0.5 : (isNeo ? 0.45 : 0.55);
-  const ringWidth = isImpactor ? 0.03 : (isNeo ? 0.025 : 0.035);
+  const isEarth =
+    typeof planet.name === "string" && planet.name.toLowerCase() === "tierra";
+  const indicatorRadius = isImpactor ? 0.4 : isNeo ? 0.35 : 0.45;
+  const labelOffset = isImpactor ? 0.5 : isNeo ? 0.45 : 0.55;
+  const ringWidth = isImpactor ? 0.03 : isNeo ? 0.025 : 0.035;
   const { camera } = useThree();
   const SCREEN_SCALE = 0.03;
   const MIN_SCALE = 12;
-  const labelColor = isImpactor ? '#ff4444' : (isNeo ? '#e8faff' : planet.orbitColor || planet.color || '#ffffff');
+  const labelColor = isImpactor
+    ? "#ff4444"
+    : isNeo
+      ? "#e8faff"
+      : planet.orbitColor || planet.color || "#ffffff";
+  const bodyColor = isEarth
+    ? "#ccff33"
+    : isImpactor || isNeo
+      ? "#ffd54f"
+      : planet.color || "#ffffff";
+  const bodyRadius = Math.max(
+    (planet.radiusKm || 1000) * SCALE_FACTOR,
+    isImpactor || isNeo ? 0.28 : isEarth ? 0.32 : 0.25,
+  );
+  const textureUrl =
+    planet.textureUrl || planet.surfaceTexture || planet.textureMap;
+  const rotationPeriodHours = Number.isFinite(planet.rotationPeriodHours)
+    ? planet.rotationPeriodHours
+    : Number.isFinite(planet.rotationPeriodDays)
+      ? planet.rotationPeriodDays * 24
+      : isEarth
+        ? 23.9344696
+        : null;
+  const axialTiltDeg = Number.isFinite(planet.axialTiltDeg)
+    ? planet.axialTiltDeg
+    : isEarth
+      ? 23.4367
+      : 0;
+  const rotationOffsetDeg = Number.isFinite(planet.rotationOffsetDeg)
+    ? planet.rotationOffsetDeg
+    : 0;
+  const rotationOffsetRad = degToRad(rotationOffsetDeg);
+  const rotationPeriodSeconds = rotationPeriodHours
+    ? Math.abs(rotationPeriodHours) * 3600
+    : null;
+  const tiltGroupRef = useRef();
+  const rotationGroupRef = useRef();
+  const surfaceTexture = useMemo(() => {
+    if (!textureUrl) {
+      return null;
+    }
+    const loader = new THREE.TextureLoader();
+    const texture = loader.load(textureUrl);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = 4;
+    return texture;
+  }, [textureUrl]);
+
+  useEffect(() => {
+    return () => {
+      if (surfaceTexture) {
+        surfaceTexture.dispose();
+      }
+    };
+  }, [surfaceTexture]);
+
+  useEffect(() => {
+    if (tiltGroupRef.current) {
+      tiltGroupRef.current.rotation.set(0, 0, 0);
+      if (axialTiltDeg) {
+        tiltGroupRef.current.rotation.x = degToRad(axialTiltDeg);
+      }
+    }
+  }, [axialTiltDeg]);
+
+  useEffect(() => {
+    if (rotationGroupRef.current) {
+      rotationGroupRef.current.rotation.y = rotationOffsetRad;
+    }
+  }, [rotationOffsetRad]);
 
   useFrame(() => {
     const elapsed = simulationTimeRef.current;
@@ -479,23 +660,33 @@ function PlanetBody({ planet, maxOrbitDistance, simulationTimeRef }) {
       groupRef.current.position.set(x, y, z);
     }
 
+    if (rotationGroupRef.current && rotationPeriodSeconds) {
+      const angle =
+        rotationOffsetRad +
+        ((elapsed % rotationPeriodSeconds) / rotationPeriodSeconds) * TWO_PI;
+      rotationGroupRef.current.rotation.y = angle;
+    }
+
     if (groupRef.current && billboardRef.current) {
       const distance = camera.position.distanceTo(groupRef.current.position);
       const scaleValue = Math.max(MIN_SCALE, distance * SCREEN_SCALE);
       billboardRef.current.scale.set(scaleValue, scaleValue, scaleValue);
 
-      const visibility = computeLabelVisibility(planet, camera, maxOrbitDistance);
+      const visibility = labelsAlwaysVisible
+        ? 1
+        : computeLabelVisibility(planet, camera, maxOrbitDistance);
       billboardRef.current.visible = visibility > 0.05;
 
       if (ringRef.current?.material) {
-        ringRef.current.material.opacity = (isImpactor ? 1 : (isNeo ? 1 : 0.8)) * visibility;
+        ringRef.current.material.opacity =
+          (isImpactor ? 1 : isNeo ? 1 : 0.8) * visibility;
       }
 
       if (textRef.current) {
         if (textRef.current.material) {
           textRef.current.material.opacity = visibility;
         }
-        if (typeof textRef.current.outlineOpacity === 'number') {
+        if (typeof textRef.current.outlineOpacity === "number") {
           textRef.current.outlineOpacity = visibility;
         }
         textRef.current.visible = visibility > 0.05;
@@ -505,12 +696,44 @@ function PlanetBody({ planet, maxOrbitDistance, simulationTimeRef }) {
 
   return (
     <group ref={groupRef}>
+      <group ref={tiltGroupRef}>
+        <group ref={rotationGroupRef}>
+          <Sphere args={[bodyRadius, 32, 32]}>
+            <meshStandardMaterial
+              color={surfaceTexture ? "#ffffff" : bodyColor}
+              map={surfaceTexture || null}
+              emissive={
+                surfaceTexture
+                  ? "#000000"
+                  : isImpactor || isNeo
+                    ? "#b59400"
+                    : isEarth
+                      ? "#86ff3b"
+                      : "#222222"
+              }
+              emissiveIntensity={
+                surfaceTexture
+                  ? 0
+                  : isImpactor || isNeo
+                    ? 0.4
+                    : isEarth
+                      ? 0.2
+                      : 0.05
+              }
+              roughness={surfaceTexture ? 0.5 : 0.6}
+              metalness={surfaceTexture ? 0.05 : 0.1}
+            />
+          </Sphere>
+        </group>
+      </group>
       <Billboard ref={billboardRef} follow position={[0, 0, 0]}>
         <group>
           <mesh ref={ringRef}>
-            <ringGeometry args={[indicatorRadius - ringWidth, indicatorRadius, 128]} />
+            <ringGeometry
+              args={[indicatorRadius - ringWidth, indicatorRadius, 128]}
+            />
             <meshBasicMaterial
-              color={planet.orbitColor || planet.color || '#ffffff'}
+              color={planet.orbitColor || planet.color || "#ffffff"}
               side={THREE.DoubleSide}
               transparent
               opacity={0.8}
@@ -523,15 +746,19 @@ function PlanetBody({ planet, maxOrbitDistance, simulationTimeRef }) {
             color={labelColor}
             anchorX="left"
             anchorY="middle"
-            outlineWidth={isImpactor ? 0.05 : (isNeo ? 0.04 : 0.03)}
+            outlineWidth={isImpactor ? 0.05 : isNeo ? 0.04 : 0.03}
             outlineColor="#000000"
-        >
-          {isImpactor ? `IMPACTOR: ${planet.name}` : (isNeo ? `NEO: ${planet.name}` : planet.name)}
-        </Text>
-      </group>
-    </Billboard>
-  </group>
-);
+          >
+            {isImpactor
+              ? `IMPACTOR: ${planet.name}`
+              : isNeo
+                ? `NEO: ${planet.name}`
+                : planet.name}
+          </Text>
+        </group>
+      </Billboard>
+    </group>
+  );
 }
 
 function Sun() {
@@ -539,16 +766,20 @@ function Sun() {
   return (
     <group>
       <Sphere args={[sunRadius, 64, 64]}>
-        <meshStandardMaterial emissive="#ffcc55" emissiveIntensity={1.5} color="#ffaa33" />
+        <meshStandardMaterial
+          emissive="#fffad8"
+          emissiveIntensity={10.5}
+          color="#ffca7a"
+        />
       </Sphere>
-      <pointLight args={[0xffffff, 2.2, 0]} />
+      <pointLight color={0xffe8a0} intensity={15000} distance={0} decay={2} />
     </group>
   );
 }
 
 function SolarSkybox() {
   const { scene } = useThree();
-  const texture = useLoader(THREE.TextureLoader, '/textures/space-skybox.jpg');
+  const texture = useLoader(THREE.TextureLoader, "/textures/space-skybox.jpg");
 
   useEffect(() => {
     texture.mapping = THREE.EquirectangularReflectionMapping;
@@ -565,16 +796,45 @@ function SolarSkybox() {
   return null;
 }
 
-export default function SolarSystemVisualization({ className = '', planets = [], neoObjects = [], generatedAt, timeScale = 1, onCollision }) {
+export default function SolarSystemVisualization({
+  className = "",
+  planets = [],
+  neoObjects = [],
+  generatedAt,
+  timeScale = 1,
+  onCollision,
+  focusBodyName,
+  followFocus = false,
+  cameraDistanceMultiplier = 1.6,
+  showStars = true,
+  showMiniMap = true,
+  alwaysShowLabels = false,
+}) {
+  const simulationTimeRef = useRef(0);
+  const [collisions, setCollisions] = useState([]);
+  const controlsRef = useRef();
+
+  const bodies = useMemo(
+    () => [...planets, ...neoObjects],
+    [planets, neoObjects],
+  );
+
+  const focusPlanet = useMemo(() => {
+    if (!focusBodyName) {
+      return null;
+    }
+    const normalized = focusBodyName.trim().toLowerCase();
+    return (
+      bodies.find((body) => (body.name || "").toLowerCase() === normalized) ||
+      null
+    );
+  }, [focusBodyName, bodies]);
+
   const maxOrbitDistance = useMemo(() => {
-    const bodies = [...planets, ...neoObjects];
     if (!bodies.length) return 1;
     const maxSemiMajor = Math.max(...bodies.map((p) => p.semiMajorAxisKm || 0));
     return Math.max(1, maxSemiMajor * SCALE_FACTOR);
-  }, [planets, neoObjects]);
-
-  const simulationTimeRef = useRef(0);
-  const [collisions, setCollisions] = useState([]);
+  }, [bodies]);
 
   useEffect(() => {
     simulationTimeRef.current = 0;
@@ -582,32 +842,44 @@ export default function SolarSystemVisualization({ className = '', planets = [],
 
   const handleCollision = (collisionData) => {
     // Añadir nueva colisión
-    setCollisions(prev => [...prev, { ...collisionData, id: Date.now() }]);
-    
+    setCollisions((prev) => [...prev, { ...collisionData, id: Date.now() }]);
+
     // Notificar al componente padre si existe callback
     if (onCollision) {
       onCollision(collisionData);
     }
-    
+
     // Log en consola para debugging
-    console.log('🚨 COLISIÓN DETECTADA:', {
+    console.log("🚨 COLISIÓN DETECTADA:", {
       objetos: `${collisionData.object1.name} ↔ ${collisionData.object2.name}`,
       distancia: collisionData.distance,
-      tiempo: collisionData.time
+      tiempo: collisionData.time,
     });
   };
 
   const handleCollisionComplete = (collisionId) => {
-    setCollisions(prev => prev.filter(c => c.id !== collisionId));
+    setCollisions((prev) => prev.filter((c) => c.id !== collisionId));
   };
 
-  const cameraDistance = maxOrbitDistance * 1.6;
+  const baseMultiplier = focusPlanet ? cameraDistanceMultiplier : 1.6;
+  const cameraDistance = Math.max(maxOrbitDistance * baseMultiplier, 10);
   const cameraFar = cameraDistance * 12;
+  const minZoomDistance = focusPlanet
+    ? Math.max(
+      (focusPlanet.radiusKm || 1000) * SCALE_FACTOR * 1.8,
+      cameraDistance * 0.0025,
+      0.02,
+    )
+    : maxOrbitDistance * 0.1;
 
   return (
     <div className={`w-full h-full ${className}`}>
       <Canvas
-        gl={{ outputColorSpace: THREE.SRGBColorSpace, logarithmicDepthBuffer: true }}
+        gl={{
+          outputColorSpace: THREE.SRGBColorSpace,
+          logarithmicDepthBuffer: true,
+          physicallyCorrectLights: true,
+        }}
         camera={{
           position: [cameraDistance, cameraDistance * 0.45, cameraDistance],
           fov: 45,
@@ -615,16 +887,35 @@ export default function SolarSystemVisualization({ className = '', planets = [],
           far: cameraFar,
         }}
       >
-        <SolarSkybox />
-        <SolarTimeController timeScale={timeScale} simulationTimeRef={simulationTimeRef} />
-        <CollisionDetector 
-          planets={planets} 
-          neoObjects={neoObjects} 
+        {showStars && <SolarSkybox />}
+        <SolarTimeController
+          timeScale={timeScale}
+          simulationTimeRef={simulationTimeRef}
+        />
+        <FocusCameraController
+          focusPlanet={focusPlanet}
+          simulationTimeRef={simulationTimeRef}
+          cameraDistanceMultiplier={cameraDistanceMultiplier}
+          followEnabled={followFocus}
+          controlsRef={controlsRef}
+        />
+        <CollisionDetector
+          planets={planets}
+          neoObjects={neoObjects}
           onCollision={handleCollision}
           simulationTimeRef={simulationTimeRef}
         />
         <ambientLight intensity={0.1} />
-        <Stars radius={500} depth={60} count={2000} factor={4} fade speed={1} />
+        {showStars && (
+          <Stars
+            radius={500}
+            depth={60}
+            count={2000}
+            factor={4}
+            fade
+            speed={1}
+          />
+        )}
 
         <Sun />
 
@@ -635,6 +926,7 @@ export default function SolarSystemVisualization({ className = '', planets = [],
               planet={planet}
               maxOrbitDistance={maxOrbitDistance}
               simulationTimeRef={simulationTimeRef}
+              labelsAlwaysVisible={alwaysShowLabels}
             />
           </group>
         ))}
@@ -649,13 +941,14 @@ export default function SolarSystemVisualization({ className = '', planets = [],
         ))}
 
         <OrbitControls
+          ref={controlsRef}
           enablePan
           enableZoom
           enableRotate
-          zoomSpeed={1.4}
+          zoomSpeed={2.8}
           panSpeed={0.5}
           rotateSpeed={0.35}
-          minDistance={maxOrbitDistance * 0.1}
+          minDistance={minZoomDistance}
           maxDistance={cameraFar * 0.9}
         />
       </Canvas>

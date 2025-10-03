@@ -3,10 +3,9 @@
  * Frontend React con Three.js para visualización de órbitas
  */
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import OrbitalVisualization from './components/OrbitalVisualization';
 import ControlPanel from './components/ControlPanel';
-import AnimationControls from './components/AnimationControls';
 import SolarSystemVisualization from './components/SolarSystemVisualization';
 import MeteorMadnessAPI from './services/api';
 
@@ -55,15 +54,12 @@ function App() {
   const [impactorError, setImpactorError] = useState(null);
   const [collisions, setCollisions] = useState([]);
   const [showCollisionNotifications, setShowCollisionNotifications] = useState(true);
+  const [neoTimeScale, setNeoTimeScale] = useState(1);
+  const [currentNeoOrbit, setCurrentNeoOrbit] = useState(null);
+  const [currentNeoName, setCurrentNeoName] = useState('NEO');
 
   // Estados de animación
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentFrame, setCurrentFrame] = useState(0);
-  const [animationSpeed, setAnimationSpeed] = useState(1.0);
-
   // Referencias
-  const animationRef = useRef(null);
-  const lastFrameTimeRef = useRef(0);
   const introDismissedRef = useRef(false);
   const introFadeTimeoutRef = useRef(null);
   const introSessionRef = useRef({ id: 0, autoDismiss: false, active: true, completed: false });
@@ -88,41 +84,6 @@ function App() {
     return () => clearTimeout(timeoutId);
   }, [elements, simParams, connectionStatus, viewMode]);
 
-  // Manejo de la animación
-  useEffect(() => {
-    if (isPlaying && simulationData?.trajectory?.positions) {
-      const animate = (currentTime) => {
-        if (currentTime - lastFrameTimeRef.current >= (100 / animationSpeed)) {
-          setCurrentFrame(prev => {
-            const maxFrames = simulationData.trajectory.positions.length - 1;
-            const next = prev + 1;
-            
-            if (next > maxFrames) {
-              setIsPlaying(false);
-              return maxFrames;
-            }
-            
-            return next;
-          });
-          
-          lastFrameTimeRef.current = currentTime;
-        }
-        
-        if (isPlaying) {
-          animationRef.current = requestAnimationFrame(animate);
-        }
-      };
-      
-      animationRef.current = requestAnimationFrame(animate);
-    }
-
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [isPlaying, animationSpeed, simulationData]);
-
   useEffect(() => {
     return () => {
       if (introFadeTimeoutRef.current) {
@@ -133,7 +94,6 @@ function App() {
 
   useEffect(() => {
     if (viewMode === 'solar') {
-      setIsPlaying(false);
       setNeoSearchResults([]);
       setNeoSearchError(null);
       setIsSearchingNeo(false);
@@ -226,6 +186,40 @@ const checkBackendConnection = async () => {
     }
   };
 
+  const simulationElementsToOrbitData = useCallback((elements, name = 'NEO') => {
+    if (!elements) {
+      return null;
+    }
+
+    const semiMajorAxisKm = Number(elements.a);
+    const eccentricity = Number(elements.e);
+    const inclinationDeg = Number(elements.i);
+    const longitudeOfAscendingNodeDeg = Number(elements.Omega);
+    const argumentOfPeriapsisDeg = Number(elements.omega);
+    const meanAnomalyDeg = Number(elements.M0);
+    const mu = Number(elements.mu);
+
+    const resolvedMu = Number.isFinite(mu) ? mu : 3.986004418e5;
+
+    if (!Number.isFinite(semiMajorAxisKm)) {
+      return null;
+    }
+
+    const orbitalPeriodSeconds = 2 * Math.PI * Math.sqrt(Math.pow(semiMajorAxisKm, 3) / resolvedMu);
+
+    return {
+      name,
+      semiMajorAxisKm,
+      eccentricity: Number.isFinite(eccentricity) ? eccentricity : 0,
+      inclinationDeg: Number.isFinite(inclinationDeg) ? inclinationDeg : 0,
+      longitudeOfAscendingNodeDeg: Number.isFinite(longitudeOfAscendingNodeDeg) ? longitudeOfAscendingNodeDeg : 0,
+      argumentOfPeriapsisDeg: Number.isFinite(argumentOfPeriapsisDeg) ? argumentOfPeriapsisDeg : 0,
+      meanAnomalyDeg: Number.isFinite(meanAnomalyDeg) ? meanAnomalyDeg : 0,
+      orbitalPeriodDays: orbitalPeriodSeconds / 86400,
+      mu: resolvedMu,
+    };
+  }, []);
+
   const loadPresets = async () => {
     try {
       const result = await MeteorMadnessAPI.getPresets();
@@ -261,6 +255,16 @@ const checkBackendConnection = async () => {
       markIntroLoaded(sessionId);
     }
   }, [connectionStatus, markIntroLoaded]);
+
+  useEffect(() => {
+    if (connectionStatus !== 'connected') {
+      return;
+    }
+
+    if (!solarSystemData && !isLoadingSolar) {
+      loadSolarSystemData();
+    }
+  }, [connectionStatus, solarSystemData, isLoadingSolar, loadSolarSystemData]);
 
   useEffect(() => {
     if (viewMode === 'solar' && connectionStatus === 'connected' && !solarSystemData && !isLoadingSolar) {
@@ -371,8 +375,9 @@ const checkBackendConnection = async () => {
       const orbitalPeriodDays = (2 * Math.PI) / meanMotion / 86400;
 
       const impactorColor = '#ff4444';
+      const impactorName = data.name || 'IMPACTOR-2025';
       setImpactorObject({
-        name: data.name || 'IMPACTOR-2025',
+        name: impactorName,
         color: impactorColor,
         orbitColor: impactorColor,
         radiusKm: data.radiusKm || 0.5,
@@ -384,6 +389,21 @@ const checkBackendConnection = async () => {
         meanAnomalyDeg: wrappedMeanAnomalyDeg,
         orbitalPeriodDays,
         isNeo: true,
+        isImpactor: true,
+      });
+      setCurrentNeoName(impactorName);
+      setCurrentNeoOrbit({
+        name: impactorName,
+        semiMajorAxisKm: aKm,
+        eccentricity,
+        inclinationDeg,
+        longitudeOfAscendingNodeDeg: ascendingNodeDeg,
+        argumentOfPeriapsisDeg: periapsisDeg,
+        meanAnomalyDeg: wrappedMeanAnomalyDeg,
+        orbitalPeriodDays,
+        mu,
+        color: impactorColor,
+        orbitColor: impactorColor,
         isImpactor: true,
       });
       setImpactorError(null);
@@ -399,6 +419,8 @@ const checkBackendConnection = async () => {
     setImpactorObject(null);
     setImpactorError(null);
     setIsLoadingImpactor(false);
+    setCurrentNeoOrbit(null);
+    setCurrentNeoName('NEO');
   }, []);
 
   const handleCollision = useCallback((collisionData) => {
@@ -611,8 +633,13 @@ const checkBackendConnection = async () => {
 
       if (result.success) {
         setSimulationData(result.data.data);
-        setCurrentFrame(0);
-        setIsPlaying(false);
+
+        const name = currentNeoName || 'NEO';
+        const orbit = simulationElementsToOrbitData(elements, name);
+        if (orbit) {
+          const previousColor = currentNeoOrbit?.color || currentNeoOrbit?.orbitColor || '#2B7BFF';
+          setCurrentNeoOrbit({ ...orbit, color: previousColor, orbitColor: previousColor });
+        }
       } else {
         setError(result.error?.error || 'Error en la simulación');
         setSimulationData(null);
@@ -630,6 +657,7 @@ const checkBackendConnection = async () => {
   // Manejadores de eventos
   const handleElementsChange = useCallback((newElements) => {
     setElements(newElements);
+    setCurrentNeoName('Simulación personalizada');
   }, []);
   
   const handleSimParamsChange = useCallback((newParams) => {
@@ -638,7 +666,18 @@ const checkBackendConnection = async () => {
 
   const handlePresetSelect = useCallback((presetKey, presetElements) => {
     setElements(presetElements);
-  }, []);
+
+    const preset = presets[presetKey];
+    const presetName = preset?.name || presetKey || 'Preset';
+    setCurrentNeoName(presetName);
+
+    const referenceElements = preset?.elements || presetElements;
+    const orbit = simulationElementsToOrbitData(referenceElements, presetName);
+    if (orbit) {
+      const presetColor = preset?.color || preset?.orbitColor || '#2B7BFF';
+      setCurrentNeoOrbit({ ...orbit, color: presetColor, orbitColor: presetColor });
+    }
+  }, [presets, simulationElementsToOrbitData]);
 
   const handleNeoSelect = useCallback(async (item) => {
     if (!item?.designation) return;
@@ -703,8 +742,9 @@ const checkBackendConnection = async () => {
         const orbitalPeriodDays = (2 * Math.PI) / meanMotion / 86400;
 
         const neoColor = '#7cf9ff';
+        const neoName = data.object?.full_name || item.full_name || item.designation;
         setSolarNeoObject({
-          name: data.object?.full_name || item.full_name || item.designation,
+          name: neoName,
           color: neoColor,
           orbitColor: neoColor,
           radiusKm: 1,
@@ -727,6 +767,21 @@ const checkBackendConnection = async () => {
         setSolarNeoError(null);
         setSolarSearchQuery('');
         setNeoSearchResults([]);
+
+        setCurrentNeoName(neoName || 'NEO');
+        setCurrentNeoOrbit({
+          name: neoName || 'NEO',
+          semiMajorAxisKm: aKm,
+          eccentricity,
+          inclinationDeg,
+          longitudeOfAscendingNodeDeg: ascendingNodeDeg,
+          argumentOfPeriapsisDeg: periapsisDeg,
+          meanAnomalyDeg: wrappedMeanAnomalyDeg,
+          orbitalPeriodDays,
+          mu,
+          color: neoColor,
+          orbitColor: neoColor,
+        });
       } catch (err) {
         console.error('Error al obtener datos del NEO:', err);
         setSolarNeoError('Error de comunicación al obtener datos del NEO');
@@ -766,6 +821,14 @@ const checkBackendConnection = async () => {
         return;
       }
 
+      const neoName = data.object?.full_name || item.full_name || item.designation;
+      setCurrentNeoName(neoName || 'NEO');
+      const orbitFromElements = simulationElementsToOrbitData(simulationElements, neoName || 'NEO');
+      const neoColor = '#7cf9ff';
+      if (orbitFromElements) {
+        setCurrentNeoOrbit({ ...orbitFromElements, color: neoColor, orbitColor: neoColor });
+      }
+
       setNeoSearchResults([]);
       setElements(simulationElements);
       triggeredSimulation = true;
@@ -779,39 +842,24 @@ const checkBackendConnection = async () => {
         setIsLoading(false);
       }
     }
-  }, [connectionStatus, handleViewModeChange, viewMode, solarSystemData]);
+  }, [connectionStatus, handleViewModeChange, viewMode, solarSystemData, simulationElementsToOrbitData]);
 
   const handleRetrySolar = useCallback(() => {
     loadSolarSystemData();
   }, [loadSolarSystemData]);
 
-  const handlePlay = useCallback(() => {
-    if (simulationData?.trajectory?.positions) {
-      setIsPlaying(true);
-    }
-  }, [simulationData]);
-
-  const handlePause = useCallback(() => {
-    setIsPlaying(false);
-  }, []);
-
-  const handleReset = useCallback(() => {
-    setIsPlaying(false);
-    setCurrentFrame(0);
-  }, []);
-
-  const handleFrameSeek = useCallback((frame) => {
-    setCurrentFrame(frame);
-    setIsPlaying(false);
-  }, []);
-
-  const handleSpeedChange = useCallback((speed) => {
-    setAnimationSpeed(speed);
-  }, []);
-
   const togglePanel = useCallback(() => {
     setIsPanelOpen(prev => !prev);
   }, []);
+
+  const earthOrbitData = useMemo(() => {
+    const planets = solarSystemData?.planets;
+    if (!Array.isArray(planets)) {
+      return null;
+    }
+
+    return planets.find((planet) => (planet.name || '').toLowerCase() === 'tierra') || null;
+  }, [solarSystemData]);
 
   // Retry connection
   const retryConnection = () => {
@@ -861,12 +909,14 @@ const checkBackendConnection = async () => {
     );
   }
 
-  const totalFrames = simulationData?.trajectory?.positions?.length || 0;
   const solarPlanets = solarSystemData?.planets || [];
   const solarGeneratedAt = solarSystemData?.generatedAt || null;
   const isSolarReady = solarPlanets.length > 0;
-  const solarSpeedPresets = [1, 60, 3600, 86400, 604800, 2592000];
+  const speedPresets = [1, 60, 3600, 86400, 604800, 2592000];
+  const solarSpeedPresets = speedPresets;
+  const neoSpeedPresets = speedPresets;
   const solarTimeScaleLabel = formatSolarScale(solarTimeScale);
+  const neoTimeScaleLabel = formatSolarScale(neoTimeScale);
   const solarGeneratedLabel = solarGeneratedAt ? new Date(solarGeneratedAt).toLocaleString() : null;
   const introLoadDurationLabel = introLoadDurationMs != null
     ? introLoadDurationMs >= 1000
@@ -1026,14 +1076,18 @@ const checkBackendConnection = async () => {
                 )}
               </div>
             )
-          ) : (
+         ) : (
             <OrbitalVisualization
-              simulationData={simulationData}
-              currentFrame={currentFrame}
-              isPlaying={isPlaying}
-              showTrajectory={true}
-              showInfo={true}
               className="h-full w-full"
+              earthOrbitData={earthOrbitData}
+              neoOrbitData={currentNeoOrbit}
+              timeScale={neoTimeScale}
+              generatedAt={solarGeneratedAt}
+              onCollision={handleCollision}
+              focusBodyName="Tierra"
+              followFocus
+              cameraDistanceMultiplier={0.8}
+              showStars
             />
           )}
 
@@ -1270,24 +1324,51 @@ const checkBackendConnection = async () => {
 
         {viewMode === 'orbit' && (
           <div
-            className="pointer-events-none fixed bottom-6 z-20 flex justify-center"
+            className="pointer-events-none fixed bottom-6 z-20 flex justify-center w-full"
             style={bottomPanelStyle}
           >
-            <div className="pointer-events-auto mx-4 w-full max-w-5xl rounded-2xl border border-transparent bg-transparent">
-              <AnimationControls
-                isPlaying={isPlaying}
-                onPlay={handlePlay}
-                onPause={handlePause}
-                onReset={handleReset}
-                currentFrame={currentFrame}
-                totalFrames={totalFrames}
-                onFrameSeek={handleFrameSeek}
-                speed={animationSpeed}
-                onSpeedChange={handleSpeedChange}
-                simulationData={simulationData}
-                disabled={isLoading || !simulationData}
-                className="rounded-2xl"
-              />
+            <div className="pointer-events-auto mx-4 w-full max-w-4xl rounded-2xl border border-transparent bg-transparent px-6 py-4">
+              <div className="flex flex-col gap-3 text-sm text-gray-200">
+                <div className="text-xs text-gray-300">
+                  Objeto simulado: <span className="text-gray-100 font-semibold">{currentNeoName}</span>
+                </div>
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <span className="font-semibold text-gray-100">Velocidad de simulación</span>
+                  <span className="text-gray-300">
+                    1 s real = <span className="text-purple-300 font-semibold">{neoTimeScaleLabel}</span> simulados ({neoTimeScale.toLocaleString()} s)
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={1}
+                  max={2592000}
+                  step={1}
+                  value={neoTimeScale}
+                  onChange={(event) => setNeoTimeScale(Number(event.target.value))}
+                  className="slider-range"
+                />
+                <div className="flex items-center flex-wrap gap-2">
+                  {neoSpeedPresets.map((preset) => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => setNeoTimeScale(preset)}
+                      className={`px-3 py-1 rounded-md border transition-colors ${
+                        neoTimeScale === preset
+                          ? 'bg-purple-600 border-purple-500 text-white'
+                          : 'bg-transparent border-white/10 text-gray-200 hover:bg-white/10'
+                      }`}
+                    >
+                      {formatSolarScale(preset)}
+                    </button>
+                  ))}
+                </div>
+                {solarGeneratedLabel && (
+                  <div className="text-xs text-gray-300">
+                    Datos generados: <span className="text-gray-100">{solarGeneratedLabel}</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
