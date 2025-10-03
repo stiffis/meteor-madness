@@ -408,7 +408,12 @@ const checkBackendConnection = async () => {
       object1: collisionData.object1.name,
       object2: collisionData.object2.name,
       distance: collisionData.distance,
-      time: collisionData.time
+      threshold: collisionData.threshold,
+      time: collisionData.time,
+      entryAngle: collisionData.entryAngle,
+      relativeVelocity: collisionData.relativeVelocity,
+      impactType: collisionData.impactType,
+      collisionType: collisionData.collisionType
     };
     
     setCollisions(prev => [collision, ...prev.slice(0, 9)]); // Mantener solo las últimas 10 colisiones
@@ -418,25 +423,39 @@ const checkBackendConnection = async () => {
       // Crear notificación visual temporal
       const notification = document.createElement('div');
       notification.className = 'fixed top-20 right-6 z-50 bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg border border-red-500 max-w-sm';
+      
+      // Determinar el emoji según el tipo de colisión
+      let emoji = '💥';
+      let title = '¡COLISIÓN DETECTADA!';
+      
+      if (collisionData.collisionType === 'ATMOSPHERIC_ENTRY') {
+        emoji = '🌍';
+        title = '¡ENTRADA ATMOSFÉRICA!';
+      } else if (collisionData.collisionType === 'SURFACE_IMPACT') {
+        emoji = '💥';
+        title = '¡IMPACTO SUPERFICIAL!';
+      }
+      
       notification.innerHTML = `
         <div class="flex items-center space-x-2">
-          <span class="text-xl">💥</span>
+          <span class="text-xl">${emoji}</span>
           <div>
-            <div class="font-semibold">¡COLISIÓN DETECTADA!</div>
+            <div class="font-semibold">${title}</div>
             <div class="text-sm">${collision.object1} ↔ ${collision.object2}</div>
             <div class="text-xs opacity-75">${collision.timestamp}</div>
+            <div class="text-xs opacity-75">Ángulo: ${collisionData.entryAngle?.toFixed(1)}°</div>
           </div>
         </div>
       `;
       
       document.body.appendChild(notification);
       
-      // Remover después de 5 segundos
+      // Remover después de 7 segundos (más tiempo para leer la información)
       setTimeout(() => {
         if (notification.parentNode) {
           notification.parentNode.removeChild(notification);
         }
-      }, 5000);
+      }, 7000);
     }
   }, [showCollisionNotifications]);
 
@@ -1185,13 +1204,27 @@ const checkBackendConnection = async () => {
                       {collisions.map((collision) => (
                         <div key={collision.id} className="bg-red-900/30 border border-red-500/50 rounded p-2 text-xs">
                           <div className="flex items-center space-x-1 mb-1">
-                            <span className="text-red-400">💥</span>
-                            <span className="font-semibold text-red-300">COLISIÓN</span>
+                            <span className="text-red-400">
+                              {collision.collisionType === 'ATMOSPHERIC_ENTRY' ? '🌍' : 
+                               collision.collisionType === 'SURFACE_IMPACT' ? '💥' : '⚠️'}
+                            </span>
+                            <span className="font-semibold text-red-300">
+                              {collision.collisionType === 'ATMOSPHERIC_ENTRY' ? 'ENTRADA ATMOSFÉRICA' :
+                               collision.collisionType === 'SURFACE_IMPACT' ? 'IMPACTO SUPERFICIAL' : 'COLISIÓN'}
+                            </span>
                           </div>
-                          <div className="text-gray-200">
-                            <div>{collision.object1} ↔ {collision.object2}</div>
-                            <div className="text-gray-400">{collision.timestamp}</div>
-                            <div className="text-gray-400">Distancia: {collision.distance.toFixed(4)}</div>
+                          <div className="text-gray-200 space-y-1">
+                            <div className="font-medium">{collision.object1} ↔ {collision.object2}</div>
+                            <div className="text-gray-400 text-[10px]">{collision.timestamp}</div>
+                            <div className="grid grid-cols-2 gap-1 text-[10px]">
+                              <div>Distancia: {(collision.distance / 1000).toFixed(1)} km</div>
+                              <div>Umbral: {(collision.threshold / 1000).toFixed(1)} km</div>
+                              <div>Ángulo: {collision.entryAngle?.toFixed(1)}°</div>
+                              <div>Velocidad: {(collision.relativeVelocity / 1000).toFixed(1)} km/s</div>
+                            </div>
+                            <div className="text-[10px] text-yellow-300">
+                              Tipo: {collision.impactType?.replace('_', ' ')}
+                            </div>
                           </div>
                         </div>
                       ))}
