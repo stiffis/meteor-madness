@@ -87,10 +87,13 @@ export default function OrbitalVisualization({
   cameraDistanceMultiplier = 0.9,
   showStars = true,
 }) {
-  const earthPlanet = useMemo(
-    () => normalizePlanet(earthOrbitData, DEFAULT_EARTH),
-    [earthOrbitData],
-  );
+  const earthPlanet = useMemo(() => {
+    // Si tenemos datos del backend, usarlos; si no, usar DEFAULT_EARTH
+    if (earthOrbitData) {
+      return normalizePlanet(earthOrbitData, DEFAULT_EARTH);
+    }
+    return DEFAULT_EARTH;
+  }, [earthOrbitData]);
 
   const neoObject = useMemo(() => {
     const normalized = normalizePlanet(neoOrbitData, DEFAULT_NEO);

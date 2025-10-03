@@ -231,6 +231,19 @@ const checkBackendConnection = async () => {
     }
   };
 
+  // Inicializar currentNeoOrbit cuando los elementos cambien
+  useEffect(() => {
+    if (viewMode === 'orbit') {
+      const orbit = simulationElementsToOrbitData(elements, currentNeoName);
+      if (orbit) {
+        setCurrentNeoOrbit(prevOrbit => {
+          const currentColor = prevOrbit?.color || prevOrbit?.orbitColor || '#2B7BFF';
+          return { ...orbit, color: currentColor, orbitColor: currentColor };
+        });
+      }
+    }
+  }, [elements, simulationElementsToOrbitData, currentNeoName, viewMode]);
+
   const loadSolarSystemData = useCallback(async (sessionId = introSessionRef.current.id) => {
     if (connectionStatus !== 'connected') {
       setSolarError('Backend no disponible para consultar el sistema solar');
@@ -267,7 +280,8 @@ const checkBackendConnection = async () => {
   }, [connectionStatus, solarSystemData, isLoadingSolar, loadSolarSystemData]);
 
   useEffect(() => {
-    if (viewMode === 'solar' && connectionStatus === 'connected' && !solarSystemData && !isLoadingSolar) {
+    // Cargar datos del sistema solar tanto para vista solar como para simulación NEO (necesitamos datos de la Tierra)
+    if (connectionStatus === 'connected' && !solarSystemData && !isLoadingSolar) {
       loadSolarSystemData(introSessionRef.current.id);
     }
   }, [viewMode, connectionStatus, solarSystemData, isLoadingSolar, loadSolarSystemData]);
@@ -422,6 +436,65 @@ const checkBackendConnection = async () => {
     setCurrentNeoOrbit(null);
     setCurrentNeoName('NEO');
   }, []);
+
+  const handleLoadImpactorForNeoSimulation = useCallback(async () => {
+    if (connectionStatus !== 'connected') {
+      setError('Backend no disponible para cargar IMPACTOR-2025');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const result = await MeteorMadnessAPI.getImpactor2025();
+
+      if (!result.success) {
+        const message = result.error?.error || result.error || 'No se pudo obtener datos de IMPACTOR-2025';
+        setError(message);
+        return;
+      }
+
+      const data = result.data || {};
+      const impactorElements = data.simulation_elements;
+
+      if (!impactorElements) {
+        setError('IMPACTOR-2025 no cuenta con elementos orbitales disponibles');
+        return;
+      }
+
+      // Configurar elementos orbitales para la simulación NEO
+      const neoElements = {
+        a: Number(impactorElements.a),
+        e: Number(impactorElements.e), 
+        i: Number(impactorElements.i),
+        omega: Number(impactorElements.omega),
+        Omega: Number(impactorElements.Omega),
+        M0: Number(impactorElements.M0)
+      };
+
+      setElements(neoElements);
+      setCurrentNeoName('IMPACTOR-2025');
+      
+      // Crear órbita para visualización
+      const orbit = simulationElementsToOrbitData(neoElements, 'IMPACTOR-2025');
+      if (orbit) {
+        setCurrentNeoOrbit({ 
+          ...orbit, 
+          color: '#ff4444', 
+          orbitColor: '#ff4444',
+          isImpactor: true 
+        });
+      }
+
+      setError(null);
+    } catch (err) {
+      console.error('Error al obtener datos de IMPACTOR-2025:', err);
+      setError('Error de comunicación al obtener datos de IMPACTOR-2025');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [connectionStatus, simulationElementsToOrbitData]);
 
   const handleCollision = useCallback((collisionData) => {
     const collision = {
@@ -1292,6 +1365,52 @@ const checkBackendConnection = async () => {
                   <div className="text-[11px] text-gray-300 mt-2">
                     El sistema detecta automáticamente cuando dos objetos están muy cerca.
                   </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {viewMode === 'orbit' && (
+            <div className="pointer-events-none absolute top-24 right-6 z-30 flex flex-col w-80 max-w-full">
+              <div className="pointer-events-auto bg-transparent border border-transparent rounded-2xl p-4 space-y-3 text-gray-100">
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-100 mb-2">IMPACTOR-2025</h3>
+                  <div className="text-xs text-gray-300 mb-3">
+                    Cargar meteorito hipotético para simulación de impacto
+                  </div>
+                  {error && currentNeoName === 'IMPACTOR-2025' && (
+                    <div className="text-xs text-red-400 mb-3">
+                      {typeof error === 'string' ? error : error.error}
+                    </div>
+                  )}
+                  {isLoading && currentNeoName === 'IMPACTOR-2025' && (
+                    <div className="text-xs text-red-300 mb-3">Cargando IMPACTOR-2025...</div>
+                  )}
+                  {currentNeoName === 'IMPACTOR-2025' && currentNeoOrbit && (
+                    <div className="text-xs text-gray-200 bg-transparent border border-transparent rounded-lg p-3 space-y-1 mb-3">
+                      <div className="text-sm text-gray-100 font-semibold">IMPACTOR-2025 cargado:</div>
+                      <div className="text-red-300 font-semibold">⚠️ Objeto con trayectoria de impacto potencial</div>
+                      <div>Período orbital: {currentNeoOrbit.orbitalPeriodDays?.toFixed(1)} días</div>
+                      <div>Semi-eje mayor: {(currentNeoOrbit.semiMajorAxisKm / 149597870.7).toFixed(3)} AU</div>
+                      <div>Excentricidad: {currentNeoOrbit.eccentricity?.toFixed(3)}</div>
+                      <div>Inclinación: {currentNeoOrbit.inclinationDeg?.toFixed(1)}°</div>
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleLoadImpactorForNeoSimulation}
+                    disabled={isLoading || connectionStatus !== 'connected'}
+                    className={`w-full px-4 py-2 rounded-lg border transition-colors text-sm font-medium ${
+                      isLoading || connectionStatus !== 'connected'
+                        ? 'bg-gray-700/40 border-gray-500/60 text-gray-400 cursor-not-allowed'
+                        : 'bg-red-600/80 border-red-500 text-white hover:bg-red-700/90'
+                    }`}
+                  >
+                    {isLoading && currentNeoName === 'IMPACTOR-2025' ? 'Cargando...' : '🚀 Cargar IMPACTOR-2025'}
+                  </button>
+                </div>
+                <div className="text-[11px] text-gray-300">
+                  Esto cargará los elementos orbitales de IMPACTOR-2025 en la simulación.
                 </div>
               </div>
             </div>
