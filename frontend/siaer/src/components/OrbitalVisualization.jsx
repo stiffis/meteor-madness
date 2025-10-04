@@ -11,13 +11,14 @@ const DEFAULT_EARTH = {
   color: "#6ba4ff",
   orbitColor: "#3fa9f5",
   radiusKm: 6371,
-  semiMajorAxisKm: 149_597_870.7,
-  eccentricity: 0.01671,
-  inclinationDeg: 0.00005,
-  longitudeOfAscendingNodeDeg: -11.26064,
-  argumentOfPeriapsisDeg: 114.20783,
-  meanAnomalyDeg: 358.617,
-  orbitalPeriodDays: 365.256,
+  semiMajorAxisKm: 0,
+  eccentricity: 0,
+  inclinationDeg: 0,
+  longitudeOfAscendingNodeDeg: 0,
+  argumentOfPeriapsisDeg: 0,
+  meanAnomalyDeg: 0,
+  orbitalPeriodDays: 1,
+  isStationary: true,
   textureUrl: "/textures/earth-daymap.jpg",
 };
 
@@ -90,7 +91,21 @@ export default function OrbitalVisualization({
   const earthPlanet = useMemo(() => {
     // Si tenemos datos del backend, usarlos; si no, usar DEFAULT_EARTH
     if (earthOrbitData) {
-      return normalizePlanet(earthOrbitData, DEFAULT_EARTH);
+      const normalized = normalizePlanet(earthOrbitData, DEFAULT_EARTH);
+      if ((normalized.name || '').toLowerCase() === 'tierra') {
+        return {
+          ...normalized,
+          semiMajorAxisKm: 0,
+          eccentricity: 0,
+          inclinationDeg: 0,
+          longitudeOfAscendingNodeDeg: 0,
+          argumentOfPeriapsisDeg: 0,
+          meanAnomalyDeg: 0,
+          orbitalPeriodDays: 1,
+          isStationary: true,
+        };
+      }
+      return normalized;
     }
     return DEFAULT_EARTH;
   }, [earthOrbitData]);

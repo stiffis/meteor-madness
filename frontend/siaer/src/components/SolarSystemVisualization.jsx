@@ -207,6 +207,10 @@ function orbitalToCartesian(planet, trueAnomaly) {
 }
 
 function computePlanetPosition(planet, elapsedSeconds) {
+  if (planet.isStationary || Math.abs(planet.semiMajorAxisKm || 0) < 1e-6) {
+    return [0, 0, 0];
+  }
+
   const meanMotion = (2 * Math.PI) / (planet.orbitalPeriodDays * 86400);
   const M0 = degToRad(planet.meanAnomalyDeg || 0);
   const meanAnomaly = M0 + meanMotion * elapsedSeconds;
@@ -224,6 +228,9 @@ function computePlanetPosition(planet, elapsedSeconds) {
 }
 
 function createOrbitPoints(planet, segments = 256) {
+  if (planet.isStationary || Math.abs(planet.semiMajorAxisKm || 0) < 1e-6) {
+    return [[0, 0, 0]];
+  }
   const points = [];
   for (let i = 0; i <= segments; i += 1) {
     const trueAnomaly = (i / segments) * 2 * Math.PI;
@@ -233,6 +240,9 @@ function createOrbitPoints(planet, segments = 256) {
 }
 
 function PlanetOrbit({ planet }) {
+  if (planet.isStationary || Math.abs(planet.semiMajorAxisKm || 0) < 1e-6) {
+    return null;
+  }
   const points = useMemo(() => createOrbitPoints(planet), [planet]);
   return (
     <Line
@@ -832,7 +842,10 @@ export default function SolarSystemVisualization({
 
   const maxOrbitDistance = useMemo(() => {
     if (!bodies.length) return 1;
-    const maxSemiMajor = Math.max(...bodies.map((p) => p.semiMajorAxisKm || 0));
+    const active = bodies
+      .filter((p) => !(p.isStationary || Math.abs(p.semiMajorAxisKm || 0) < 1e-6))
+      .map((p) => Math.abs(p.semiMajorAxisKm || 0));
+    const maxSemiMajor = active.length ? Math.max(...active) : 1;
     return Math.max(1, maxSemiMajor * SCALE_FACTOR);
   }, [bodies]);
 

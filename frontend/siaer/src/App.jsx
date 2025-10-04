@@ -4,7 +4,6 @@
  */
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import OrbitalVisualization from './components/OrbitalVisualization';
 import ControlPanel from './components/ControlPanel';
 import SolarSystemVisualization from './components/SolarSystemVisualization';
 import MeteorMadnessAPI from './services/api';
@@ -1149,19 +1148,8 @@ const checkBackendConnection = async () => {
                 )}
               </div>
             )
-         ) : (
-            <OrbitalVisualization
-              className="h-full w-full"
-              earthOrbitData={earthOrbitData}
-              neoOrbitData={currentNeoOrbit}
-              timeScale={neoTimeScale}
-              generatedAt={solarGeneratedAt}
-              onCollision={handleCollision}
-              focusBodyName="Tierra"
-              followFocus
-              cameraDistanceMultiplier={0.8}
-              showStars
-            />
+          ) : (
+            <div className="h-full w-full" />
           )}
 
           {viewMode === 'solar' && (
