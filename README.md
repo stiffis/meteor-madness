@@ -1,4 +1,4 @@
-# 🚀 SIAER - Simulador de Impactos de Asteroides y Evaluación de Riesgos
+# 🚀 Meteor Impact Simulator and Risk Assessment Tool
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
@@ -14,284 +14,302 @@
 ![Matplotlib](https://img.shields.io/badge/Matplotlib-11557C?style=for-the-badge&logo=matplotlib&logoColor=white)
 ![Gunicorn](https://img.shields.io/badge/Gunicorn-499848?style=for-the-badge&logo=gunicorn&logoColor=white)
 
-Proyecto **EN DESARROLLO**. Herramienta web interactiva que simula impactos de asteroides en la Tierra y evalúa las consecuencias medioambientales, integrando datos reales de NASA y USGS.
+**IN DEVELOPMENT**. Interactive web tool that simulates asteroid impacts on Earth and evaluates environmental consequences, integrating real data from NASA and USGS.
 
-## 📁 Estructura del Proyecto
+## 📁 Project Structure
 
 ```
 MeteorMadness/
-├── README.md                    # Este archivo
-├── backend/                     # API REST en Flask
-│   ├── app.py                   # Aplicación principal
-│   ├── requirements.txt         # Dependencias Python
-│   ├── start_dev.sh            # Script de desarrollo
-│   ├── test_setup.py           # Test de configuración
-│   ├── test_api.py             # Test de endpoints
-│   ├── models/                 # Modelos de datos
-│   │   └── orbital_elements.py # Elementos orbitales keplerianos
-│   └── services/               # Lógica de negocio
-│       ├── orbital_service.py  # Validación y presets
-│       └── simulation_service.py # Simulación orbital
-├── frontend/                   # Frontend React + Three.js
-│   ├── src/                   # Código fuente React
-│   │   ├── components/        # Componentes React
-│   │   └── services/          # Servicios API
-│   ├── README.md              # Documentación del frontend
-│   └── start_dev.sh          # Script de desarrollo
-└── simultion_trajectory/      # Simulación orbital original
-    ├── orbital_simulation.py  # Simulación base
-    ├── interactive_orbital_sim.py # Interfaz interactiva
-    └── README.md              # Documentación detallada
+├── README.md                    # This file
+├── backend/                     # Flask REST API
+│   ├── app.py                   # Main application
+│   ├── requirements.txt         # Python dependencies
+│   ├── start_dev.sh            # Development script
+│   ├── test_setup.py           # Setup test
+│   ├── test_api.py             # Endpoints test
+│   ├── models/                 # Data models
+│   │   └── orbital_elements.py # Keplerian orbital elements
+│   └── services/               # Business logic
+│       ├── orbital_service.py  # Validation and presets
+│       └── simulation_service.py # Orbital simulation
+├── frontend/                   # React + Three.js frontend
+│   ├── src/                   # React source code
+│   │   ├── components/        # React components
+│   │   └── services/          # API services
+│   ├── README.md              # Frontend documentation
+│   └── start_dev.sh          # Development script
+└── simultion_trajectory/      # Original orbital simulation
+    ├── orbital_simulation.py  # Base simulation
+    ├── interactive_orbital_sim.py # Interactive interface
+    └── README.md              # Detailed documentation
 ```
 
-## 🎯 Estado Actual del Desarrollo
+## 🎯 Current Development Status
 
-### ✅ **Completado (Fase 1 - Simulación Orbital)**
+### ✅ **Completed (Phase 1 - Orbital Simulation)**
 
-1. **Simulación de Trayectorias Orbitales**
-   - ✅ Implementación completa de ecuaciones de Kepler
-   - ✅ Propagación orbital con elementos keplerianos
-   - ✅ Visualización 3D interactiva con Three.js
-   - ✅ 6 presets educativos (ISS, Geoestacionaria, Molniya, etc.)
-   - ✅ Detección de impactos con la Tierra
+1. **Orbital Trajectory Simulation**
+   - ✅ Complete implementation of Kepler's equations
+   - ✅ Orbital propagation with Keplerian elements
+   - ✅ Interactive 3D visualization with Three.js
+   - ✅ 6 educational presets (ISS, Geostationary, Molniya, etc.)
+   - ✅ Earth impact detection
 
-2. **Backend Flask Funcional**
-   - ✅ API REST para simulación orbital
-   - ✅ Validación de elementos orbitales
-   - ✅ Integración con simulación Python existente
-   - ✅ Análisis orbital (periapsis, apoapsis, períodos)
+2. **Functional Flask Backend**
+   - ✅ REST API for orbital simulation
+   - ✅ Orbital elements validation
+   - ✅ Integration with existing Python simulation
+   - ✅ Orbital analysis (periapsis, apoapsis, periods)
 
-3. **Frontend React + Three.js**
-   - ✅ Interfaz web moderna y responsive
-   - ✅ Panel de control para elementos orbitales
-   - ✅ Animación en tiempo real de satélites
-   - ✅ Controles de velocidad y navegación temporal
+3. **React + Three.js Frontend**
+   - ✅ Modern and responsive web interface
+   - ✅ Control panel for orbital elements
+   - ✅ Real-time satellite animation
+   - ✅ Speed and temporal navigation controls
 
-### 🔄 **En Desarrollo (Fase 2 - Efectos de Impacto)**
+### 🔄 **In Development (Phase 2 - Impact Effects)**
 
-1. **Simulación de Efectos de Impacto** ⚠️ **PENDIENTE**
-   - ❌ Cálculo de formación de cráteres
-   - ❌ Simulación de ondas expansivas
-   - ❌ Modelado de tsunamis (impactos oceánicos)
-   - ❌ Efectos sísmicos y geológicos
-   - ❌ Evaluación de daños por zonas
+1. **Impact Effects Simulation** ⚠️ **PENDING**
+   - ❌ Crater formation calculation
+   - ❌ Blast wave simulation
+   - ❌ Tsunami modeling (ocean impacts)
+   - ❌ Seismic and geological effects
+   - ❌ Damage assessment by zones
 
-2. **Integración con APIs Externas** ⚠️ **PENDIENTE**
+2. **External APIs Integration** ⚠️ **PENDING**
    - ❌ NASA Near-Earth Object (NEO) API
    - ❌ USGS Earthquake Catalog API
-   - ❌ Datos reales de asteroides cercanos
-   - ❌ Información sísmica histórica
+   - ❌ Real near-Earth asteroid data
+   - ❌ Historical seismic information
 
-3. **Funcionalidades Avanzadas** ⚠️ **PENDIENTE**
-   - ❌ Mapas 2D de zonas afectadas
-   - ❌ Cálculo de energía cinética y equivalente TNT
-   - ❌ Simulación de estrategias de mitigación
-   - ❌ Sección educativa sobre impactos de asteroides
+3. **Advanced Features** ⚠️ **PENDING**
+   - ❌ 2D maps of affected zones
+   - ❌ Kinetic energy and TNT equivalent calculation
+   - ❌ Mitigation strategies simulation
+   - ❌ Educational section on asteroid impacts
 
-### 📋 **Próximas Prioridades (Basadas en Anteproyecto)**
+### 📋 **Next Priorities (Based on Project Proposal)**
 
-#### **Objetivo 1: Efectos Medioambientales del Impacto**
-- [ ] Implementar modelos de formación de cráteres (Collins et al., 2005)
-- [ ] Calcular ondas expansivas usando escalado Kingery-Bulmash
-- [ ] Simular tsunamis con modelos Ward y Asphaug (2000)
-- [ ] Evaluar efectos térmicos y sísmicos
+#### **Objective 1: Environmental Impact Effects**
 
-#### **Objetivo 2: Integración de Datos Reales**
-- [ ] Conectar con NASA NEO API para asteroides cercanos
-- [ ] Integrar USGS Earthquake Catalog para efectos sísmicos
-- [ ] Implementar validación con casos históricos (Tunguska, Chelyabinsk)
+- [ ] Implement crater formation models (Collins et al., 2005)
+- [ ] Calculate blast waves using Kingery-Bulmash scaling
+- [ ] Simulate tsunamis with Ward and Asphaug models (2000)
+- [ ] Evaluate thermal and seismic effects
 
-#### **Objetivo 3: Interfaz Interactiva Avanzada**
-- [ ] Mapas 2D con D3.js para visualizar zonas afectadas
-- [ ] Sliders para parámetros de asteroide (tamaño, velocidad, ángulo)
-- [ ] Visualización de estrategias de mitigación
-- [ ] Exportación de datos (GeoJSON, CSV)
+#### **Objective 2: Real Data Integration**
 
-#### **Objetivo 4: Componente Educativo**
-- [ ] Sección explicativa sobre fundamentos científicos
-- [ ] Casos de estudio históricos interactivos
-- [ ] Glosario y referencias científicas
-- [ ] Medidas de protección planetaria
+- [ ] Connect with NASA NEO API for near-Earth asteroids
+- [ ] Integrate USGS Earthquake Catalog for seismic effects
+- [ ] Implement validation with historical cases (Tunguska, Chelyabinsk)
 
-### 🔧 Tecnologías
+#### **Objective 3: Advanced Interactive Interface**
+
+- [ ] 2D maps with D3.js to visualize affected zones
+- [ ] Sliders for asteroid parameters (size, velocity, angle)
+- [ ] Mitigation strategies visualization
+- [ ] Data export (GeoJSON, CSV)
+
+#### **Objective 4: Educational Component**
+
+- [ ] Explanatory section on scientific fundamentals
+- [ ] Interactive historical case studies
+- [ ] Glossary and scientific references
+- [ ] Planetary protection measures
+
+### 🔧 Technologies
 
 - **Backend**: Flask, NumPy, SciPy, Matplotlib
 - **Frontend**: React 18, Vite, Three.js, Tailwind CSS
 - **3D Graphics**: React Three Fiber, Three.js
-- **Simulación**: Ecuaciones de Kepler, Newton-Raphson
-- **API**: REST con validación y presets
-- **Testing**: Scripts automatizados de prueba
+- **Simulation**: Kepler's equations, Newton-Raphson
+- **API**: REST with validation and presets
+- **Testing**: Automated test scripts
 
-## 🚀 Instalación y Uso
+## 🚀 Installation and Usage
 
-### 📋 Prerequisitos
+### 📋 Prerequisites
 
-- **Python 3.8+** con pip
-- **Node.js 18+** con npm
-- **Git** para clonar el repositorio
+- **Python 3.8+** with pip
+- **Node.js 18+** with npm
+- **Git** to clone the repository
 
-### 🔧 Instalación Completa
+### 🔧 Complete Installation
 
-#### 1. Clonar el Repositorio
+#### 1. Clone the Repository
+
 ```bash
 git clone <repository-url>
 cd MeteorMadness
 ```
 
-#### 2. Configurar Backend (Python/Flask)
+#### 2. Setup Backend (Python/Flask)
+
 ```bash
-# Navegar al directorio backend
+# Navigate to backend directory
 cd backend
 
-# Crear entorno virtual
+# Create virtual environment
 python -m venv venv
 
-# Activar entorno virtual
-# En Linux/Mac:
+# Activate virtual environment
+# On Linux/Mac:
 source venv/bin/activate
-# En Windows:
+# On Windows:
 # venv\Scripts\activate
 
-# Instalar dependencias
+# Install dependencies
 pip install -r requirements.txt
 
-# Verificar instalación
+# Verify installation
 python test_setup.py
 ```
 
-#### 3. Configurar Frontend (React/Three.js)
+#### 3. Setup Frontend (React/Three.js)
+
 ```bash
-# Navegar al directorio frontend
+# Navigate to frontend directory
 cd frontend/siaer
 
-# Instalar dependencias
+# Install dependencies
 npm install
 
-# Verificar instalación
+# Verify installation
 npm run build
 ```
 
-### 🎮 Uso de la Aplicación
+### 🎮 Application Usage
 
-#### **Opción 1: Aplicación Web Completa (Recomendado)**
+#### **Option 1: Complete Web Application (Recommended)**
 
-1. **Iniciar Backend**:
+1. **Start Backend**:
+
 ```bash
 cd backend
 source venv/bin/activate  # Linux/Mac
 python app.py
 ```
-El backend estará disponible en: `http://localhost:5000`
 
-2. **Iniciar Frontend** (en otra terminal):
+Backend will be available at: `http://localhost:5000`
+
+2. **Start Frontend** (in another terminal):
+
 ```bash
 cd frontend/siaer
 npm run dev
 ```
-El frontend estará disponible en: `http://localhost:5173`
 
-3. **Usar la Aplicación**:
-   - Abre tu navegador en `http://localhost:5173`
-   - Modifica los elementos orbitales con los sliders
-   - Prueba los presets (ISS, Molniya, CRASH)
-   - Controla la animación con Play/Pause/Reset
+Frontend will be available at: `http://localhost:5173`
 
-#### **Opción 2: Simulación Python Original**
+3. **Use the Application**:
+   - Open your browser at `http://localhost:5173`
+   - Modify orbital elements with sliders
+   - Try presets (ISS, Molniya, CRASH)
+   - Control animation with Play/Pause/Reset
+
+#### **Option 2: Original Python Simulation**
 
 ```bash
-# Navegar a simulación
+# Navigate to simulation
 cd simultion_trajectory
 
-# Activar entorno virtual
+# Activate virtual environment
 source orbital_env/bin/activate  # Linux/Mac
 
-# Simulación interactiva con controles
+# Interactive simulation with controls
 python interactive_orbital_sim.py
 
-# Simulación básica con gráficos
+# Basic simulation with graphics
 python orbital_simulation.py
 ```
 
-### 🛠️ Scripts de Desarrollo
+### 🛠️ Development Scripts
 
 #### Backend
+
 ```bash
 cd backend
-./start_dev.sh    # Inicia servidor con configuración automática
-python test_api.py # Prueba todos los endpoints
-```
-
-#### Frontend  
-```bash
-cd frontend/siaer
-./start_dev.sh    # Inicia servidor con verificación de backend
-npm run build     # Construye versión de producción
-npm run preview   # Vista previa de la build
-```
-
-### 🔍 Verificación de Instalación
-
-#### Backend
-```bash
-cd backend
-python test_setup.py
-# Debería mostrar: "🎉 ¡Todos los tests pasaron! El backend está listo."
+./start_dev.sh    # Start server with automatic configuration
+python test_api.py # Test all endpoints
 ```
 
 #### Frontend
+
+```bash
+cd frontend/siaer
+./start_dev.sh    # Start server with backend verification
+npm run build     # Build production version
+npm run preview   # Preview the build
+```
+
+### 🔍 Installation Verification
+
+#### Backend
+
+```bash
+cd backend
+python test_setup.py
+# Should show: "🎉 All tests passed! Backend is ready."
+```
+
+#### Frontend
+
 ```bash
 cd frontend/siaer
 npm run dev
-# Debería abrir automáticamente http://localhost:5173
+# Should automatically open http://localhost:5173
 ```
 
-### 🐛 Solución de Problemas
+### 🐛 Troubleshooting
 
-#### Backend no inicia
+#### Backend won't start
+
 ```bash
-# Verificar Python y dependencias
+# Verify Python and dependencies
 python --version
 pip list
 
-# Reinstalar dependencias
+# Reinstall dependencies
 pip install -r requirements.txt --force-reinstall
 ```
 
-#### Frontend no carga
+#### Frontend won't load
+
 ```bash
-# Limpiar cache y reinstalar
+# Clear cache and reinstall
 rm -rf node_modules package-lock.json
 npm install
 
-# Verificar Node.js
-node --version  # Debe ser 18+
+# Verify Node.js
+node --version  # Must be 18+
 ```
 
-#### Error de conexión Frontend-Backend
-- Verificar que el backend esté corriendo en `http://localhost:5000`
-- Comprobar que no haya firewall bloqueando el puerto
-- Revisar la consola del navegador para errores CORS
+#### Frontend-Backend connection error
 
-### 📱 Uso Básico
+- Verify backend is running at `http://localhost:5000`
+- Check that no firewall is blocking the port
+- Review browser console for CORS errors
 
-1. **Modificar Órbitas**: Usa los sliders en el panel izquierdo para cambiar elementos orbitales
-2. **Presets**: Haz clic en ISS, Molniya, etc. para cargar órbitas famosas
-3. **Animación**: Usa Play/Pause para ver el satélite orbitando
-4. **Cámara**: Arrastra para rotar, rueda para zoom, clic derecho para pan
-5. **Información**: Observa los datos orbitales en tiempo real en el panel de control
+### 📱 Basic Usage
+
+1. **Modify Orbits**: Use sliders in the left panel to change orbital elements
+2. **Presets**: Click ISS, Molniya, etc. to load famous orbits
+3. **Animation**: Use Play/Pause to see the satellite orbiting
+4. **Camera**: Drag to rotate, scroll to zoom, right-click to pan
+5. **Information**: Observe real-time orbital data in the control panel
 
 ## 📡 API Endpoints
 
-- `GET /` - Página de bienvenida
+- `GET /` - Welcome page
 - `GET /health` - Health check
-- `GET /api/orbital/presets` - Obtener presets
-- `POST /api/orbital/elements` - Validar elementos orbitales
-- `POST /api/orbital/simulate` - Ejecutar simulación
+- `GET /api/orbital/presets` - Get presets
+- `POST /api/orbital/elements` - Validate orbital elements
+- `POST /api/orbital/simulate` - Run simulation
 
-### Ejemplo de Uso
+### Usage Example
 
 ```bash
-# Simular órbita ISS
+# Simulate ISS orbit
 curl -X POST http://localhost:5000/api/orbital/simulate \
   -H "Content-Type: application/json" \
   -d '{
@@ -304,139 +322,146 @@ curl -X POST http://localhost:5000/api/orbital/simulate \
   }'
 ```
 
-## 🎮 Características
+## 🎮 Features
 
-### Frontend Web (React + Three.js)
+### Web Frontend (React + Three.js)
 
-- **Visualización 3D**: Tierra, trayectorias orbitales, satélites animados
-- **Panel de Control**: Modificación en tiempo real de elementos orbitales
-- **Presets Integrados**: ISS, Geoestacionaria, Molniya, Crash
-- **Animación Fluida**: Play/Pause/Reset de simulaciones
-- **Interfaz Moderna**: Tailwind CSS con tema espacial
-- **Responsive**: Adaptable a diferentes tamaños de pantalla
+- **3D Visualization**: Earth, orbital trajectories, animated satellites
+- **Control Panel**: Real-time modification of orbital elements
+- **Integrated Presets**: ISS, Geostationary, Molniya, Crash
+- **Smooth Animation**: Play/Pause/Reset of simulations
+- **Modern Interface**: Tailwind CSS with space theme
+- **Responsive**: Adaptable to different screen sizes
 
-### Simulación Orbital
+### Orbital Simulation
 
-- **Ecuaciones de Kepler**: Implementación precisa
-- **6 Elementos Orbitales**: a, e, i, ω, Ω, M₀
-- **Análisis Completo**: Periapsis, apoapsis, período
-- **Detección de Impactos**: Alertas automáticas
-- **Presets Educativos**: ISS, Geoestacionaria, Molniya, etc.
+- **Kepler's Equations**: Precise implementation
+- **6 Orbital Elements**: a, e, i, ω, Ω, M₀
+- **Complete Analysis**: Periapsis, apoapsis, period
+- **Impact Detection**: Automatic alerts
+- **Educational Presets**: ISS, Geostationary, Molniya, etc.
 
-### API Backend
+### Backend API
 
-- **REST Completa**: Validación y simulación
-- **CORS Habilitado**: Listo para frontend
-- **Error Handling**: Respuestas consistentes
-- **Documentación**: Endpoints autodocumentados
+- **Complete REST**: Validation and simulation
+- **CORS Enabled**: Ready for frontend
+- **Error Handling**: Consistent responses
+- **Documentation**: Self-documented endpoints
 
-## 📊 Presets Disponibles
+## 📊 Available Presets
 
-1. **default**: Órbita LEO con excentricidad (7,000 km)
-2. **iss**: Estación Espacial Internacional (6,778 km)
-3. **geostationary**: Satélite geoestacionario (42,164 km)
-4. **molniya**: Órbita elíptica rusa (26,600 km, e=0.74)
-5. **polar**: Órbita polar de observación (8,000 km)
-6. **crash**: ⚠️ Órbita de impacto educativa
+1. **default**: LEO orbit with eccentricity (7,000 km)
+2. **iss**: International Space Station (6,778 km)
+3. **geostationary**: Geostationary satellite (42,164 km)
+4. **molniya**: Russian elliptical orbit (26,600 km, e=0.74)
+5. **polar**: Polar observation orbit (8,000 km)
+6. **crash**: ⚠️ Educational impact orbit
 
-## 🌐 Aplicación Web Completa
+## 🌐 Complete Web Application
 
-### Cómo Usar la Interfaz Web
+### How to Use the Web Interface
 
-1. **Iniciar Backend**: `cd backend && python app.py`
-2. **Iniciar Frontend**: `cd frontend && npm run dev`
-3. **Abrir**: http://localhost:5173
+1. **Start Backend**: `cd backend && python app.py`
+2. **Start Frontend**: `cd frontend && npm run dev`
+3. **Open**: http://localhost:5173
 
-### Características Web
+### Web Features
 
-- **Panel Lateral**: Controles para elementos orbitales
-- **Visualizador 3D**: Tierra, órbitas y satélites en Three.js
-- **Controles de Cámara**: Zoom, rotación, desplazamiento
-- **Información en Tiempo Real**: Período, altitudes, tiempo transcurrido
-- **Presets Rápidos**: Carga instantánea de órbitas famosas
+- **Side Panel**: Controls for orbital elements
+- **3D Viewer**: Earth, orbits and satellites in Three.js
+- **Camera Controls**: Zoom, rotation, pan
+- **Real-time Information**: Period, altitudes, elapsed time
+- **Quick Presets**: Instant loading of famous orbits
 
-## 🏗️ Arquitectura y Metodología (Según Anteproyecto)
+## 🏗️ Architecture and Methodology (According to Project Proposal)
 
-### **Enfoque Científico**
-El proyecto implementa metodologías científicas validadas para la simulación de impactos de asteroides:
+### **Scientific Approach**
 
-1. **Modelos Físicos Validados**
-   - Ecuaciones de Kepler para propagación orbital
+The project implements validated scientific methodologies for asteroid impact simulation:
+
+1. **Validated Physical Models**
+   - Kepler's equations for orbital propagation
    - Earth Impact Effects Program (Collins et al., 2005)
-   - Escalado Kingery-Bulmash para ondas expansivas
-   - Modelos Ward-Asphaug para tsunamis
+   - Kingery-Bulmash scaling for blast waves
+   - Ward-Asphaug models for tsunamis
 
-2. **Integración de Datos Reales**
+2. **Real Data Integration**
    - NASA Near-Earth Object (NEO) API
    - USGS Earthquake Catalog
-   - Validación con casos históricos
+   - Validation with historical cases
 
-3. **Arquitectura Cliente-Servidor**
+3. **Client-Server Architecture**
    - **Frontend**: React + Vite + Three.js + D3.js
    - **Backend**: Flask + Python (NumPy, SciPy, AstroPy)
-   - **APIs**: RESTful con datos en tiempo real
+   - **APIs**: RESTful with real-time data
 
-### **Fase de Desarrollo Actual vs Objetivo Final**
+### **Current Development Phase vs Final Objective**
 
-| Componente | Estado Actual | Objetivo Final |
-|------------|---------------|----------------|
-| **Trayectoria Orbital** | ✅ Completo | ✅ Ecuaciones de Kepler |
-| **Efectos de Impacto** | ❌ No iniciado | 🎯 Cráteres, ondas, tsunamis |
-| **APIs Externas** | ❌ No integradas | 🎯 NASA NEO + USGS |
-| **Mapas 2D** | ❌ No implementado | 🎯 D3.js + GeoJSON |
-| **Sección Educativa** | ❌ No iniciado | 🎯 Fundamentos científicos |
+| Component               | Current Status     | Final Objective             |
+| ----------------------- | ------------------ | --------------------------- |
+| **Orbital Trajectory**  | ✅ Complete        | ✅ Kepler's equations       |
+| **Impact Effects**      | ❌ Not started     | 🎯 Craters, waves, tsunamis |
+| **External APIs**       | ❌ Not integrated  | 🎯 NASA NEO + USGS          |
+| **2D Maps**             | ❌ Not implemented | 🎯 D3.js + GeoJSON          |
+| **Educational Section** | ❌ Not started     | 🎯 Scientific fundamentals  |
 
-## 🤝 Contribución
+## 🤝 Contributing
 
-El proyecto está completamente estructurado para contribuciones:
+The project is fully structured for contributions:
 
-- **Backend**: API REST extensible en Flask
-- **Frontend**: Componentes React modulares
-- **Simulación**: Algoritmos modulares
-- **Documentación**: Completa y actualizada
+- **Backend**: Extensible REST API in Flask
+- **Frontend**: Modular React components
+- **Simulation**: Modular algorithms
+- **Documentation**: Complete and updated
 
-## 📚 Referencias Científicas
+## 📚 Scientific References
 
-### **Validación con Casos Históricos**
-- **Tunguska (1908)**: Evento de estallido atmosférico en Siberia
-- **Chelyabinsk (2013)**: Meteorito y onda expansiva documentados
-- **Chicxulub**: Impacto asociado con extinción masiva K-Pg
+### **Validation with Historical Cases**
 
-### **APIs y Datos Reales**
-- **NASA NEO API**: Near-Earth Object database para asteroides cercanos
-- **USGS Earthquake Catalog**: Datos sísmicos globales para modelado
-- **NASA Mission Visualization**: Metodología de diseño orbital
+- **Tunguska (1908)**: Atmospheric explosion event in Siberia
+- **Chelyabinsk (2013)**: Documented meteorite and blast wave
+- **Chicxulub**: Impact associated with K-Pg mass extinction
 
-### **Frameworks y Tecnologías**
+### **APIs and Real Data**
+
+- **NASA NEO API**: Near-Earth Object database for close asteroids
+- **USGS Earthquake Catalog**: Global seismic data for modeling
+- **NASA Mission Visualization**: Orbital design methodology
+
+### **Frameworks and Technologies**
+
 - [NASA Mission Visualization - Elliptical Orbit Design](https://nasa.github.io/mission-viz/RMarkdown/Elliptical_Orbit_Design.html)
 - [Three.js Documentation](https://threejs.org/docs/)
 - [React Three Fiber](https://docs.pmnd.rs/react-three-fiber)
-- [D3.js](https://d3js.org/) - Visualización de datos y mapas 2D
+- [D3.js](https://d3js.org/) - Data visualization and 2D maps
 
-## 📄 Licencia
+## 📄 License
 
-Proyecto de código abierto bajo licencia MIT.
+Open source project under MIT license.
 
 ---
 
-## ⚡ Estado del Proyecto
+## ⚡ Project Status
 
-### 🏆 **Fase 1 Completada: Simulación Orbital**
-✅ **Trayectorias de Asteroides** - Ecuaciones de Kepler implementadas  
-✅ **Visualización 3D** - Three.js con animación en tiempo real  
-✅ **Backend Flask** - API REST funcional  
-✅ **Frontend React** - Interfaz moderna e interactiva  
+### 🏆 **Phase 1 Completed: Orbital Simulation**
 
-### 🚧 **Fase 2 En Desarrollo: Efectos de Impacto**
-⚠️ **Modelos de Impacto** - Cráteres, ondas expansivas, tsunamis  
-⚠️ **APIs NASA/USGS** - Datos reales de asteroides y efectos sísmicos  
-⚠️ **Mapas de Daño** - Visualización 2D de zonas afectadas  
-⚠️ **Componente Educativo** - Fundamentos científicos  
+✅ **Asteroid Trajectories** - Kepler's equations implemented  
+✅ **3D Visualization** - Three.js with real-time animation  
+✅ **Flask Backend** - Functional REST API  
+✅ **React Frontend** - Modern and interactive interface
 
-**SIAER** está en desarrollo activo. La simulación orbital está completa y funcional, mientras que los efectos de impacto y la integración con datos reales están en fase de implementación.
+### 🚧 **Phase 2 In Development: Impact Effects**
 
-### 📈 **Progreso Actual: ~40% Completado**
-- ✅ Simulación orbital y visualización 3D
-- 🔄 Efectos de impacto (próxima prioridad)
-- 📋 APIs externas y datos reales
-- 📋 Sección educativa y documentación científica
+⚠️ **Impact Models** - Craters, blast waves, tsunamis  
+⚠️ **NASA/USGS APIs** - Real asteroid data and seismic effects  
+⚠️ **Damage Maps** - 2D visualization of affected zones  
+⚠️ **Educational Component** - Scientific fundamentals
+
+**MeteorMadness** is in active development. Orbital simulation is complete and functional, while impact effects and real data integration are in implementation phase.
+
+### 📈 **Current Progress: ~40% Completed**
+
+- ✅ Orbital simulation and 3D visualization
+- 🔄 Impact effects (next priority)
+- 📋 External APIs and real data
+- 📋 Educational section and scientific documentation
