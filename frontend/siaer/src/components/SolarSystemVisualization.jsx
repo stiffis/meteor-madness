@@ -280,9 +280,12 @@ function CameraFocuser({
   cameraDistanceMultiplier,
   customCameraPosition,
   controlsRef,
+  followFocus = false,
 }) {
   const camera = useThree((state) => state.camera);
   const lastFocusIdRef = useRef(null);
+  const tempTargetRef = useRef(new THREE.Vector3());
+  const tempOffsetRef = useRef(new THREE.Vector3());
 
   useEffect(() => {
     if (!controlsRef?.current) {
@@ -328,6 +331,25 @@ function CameraFocuser({
     
     lastFocusIdRef.current = focusId;
   }, [focusPlanet, cameraDistanceMultiplier, controlsRef, simulationTimeRef, camera]);
+
+  useFrame(() => {
+    if (!followFocus || !controlsRef?.current || !focusPlanet) {
+      return;
+    }
+
+    const controls = controlsRef.current;
+    const elapsed = simulationTimeRef.current;
+    const [x, y, z] = computePlanetPosition(focusPlanet, elapsed);
+    const newTarget = tempTargetRef.current.set(x, y, z);
+    const orbitCamera = controls.object || camera;
+    const offset = tempOffsetRef.current
+      .copy(orbitCamera.position)
+      .sub(controls.target);
+
+    controls.target.copy(newTarget);
+    orbitCamera.position.copy(newTarget).add(offset);
+    controls.update();
+  });
 
   return null;
 }
@@ -995,6 +1017,7 @@ export default function SolarSystemVisualization({
             cameraDistanceMultiplier={cameraDistanceMultiplier}
             customCameraPosition={customCameraPosition}
             controlsRef={controlsRef}
+            followFocus={followFocus}
           />
         )}
         <CollisionDetector
