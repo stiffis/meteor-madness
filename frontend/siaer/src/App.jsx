@@ -3,10 +3,11 @@
  * Frontend React con Three.js para visualización de órbitas
  */
 
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ControlPanel from './components/ControlPanel';
 import SolarSystemVisualization from './components/SolarSystemVisualization';
 import ImpactorPage from './pages/ImpactorPage';
+import ImpactorSimPage from './pages/ImpactorSimPage';
 import MeteorMadnessAPI from './services/api';
 
 function App() {
@@ -58,6 +59,7 @@ function App() {
   const [currentNeoOrbit, setCurrentNeoOrbit] = useState(null);
   const [currentNeoName, setCurrentNeoName] = useState('NEO');
   const [showImpactorPage, setShowImpactorPage] = useState(false);
+  const [showImpactorSimPage, setShowImpactorSimPage] = useState(false);
 
   // Estados de animación
   // Referencias
@@ -67,10 +69,6 @@ function App() {
   const introStartTimeRef = useRef(Date.now());
   const neoSearchRequestIdRef = useRef(0);
   const solarSearchTimeoutRef = useRef(null);
-
-  const handleGoBackFromImpactor = useCallback(() => {
-    setShowImpactorPage(false);
-  }, []);
 
   // Verificar conexión con backend al inicio
   useEffect(() => {
@@ -172,6 +170,26 @@ function App() {
     setIntroProgress(100);
     setIntroLoadDurationMs(Date.now() - introStartTimeRef.current);
   }, []);
+
+  const handleGoBackFromImpactor = useCallback(() => {
+    startIntro(true);
+    const sessionId = introSessionRef.current.id;
+    setShowImpactorPage(false);
+
+    setTimeout(() => {
+      markIntroLoaded(sessionId);
+    }, 600);
+  }, [markIntroLoaded, startIntro]);
+
+  const handleImpactorSimBack = useCallback(() => {
+    startIntro(true);
+    const sessionId = introSessionRef.current.id;
+    setShowImpactorSimPage(false);
+
+    setTimeout(() => {
+      markIntroLoaded(sessionId);
+    }, 600);
+  }, [markIntroLoaded, startIntro]);
 
 // Funciones de API
 const checkBackendConnection = async () => {
@@ -316,8 +334,15 @@ const checkBackendConnection = async () => {
   }, [connectionStatus, markIntroLoaded, solarSystemData, startIntro, viewMode]);
 
   const handleAdvancePhase = useCallback(() => {
-    // Placeholder: futuro flujo de siguiente fase
-  }, []);
+    startIntro(true);
+    const sessionId = introSessionRef.current.id;
+    setShowImpactorPage(false);
+    setShowImpactorSimPage(true);
+
+    setTimeout(() => {
+      markIntroLoaded(sessionId);
+    }, 600);
+  }, [markIntroLoaded, startIntro]);
 
   const handleSolarSpeedChange = useCallback((event) => {
     setSolarTimeScale(Number(event.target.value));
@@ -934,15 +959,6 @@ const checkBackendConnection = async () => {
     setIsPanelOpen(prev => !prev);
   }, []);
 
-  const earthOrbitData = useMemo(() => {
-    const planets = solarSystemData?.planets;
-    if (!Array.isArray(planets)) {
-      return null;
-    }
-
-    return planets.find((planet) => (planet.name || '').toLowerCase() === 'tierra') || null;
-  }, [solarSystemData]);
-
   // Retry connection
   const retryConnection = () => {
     setConnectionStatus('connecting');
@@ -1023,6 +1039,18 @@ const checkBackendConnection = async () => {
   // Render principal
   
   // Si se debe mostrar la página de impactos, renderizarla en lugar del contenido principal
+  if (showImpactorSimPage) {
+    return (
+      <ImpactorSimPage
+        onGoBack={handleImpactorSimBack}
+        solarSystemData={solarSystemData}
+        solarSystemError={solarError}
+        isLoadingSolar={isLoadingSolar}
+        retrySolar={handleRetrySolar}
+      />
+    );
+  }
+
   if (showImpactorPage) {
     return <ImpactorPage onGoBack={handleGoBackFromImpactor} onAdvancePhase={handleAdvancePhase} />;
   }

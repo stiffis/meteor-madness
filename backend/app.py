@@ -51,6 +51,7 @@ def home():
             "/api/neo/search": "GET - Buscar objetos NEO (proxy SBDB)",
             "/api/neo/object": "GET - Obtener datos de un NEO desde NASA",
             "/api/solar/system": "GET - Estados orbitales aproximados del sistema solar",
+            "/api/solar/system/j2000": "GET - Elementos orbitales J2000 sin variación temporal",
             "/api/impactor/2025": "GET - Datos del meteorito IMPACTOR-2025"
         }
     })
@@ -266,6 +267,26 @@ def get_solar_system_state():
     })
 
 
+@app.route('/api/solar/system/j2000', methods=['GET'])
+def get_solar_system_j2000():
+    """Devuelve los elementos orbitales J2000 con variación temporal fija."""
+    
+    try:
+        data = solar_system_service.get_planet_states_j2000()
+        print(f"J2000 endpoint called, returning data with {len(data.get('planets', []))} planets")
+        return jsonify({
+            "success": True,
+            "data": data,
+        })
+    except Exception as e:
+        print(f"Error in J2000 endpoint: {str(e)}")
+        return jsonify({
+            "success": False,
+            "error": "Error al obtener datos J2000 del sistema solar",
+            "details": str(e)
+        }), 500
+
+
 @app.route('/api/impactor/2025', methods=['GET'])
 def get_impactor_2025():
     """Obtiene los datos del meteorito IMPACTOR-2025."""
@@ -279,27 +300,27 @@ def get_impactor_2025():
             "description": "Meteorito hipotético con trayectoria de impacto potencial",
             "color": "#ff4444",
             "orbitColor": "#ff6666",
-            "radiusKm": 0.5,  # Pequeño para visualización
-            "semiMajorAxisKm": 373922988.41,  # a ≈ 373,922,988.41 km
-            "eccentricity": 0.6,  # e = 0.6
-            "inclinationDeg": 3.0,  # i = 3.0°
-            "longitudeOfAscendingNodeDeg": 12.64,  # Ω = 12.64°
-            "argumentOfPeriapsisDeg": 0.0,  # ω = 0.0°
-            "meanAnomalyDeg": -1.0,  # M₀ = -1.0°
-            "orbitalPeriodDays": 1443.36,  # P ≈ 1443.36 días
+            "radiusKm": 0.5,  # Radio más realista para un meteorito (500 metros)
+            "semiMajorAxisKm": 149_597_870.7,  # Misma órbita que la Tierra (1 AU)
+            "eccentricity": 0.0001,  # Órbita casi circular
+            "inclinationDeg": 0.0,  # Coplana con la Tierra
+            "longitudeOfAscendingNodeDeg": 0.0,
+            "argumentOfPeriapsisDeg": 0.0,
+            "meanAnomalyDeg": 279.625,  # Posición en 279.625°
+            "orbitalPeriodDays": 365.256,  # Periodo orbital terrestre
             "isNeo": True,
             "pha": True,  # Potencialmente peligroso
-            "moid_au": 0.02,  # Distancia mínima de intersección orbital muy pequeña
+            "moid_au": 0.0,
             "absolute_magnitude_h": 18.5,  # Magnitud estimada
             "orbit_class": "Apollo",
             "warning": "⚠️ Objeto con trayectoria de impacto potencial - ÓRBITA MUY PELIGROSA",
             "simulation_elements": {
-                "a": 373922988.41,
-                "e": 0.6,
-                "i": 3.0,
+                "a": 149_597_870.7,
+                "e": 0.0001,
+                "i": 0.0,
                 "omega": 0.0,
-                "Omega": 12.64,
-                "M0": -1.0,
+                "Omega": 0.0,
+                "M0": 279.625,
                 "mu": 1.32712440018e11  # Constante gravitacional solar
             }
         }
@@ -331,6 +352,7 @@ def not_found(error):
             "/api/neo/search",
             "/api/neo/object",
             "/api/solar/system",
+            "/api/solar/system/j2000",
             "/api/impactor/2025"
         ]
     }), 404
@@ -361,6 +383,7 @@ if __name__ == '__main__':
     print("   GET  /api/neo/search - Buscar objetos NEO (SBDB Query)")
     print("   GET  /api/neo/object - Obtener datos de NEO desde NASA")
     print("   GET  /api/solar/system - Estados orbitales del sistema solar")
+    print("   GET  /api/solar/system/j2000 - Elementos orbitales J2000 sin variación temporal")
     print("   GET  /api/impactor/2025 - Datos del meteorito IMPACTOR-2025")
     print()
     

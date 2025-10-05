@@ -134,7 +134,7 @@ function isEarthBody(body) {
   return Number.isFinite(radius) && Math.abs(radius - EARTH_RADIUS_KM) < 1;
 }
 
-function classifyImpact(entryAngle, relativeVelocity) {
+function classifyImpact(entryAngle) {
   if (entryAngle < 15) {
     return "IMPACTO_DIRECTO";
   } else if (entryAngle < 30) {
@@ -146,11 +146,6 @@ function classifyImpact(entryAngle, relativeVelocity) {
   } else {
     return "ROZAMIENTO_ATMOSFERICO";
   }
-}
-
-function calculateKineticEnergy(massKg, velocityMs) {
-  // Energía cinética en Joules
-  return 0.5 * massKg * velocityMs * velocityMs;
 }
 
 function solveKepler(meanAnomaly, eccentricity, tolerance = 1e-6) {
@@ -239,18 +234,35 @@ function createOrbitPoints(planet, segments = 256) {
   return points;
 }
 
-function PlanetOrbit({ planet }) {
-  if (planet.isStationary || Math.abs(planet.semiMajorAxisKm || 0) < 1e-6) {
+function PlanetOrbit({ planet, hideOtherOrbits = false, focusBodyName = null }) {
+  const isStationary = planet.isStationary || Math.abs(planet.semiMajorAxisKm || 0) < 1e-6;
+  const isEarth = typeof planet.name === "string" && planet.name.toLowerCase() === "tierra";
+  const isImpactor = Boolean(planet.isImpactor);
+  const isFocused = focusBodyName && planet.name && planet.name.toLowerCase() === focusBodyName.toLowerCase();
+
+  // Ocultar órbitas de otros planetas si está en modo análisis de choque
+  if (hideOtherOrbits && !isEarth && !isImpactor) {
     return null;
   }
-  const points = useMemo(() => createOrbitPoints(planet), [planet]);
+
+  const points = useMemo(() => {
+    if (isStationary) {
+      return [[0, 0, 0]];
+    }
+    return createOrbitPoints(planet);
+  }, [isStationary, planet]);
+
+  if (isStationary) {
+    return null;
+  }
+
   return (
     <Line
       points={points}
       color={planet.orbitColor || planet.color || "#888888"}
-      lineWidth={2.5}
+      lineWidth={isEarth || isImpactor ? 3.5 : 2.5}
       transparent
-      opacity={0.85}
+      opacity={isEarth || isImpactor ? 1.0 : 0.85}
     />
   );
 }
@@ -262,61 +274,60 @@ function SolarTimeController({ timeScale, simulationTimeRef }) {
   return null;
 }
 
-function FocusCameraController({
+function CameraFocuser({
   focusPlanet,
   simulationTimeRef,
   cameraDistanceMultiplier,
-  followEnabled,
+  customCameraPosition,
   controlsRef,
 }) {
   const camera = useThree((state) => state.camera);
-  const focusVector = useRef(new THREE.Vector3());
-  const initialisedRef = useRef(false);
-  const previousFocusRef = useRef(new THREE.Vector3());
-  const deltaRef = useRef(new THREE.Vector3());
+  const lastFocusIdRef = useRef(null);
 
   useEffect(() => {
-    initialisedRef.current = false;
-  }, [focusPlanet, followEnabled]);
-
-  useFrame(() => {
-    const controls = controlsRef?.current;
-    if (!followEnabled || !focusPlanet || !controls) {
+    if (!controlsRef?.current) {
       return;
     }
 
-    const elapsed = simulationTimeRef.current;
-    const [x, y, z] = computePlanetPosition(focusPlanet, elapsed);
-    focusVector.current.set(x, y, z);
-
-    if (!initialisedRef.current) {
-      const orbitDistance =
-        Math.max(focusPlanet.semiMajorAxisKm || 0, 1) * SCALE_FACTOR;
-      const planetRadius =
-        Math.max(focusPlanet.radiusKm || 0, 1) * SCALE_FACTOR;
-      const baseDistance = Math.max(
-        orbitDistance * cameraDistanceMultiplier,
-        planetRadius * 25,
-        10,
-      );
-
-      camera.position.set(
-        focusVector.current.x + baseDistance,
-        focusVector.current.y + baseDistance * 0.05,
-        focusVector.current.z,
-      );
-      previousFocusRef.current.copy(focusVector.current);
-      initialisedRef.current = true;
-    } else {
-      const delta = deltaRef.current;
-      delta.copy(focusVector.current).sub(previousFocusRef.current);
-      camera.position.add(delta);
+    if (!focusPlanet) {
+      lastFocusIdRef.current = null;
+      return;
     }
 
-    controls.target.copy(focusVector.current);
+    const focusId = `${focusPlanet.name || 'unknown'}`;
+    if (lastFocusIdRef.current === focusId) {
+      return;
+    }
+
+    // Solo centrar la cámara una vez cuando cambie el planeta enfocado
+    const controls = controlsRef.current;
+    const elapsed = simulationTimeRef.current;
+    const [x, y, z] = computePlanetPosition(focusPlanet, elapsed);
+    
+    // Calcular distancia apropiada para centrar en la Tierra
+    const orbitDistance =
+      Math.max(focusPlanet.semiMajorAxisKm || 0, 1) * SCALE_FACTOR;
+    const planetRadius =
+      Math.max(focusPlanet.radiusKm || 0, 1) * SCALE_FACTOR;
+    const baseDistance = Math.max(
+      orbitDistance * cameraDistanceMultiplier,
+      planetRadius * 25,
+      10,
+    );
+
+    // Posicionar la cámara cerca de la Tierra
+    camera.position.set(
+      x + baseDistance,
+      y + baseDistance * 0.05,
+      z,
+    );
+    
+    // Centrar el target en la Tierra
+    controls.target.set(x, y, z);
     controls.update();
-    previousFocusRef.current.copy(focusVector.current);
-  });
+    
+    lastFocusIdRef.current = focusId;
+  }, [focusPlanet, cameraDistanceMultiplier, controlsRef, simulationTimeRef, camera]);
 
   return null;
 }
@@ -440,7 +451,7 @@ function calculateCollisionDetails(obj1, obj2, pos1, pos2, elapsed) {
   const entryAngle = calculateEntryAngle(relativeVelocity, relativePosition);
 
   // Clasificar tipo de impacto
-  const impactType = classifyImpact(entryAngle, relativeSpeed);
+  const impactType = classifyImpact(entryAngle);
 
   // Determinar tipo de colisión
   let collisionType = "CLOSE_APPROACH";
@@ -577,6 +588,7 @@ function PlanetBody({
   maxOrbitDistance,
   simulationTimeRef,
   labelsAlwaysVisible = false,
+  smallIndicators = false,
 }) {
   const groupRef = useRef();
   const billboardRef = useRef();
@@ -586,9 +598,15 @@ function PlanetBody({
   const isImpactor = Boolean(planet.isImpactor);
   const isEarth =
     typeof planet.name === "string" && planet.name.toLowerCase() === "tierra";
-  const indicatorRadius = isImpactor ? 0.4 : isNeo ? 0.35 : 0.45;
-  const labelOffset = isImpactor ? 0.5 : isNeo ? 0.45 : 0.55;
-  const ringWidth = isImpactor ? 0.03 : isNeo ? 0.025 : 0.035;
+  const indicatorRadius = smallIndicators 
+    ? (isImpactor ? 0.08 : isNeo ? 0.07 : 0.09)
+    : (isImpactor ? 0.4 : isNeo ? 0.35 : 0.45);
+  const labelOffset = smallIndicators 
+    ? (isImpactor ? 0.1 : isNeo ? 0.09 : 0.11)
+    : (isImpactor ? 0.5 : isNeo ? 0.45 : 0.55);
+  const ringWidth = smallIndicators 
+    ? (isImpactor ? 0.006 : isNeo ? 0.005 : 0.007)
+    : (isImpactor ? 0.03 : isNeo ? 0.025 : 0.035);
   const { camera } = useThree();
   const SCREEN_SCALE = 0.03;
   const MIN_SCALE = 12;
@@ -599,15 +617,36 @@ function PlanetBody({
       : planet.orbitColor || planet.color || "#ffffff";
   const bodyColor = isEarth
     ? "#ccff33"
-    : isImpactor || isNeo
-      ? "#ffd54f"
-      : planet.color || "#ffffff";
+    : isImpactor
+      ? "#ffff00"  // Amarillo brillante para IMPACTOR-2025
+      : isNeo
+        ? "#ffd54f"
+        : planet.color || "#ffffff";
   const bodyRadius = Math.max(
     (planet.radiusKm || 1000) * SCALE_FACTOR,
     isImpactor || isNeo ? 0.28 : isEarth ? 0.32 : 0.25,
   );
   const textureUrl =
     planet.textureUrl || planet.surfaceTexture || planet.textureMap;
+  
+  // Texturas específicas para la Tierra
+  const earthDayTexture = useMemo(() => {
+    if (!isEarth) return null;
+    const loader = new THREE.TextureLoader();
+    const texture = loader.load('/textures/earth-daymap.jpg');
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = 4;
+    return texture;
+  }, [isEarth]);
+  
+  const earthCloudsTexture = useMemo(() => {
+    if (!isEarth) return null;
+    const loader = new THREE.TextureLoader();
+    const texture = loader.load('/textures/earth-clouds.png');
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = 4;
+    return texture;
+  }, [isEarth]);
   const rotationPeriodHours = Number.isFinite(planet.rotationPeriodHours)
     ? planet.rotationPeriodHours
     : Number.isFinite(planet.rotationPeriodDays)
@@ -629,6 +668,7 @@ function PlanetBody({
     : null;
   const tiltGroupRef = useRef();
   const rotationGroupRef = useRef();
+  const cloudsGroupRef = useRef();
   const surfaceTexture = useMemo(() => {
     if (!textureUrl) {
       return null;
@@ -645,8 +685,14 @@ function PlanetBody({
       if (surfaceTexture) {
         surfaceTexture.dispose();
       }
+      if (earthDayTexture) {
+        earthDayTexture.dispose();
+      }
+      if (earthCloudsTexture) {
+        earthCloudsTexture.dispose();
+      }
     };
-  }, [surfaceTexture]);
+  }, [surfaceTexture, earthDayTexture, earthCloudsTexture]);
 
   useEffect(() => {
     if (tiltGroupRef.current) {
@@ -675,6 +721,15 @@ function PlanetBody({
         rotationOffsetRad +
         ((elapsed % rotationPeriodSeconds) / rotationPeriodSeconds) * TWO_PI;
       rotationGroupRef.current.rotation.y = angle;
+    }
+
+    // Rotación de nubes para la Tierra (más rápida que la superficie)
+    if (cloudsGroupRef.current && isEarth && rotationPeriodSeconds) {
+      const cloudSpeedMultiplier = 1.2; // Las nubes se mueven 20% más rápido
+      const cloudAngle =
+        rotationOffsetRad +
+        ((elapsed % rotationPeriodSeconds) / rotationPeriodSeconds) * TWO_PI * cloudSpeedMultiplier;
+      cloudsGroupRef.current.rotation.y = cloudAngle;
     }
 
     if (groupRef.current && billboardRef.current) {
@@ -710,30 +765,52 @@ function PlanetBody({
         <group ref={rotationGroupRef}>
           <Sphere args={[bodyRadius, 32, 32]}>
             <meshStandardMaterial
-              color={surfaceTexture ? "#ffffff" : bodyColor}
-              map={surfaceTexture || null}
+              color={isEarth && earthDayTexture ? "#ffffff" : surfaceTexture ? "#ffffff" : bodyColor}
+              map={isEarth && earthDayTexture ? earthDayTexture : surfaceTexture || null}
               emissive={
-                surfaceTexture
+                isEarth && earthDayTexture
                   ? "#000000"
-                  : isImpactor || isNeo
-                    ? "#b59400"
-                    : isEarth
-                      ? "#86ff3b"
-                      : "#222222"
+                  : surfaceTexture
+                    ? "#000000"
+                    : isImpactor
+                      ? "#ffaa00"  // Emisión amarilla para IMPACTOR-2025
+                      : isNeo
+                        ? "#b59400"
+                        : isEarth
+                          ? "#86ff3b"
+                          : "#222222"
               }
               emissiveIntensity={
-                surfaceTexture
+                isEarth && earthDayTexture
                   ? 0
-                  : isImpactor || isNeo
-                    ? 0.4
-                    : isEarth
-                      ? 0.2
-                      : 0.05
+                  : surfaceTexture
+                    ? 0
+                    : isImpactor
+                      ? 0.6  // Mayor intensidad de emisión para IMPACTOR-2025
+                      : isNeo
+                        ? 0.4
+                        : isEarth
+                          ? 0.2
+                          : 0.05
               }
-              roughness={surfaceTexture ? 0.5 : 0.6}
-              metalness={surfaceTexture ? 0.05 : 0.1}
+              roughness={isEarth && earthDayTexture ? 0.8 : surfaceTexture ? 0.5 : 0.6}
+              metalness={isEarth && earthDayTexture ? 0.0 : surfaceTexture ? 0.05 : 0.1}
             />
           </Sphere>
+          
+          {/* Nubes para la Tierra */}
+          {isEarth && earthCloudsTexture && (
+            <group ref={cloudsGroupRef}>
+              <Sphere args={[bodyRadius * 1.01, 32, 32]}>
+                <meshBasicMaterial
+                  map={earthCloudsTexture}
+                  transparent
+                  opacity={0.8}
+                  alphaTest={0.1}
+                />
+              </Sphere>
+            </group>
+          )}
         </group>
       </group>
       <Billboard ref={billboardRef} follow position={[0, 0, 0]}>
@@ -752,11 +829,14 @@ function PlanetBody({
           <Text
             ref={textRef}
             position={[labelOffset, 0, 0]}
-            fontSize={0.7}
+            fontSize={smallIndicators ? 0.15 : 0.7}
             color={labelColor}
             anchorX="left"
             anchorY="middle"
-            outlineWidth={isImpactor ? 0.05 : isNeo ? 0.04 : 0.03}
+            outlineWidth={smallIndicators 
+              ? (isImpactor ? 0.01 : isNeo ? 0.008 : 0.006)
+              : (isImpactor ? 0.05 : isNeo ? 0.04 : 0.03)
+            }
             outlineColor="#000000"
           >
             {isImpactor
@@ -815,10 +895,13 @@ export default function SolarSystemVisualization({
   onCollision,
   focusBodyName,
   followFocus = false,
+  enableFocusController = true,
   cameraDistanceMultiplier = 1.6,
   showStars = true,
-  showMiniMap = true,
   alwaysShowLabels = false,
+  hideOtherOrbits = false,
+  customCameraPosition = null,
+  smallIndicators = false,
 }) {
   const simulationTimeRef = useRef(0);
   const [collisions, setCollisions] = useState([]);
@@ -879,9 +962,9 @@ export default function SolarSystemVisualization({
   const cameraFar = cameraDistance * 12;
   const minZoomDistance = focusPlanet
     ? Math.max(
-      (focusPlanet.radiusKm || 1000) * SCALE_FACTOR * 1.8,
-      cameraDistance * 0.0025,
-      0.02,
+      (focusPlanet.radiusKm || 1000) * SCALE_FACTOR * 0.5,
+      cameraDistance * 0.001,
+      0.01,
     )
     : maxOrbitDistance * 0.1;
 
@@ -905,13 +988,15 @@ export default function SolarSystemVisualization({
           timeScale={timeScale}
           simulationTimeRef={simulationTimeRef}
         />
-        <FocusCameraController
-          focusPlanet={focusPlanet}
-          simulationTimeRef={simulationTimeRef}
-          cameraDistanceMultiplier={cameraDistanceMultiplier}
-          followEnabled={followFocus}
-          controlsRef={controlsRef}
-        />
+        {enableFocusController && focusPlanet && (
+          <CameraFocuser
+            focusPlanet={focusPlanet}
+            simulationTimeRef={simulationTimeRef}
+            cameraDistanceMultiplier={cameraDistanceMultiplier}
+            customCameraPosition={customCameraPosition}
+            controlsRef={controlsRef}
+          />
+        )}
         <CollisionDetector
           planets={planets}
           neoObjects={neoObjects}
@@ -934,12 +1019,17 @@ export default function SolarSystemVisualization({
 
         {[...planets, ...neoObjects].map((planet) => (
           <group key={planet.name || planet.designation}>
-            <PlanetOrbit planet={planet} />
+            <PlanetOrbit 
+              planet={planet} 
+              hideOtherOrbits={hideOtherOrbits}
+              focusBodyName={focusBodyName}
+            />
             <PlanetBody
               planet={planet}
               maxOrbitDistance={maxOrbitDistance}
               simulationTimeRef={simulationTimeRef}
               labelsAlwaysVisible={alwaysShowLabels}
+              smallIndicators={smallIndicators}
             />
           </group>
         ))}
@@ -955,9 +1045,9 @@ export default function SolarSystemVisualization({
 
         <OrbitControls
           ref={controlsRef}
-          enablePan
-          enableZoom
-          enableRotate
+          enablePan={true}
+          enableZoom={true}
+          enableRotate={true}
           zoomSpeed={2.8}
           panSpeed={0.5}
           rotateSpeed={0.35}

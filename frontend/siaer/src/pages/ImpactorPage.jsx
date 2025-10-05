@@ -15,6 +15,11 @@ export default function ImpactorPage({ onGoBack, onAdvancePhase }) {
   const currentStepRef = useRef(0);
   const transitionTimeoutRef = useRef(null);
   const transitionFrameRef = useRef(null);
+  const [isExiting, setIsExiting] = useState(false);
+  const [exitProgress, setExitProgress] = useState(5);
+  const [exitTarget, setExitTarget] = useState(null);
+  const exitIntervalRef = useRef(null);
+  const exitTimeoutRef = useRef(null);
 
   // Detectar scroll para mostrar/ocultar botón scroll up
   useEffect(() => {
@@ -219,6 +224,46 @@ export default function ImpactorPage({ onGoBack, onAdvancePhase }) {
 
   const stepCount = steps.length;
 
+  useEffect(() => {
+    if (!isExiting || !exitTarget) {
+      return undefined;
+    }
+
+    exitIntervalRef.current = setInterval(() => {
+      setExitProgress((prev) => {
+        if (prev >= 95) {
+          return prev;
+        }
+        const increment = 8 + Math.random() * 12;
+        return Math.min(prev + increment, 95);
+      });
+    }, 80);
+
+    exitTimeoutRef.current = setTimeout(() => {
+      if (exitIntervalRef.current) {
+        clearInterval(exitIntervalRef.current);
+        exitIntervalRef.current = null;
+      }
+      setExitProgress(100);
+      if (exitTarget === 'phase') {
+        onAdvancePhase?.();
+      } else {
+        onGoBack?.();
+      }
+    }, 800);
+
+    return () => {
+      if (exitIntervalRef.current) {
+        clearInterval(exitIntervalRef.current);
+        exitIntervalRef.current = null;
+      }
+      if (exitTimeoutRef.current) {
+        clearTimeout(exitTimeoutRef.current);
+        exitTimeoutRef.current = null;
+      }
+    };
+  }, [isExiting, exitTarget, onAdvancePhase, onGoBack]);
+
   const requestStepChange = useCallback((targetIndex) => {
     const normalized = ((targetIndex % stepCount) + stepCount) % stepCount;
     if (normalized === currentStep && pendingStep === null) {
@@ -299,11 +344,30 @@ export default function ImpactorPage({ onGoBack, onAdvancePhase }) {
     requestStepChange(stepIndex);
   };
 
+  const handleReturnToSimulator = useCallback(() => {
+    if (isExiting) {
+      return;
+    }
+    setExitTarget('back');
+    setExitProgress(5);
+    setIsExiting(true);
+  }, [isExiting]);
+
+  const handleAdvancePhaseClick = useCallback(() => {
+    if (isExiting) {
+      return;
+    }
+    setExitTarget('phase');
+    setExitProgress(5);
+    setIsExiting(true);
+  }, [isExiting]);
+
   return (
-    <div
-      ref={scrollContainerRef}
-      className="h-screen overflow-y-auto bg-gray-900"
-    >
+    <div className="relative">
+      <div
+        ref={scrollContainerRef}
+        className={`h-screen overflow-y-auto bg-gray-900 transition-opacity duration-500 ${isExiting ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      >
       {/* Header transparente */}
       <header className="fixed top-0 left-0 right-0 z-30 p-4 bg-transparent">
         <div className="flex items-center justify-between">
@@ -320,7 +384,8 @@ export default function ImpactorPage({ onGoBack, onAdvancePhase }) {
           
           <div className="flex flex-col items-end space-y-2">
             <button 
-              onClick={onGoBack}
+              onClick={handleReturnToSimulator}
+              disabled={isExiting}
               className="px-4 py-2 bg-indigo-600/80 hover:bg-indigo-500 text-white rounded-lg transition-colors duration-200 flex items-center space-x-2 border border-indigo-400/60 shadow-sm shadow-indigo-900/40"
             >
               <span>🚀</span>
@@ -328,11 +393,8 @@ export default function ImpactorPage({ onGoBack, onAdvancePhase }) {
             </button>
             {currentStep === steps.length - 1 && (
               <button
-                onClick={() => {
-                  if (typeof onAdvancePhase === 'function') {
-                    onAdvancePhase();
-                  }
-                }}
+                onClick={handleAdvancePhaseClick}
+                disabled={isExiting}
                 className="px-4 py-2 bg-emerald-600/80 hover:bg-emerald-500 text-white rounded-lg transition-colors duration-200 flex items-center space-x-2 border border-emerald-400/60 shadow-sm shadow-emerald-900/40"
               >
                 <span>🌌</span>
@@ -643,6 +705,26 @@ export default function ImpactorPage({ onGoBack, onAdvancePhase }) {
           </svg>
         </button>
       </div>
+      </div>
+      {isExiting && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900">
+          <div className="flex flex-col items-center space-y-6 text-white px-6">
+            <h1 className="text-2xl font-semibold tracking-[0.4em] text-indigo-200">SIAER</h1>
+            <div className="w-72 max-w-xs">
+              <p className="text-xs text-indigo-200 uppercase tracking-[0.3em] text-center mb-4">Preparando simulador...</p>
+              <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-indigo-500 via-sky-400 to-emerald-400 transition-all duration-200 ease-out"
+                  style={{ width: `${Math.round(exitProgress)}%` }}
+                />
+              </div>
+              <p className="mt-3 text-xs text-indigo-200 text-center uppercase tracking-[0.2em]">
+                {Math.round(exitProgress)}%
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
