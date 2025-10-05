@@ -6,6 +6,7 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import ControlPanel from './components/ControlPanel';
 import SolarSystemVisualization from './components/SolarSystemVisualization';
+import ImpactorPage from './pages/ImpactorPage';
 import MeteorMadnessAPI from './services/api';
 
 function App() {
@@ -56,6 +57,7 @@ function App() {
   const [neoTimeScale, setNeoTimeScale] = useState(1);
   const [currentNeoOrbit, setCurrentNeoOrbit] = useState(null);
   const [currentNeoName, setCurrentNeoName] = useState('NEO');
+  const [showImpactorPage, setShowImpactorPage] = useState(false);
 
   // Estados de animación
   // Referencias
@@ -65,6 +67,10 @@ function App() {
   const introStartTimeRef = useRef(Date.now());
   const neoSearchRequestIdRef = useRef(0);
   const solarSearchTimeoutRef = useRef(null);
+
+  const handleGoBackFromImpactor = useCallback(() => {
+    setShowImpactorPage(false);
+  }, []);
 
   // Verificar conexión con backend al inicio
   useEffect(() => {
@@ -308,6 +314,10 @@ const checkBackendConnection = async () => {
 
     return true;
   }, [connectionStatus, markIntroLoaded, solarSystemData, startIntro, viewMode]);
+
+  const handleAdvancePhase = useCallback(() => {
+    // Placeholder: futuro flujo de siguiente fase
+  }, []);
 
   const handleSolarSpeedChange = useCallback((event) => {
     setSolarTimeScale(Number(event.target.value));
@@ -1011,6 +1021,12 @@ const checkBackendConnection = async () => {
       };
 
   // Render principal
+  
+  // Si se debe mostrar la página de impactos, renderizarla en lugar del contenido principal
+  if (showImpactorPage) {
+    return <ImpactorPage onGoBack={handleGoBackFromImpactor} onAdvancePhase={handleAdvancePhase} />;
+  }
+
   return (
     <div className="h-screen bg-gray-900 flex flex-col overflow-hidden">
       {isIntroVisible && (
@@ -1032,7 +1048,18 @@ const checkBackendConnection = async () => {
               </p>
             </div>
             {isIntroReady && (
-              <p className="text-xs text-gray-400 uppercase tracking-[0.2em]">Desplázate hacia arriba o abajo para comenzar</p>
+              <div className="space-y-4">
+                <p className="text-xs text-gray-400 uppercase tracking-[0.2em]">Desplázate hacia arriba o abajo para comenzar</p>
+                <div className="flex flex-col space-y-2">
+                  <button
+                    onClick={() => setShowImpactorPage(true)}
+                    className="px-6 py-2 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white rounded-lg transition-all duration-200 text-sm font-medium"
+                  >
+                    🚀 IMPACTOR-2025
+                  </button>
+                  <p className="text-xs text-gray-500 text-center">Analiza efectos de impactos de asteroides</p>
+                </div>
+              </div>
             )}
           </div>
           {introLoadDurationLabel && (
