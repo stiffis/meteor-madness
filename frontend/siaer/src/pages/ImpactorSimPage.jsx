@@ -18,6 +18,11 @@ export default function ImpactorSimPage({
   const [showAnalysisPanels, setShowAnalysisPanels] = useState(false);
   const [showSpeedMessage, setShowSpeedMessage] = useState(false);
   const [simulationDate, setSimulationDate] = useState(new Date());
+  const [isSimulationFrozen, setIsSimulationFrozen] = useState(false);
+  const [collisionEvent, setCollisionEvent] = useState(null);
+  const [isManuallyPaused, setIsManuallyPaused] = useState(false);
+  const [showImpactData, setShowImpactData] = useState(false);
+  const [showNextPhaseButton, setShowNextPhaseButton] = useState(false);
   const [j2000Data, setJ2000Data] = useState(null);
   const [isLoadingJ2000, setIsLoadingJ2000] = useState(false);
   const [j2000Error, setJ2000Error] = useState(null);
@@ -30,7 +35,7 @@ export default function ImpactorSimPage({
   useEffect(() => {
     let intervalId;
     
-    if (timeScale > 0) {
+    if (timeScale > 0 && !isSimulationFrozen) {
       intervalId = setInterval(() => {
         setSimulationDate(prevDate => {
           const newDate = new Date(prevDate.getTime() + (timeScale * 100)); // timeScale * 100ms
@@ -44,7 +49,7 @@ export default function ImpactorSimPage({
         clearInterval(intervalId);
       }
     };
-  }, [timeScale]);
+  }, [timeScale, isSimulationFrozen]);
 
   // Inicializar fecha de simulación cuando se carguen los datos J2000
   useEffect(() => {
@@ -145,6 +150,10 @@ export default function ImpactorSimPage({
       // Mostrar mensaje de velocidad después de 5 segundos
       setTimeout(() => {
         setShowSpeedMessage(true);
+        // Ocultar el mensaje después de 5 segundos más
+        setTimeout(() => {
+          setShowSpeedMessage(false);
+        }, 5000);
       }, 5000);
     } else {
       // Desactivar análisis: ocultar panel de análisis y mostrar paneles normales
@@ -155,6 +164,44 @@ export default function ImpactorSimPage({
       }, 300);
     }
   }, [isCollisionAnalysis]);
+
+  const handleSimulationCollision = useCallback((event) => {
+    setCollisionEvent((prev) => prev ?? event);
+    setIsSimulationFrozen(true);
+    setIsManuallyPaused(false);
+    setShowSpeedMessage(false);
+  }, []);
+
+  const toggleManualPause = useCallback(() => {
+    if (collisionEvent) {
+      return;
+    }
+
+    setIsManuallyPaused((prev) => {
+      const next = !prev;
+      setIsSimulationFrozen(next);
+      
+      // Controlar animación del panel de datos de impacto y botón
+      if (next) {
+        // Pausar: mostrar panel de datos de impacto y botón
+        setTimeout(() => {
+          setShowImpactData(true);
+          setShowNextPhaseButton(true);
+        }, 300);
+      } else {
+        // Reanudar: ocultar panel de datos de impacto y botón
+        setShowImpactData(false);
+        setShowNextPhaseButton(false);
+      }
+      
+      return next;
+    });
+  }, [collisionEvent]);
+
+  const handleNextPhase = useCallback(() => {
+    // Por ahora no hace nada, pero aquí se implementará la lógica de la siguiente fase
+    console.log('Pasar a la siguiente fase - funcionalidad pendiente');
+  }, []);
 
   const formatScale = useCallback((scale) => {
     if (scale < 60) return `${scale.toFixed(0)} s`;
@@ -293,6 +340,7 @@ export default function ImpactorSimPage({
                   ⚡ Increase Simulator Speed
                 </div>
               )}
+              
             </div>
           </div>
 
@@ -314,14 +362,15 @@ export default function ImpactorSimPage({
               planets={collisionBodies}
               neoObjects={[]}
               generatedAt={generatedAt}
-              timeScale={timeScale}
+              timeScale={isSimulationFrozen ? 0 : timeScale}
               focusBodyName={isCollisionAnalysis ? earthBodyName : null}
-              followFocus={isCollisionAnalysis}
-              enableFocusController={isCollisionAnalysis}
+              followFocus={isCollisionAnalysis && !isSimulationFrozen}
+              enableFocusController={isCollisionAnalysis && !isSimulationFrozen}
               cameraDistanceMultiplier={1.6}
               hideOtherOrbits={isCollisionAnalysis}
               customCameraPosition={null}
               smallIndicators={isCollisionAnalysis}
+              onCollision={handleSimulationCollision}
             />
           ) : (
             <div className="h-full w-full flex flex-col items-center justify-center text-gray-300">
@@ -670,9 +719,25 @@ export default function ImpactorSimPage({
           <div className="flex flex-col gap-3 text-sm text-slate-200">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <span className="font-semibold text-white">Velocidad de simulación</span>
-              <span className="text-indigo-200">
-                1 s real = <span className="text-indigo-300 font-semibold">{formatScale(timeScale)}</span> simulados ({timeScale.toLocaleString()} s)
-              </span>
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={toggleManualPause}
+                  className={`flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm transition-colors ${
+                    collisionEvent
+                      ? 'opacity-60 cursor-not-allowed border-slate-700 text-slate-500'
+                      : isManuallyPaused || isSimulationFrozen
+                        ? 'bg-emerald-600/80 border-emerald-400/60 text-white hover:bg-emerald-500/80'
+                        : 'bg-indigo-600/80 border-indigo-400/60 text-white hover:bg-indigo-500/70'
+                  }`}
+                  disabled={Boolean(collisionEvent)}
+                >
+                  {isSimulationFrozen ? '▶️ Reanudar' : '⏸️ Pausar'}
+                </button>
+                <span className="text-indigo-200">
+                  1 s real = <span className="text-indigo-300 font-semibold">{formatScale(timeScale)}</span> simulados ({timeScale.toLocaleString()} s)
+                </span>
+              </div>
             </div>
             <div className="flex items-center justify-center">
               <div className="text-center">
@@ -689,6 +754,11 @@ export default function ImpactorSimPage({
                 </div>
               </div>
             </div>
+            {collisionEvent && (
+              <div className="text-center text-rose-400 text-sm font-semibold">
+                🔴 Colisión detectada entre {collisionEvent.object1?.name} y {collisionEvent.object2?.name}. Simulación detenida.
+              </div>
+            )}
             <input
               type="range"
               min={1}
@@ -696,7 +766,8 @@ export default function ImpactorSimPage({
               step={1}
               value={timeScale}
               onChange={handleTimeScaleChange}
-              className="slider-range"
+              className={`slider-range ${isSimulationFrozen ? 'slider-range--disabled' : ''}`}
+              disabled={isSimulationFrozen}
             />
             <div className="flex flex-wrap gap-2">
               {speedPresets.map((preset) => (
@@ -708,7 +779,8 @@ export default function ImpactorSimPage({
                     timeScale === preset
                       ? 'bg-indigo-600 border-indigo-400 text-white'
                       : 'bg-transparent border-white/10 text-gray-200 hover:bg-white/10'
-                  }`}
+                  } ${isSimulationFrozen ? 'opacity-60 cursor-not-allowed' : ''}`}
+                  disabled={isSimulationFrozen}
                 >
                   {formatScale(preset)}
                 </button>
@@ -719,134 +791,497 @@ export default function ImpactorSimPage({
       </div>
 
       {/* Panel de Análisis de Choque - Solo derecho */}
-      <div className={`fixed right-0 top-24 bottom-0 w-96 bg-transparent z-20 transition-transform duration-700 ease-out ${showAnalysisPanels ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`fixed right-0 top-24 bottom-0 w-96 bg-transparent z-20 transition-all duration-700 ease-out ${
+        isManuallyPaused 
+          ? (showImpactData ? 'translate-x-0 scale-100' : 'translate-x-full scale-95')
+          : (showAnalysisPanels ? 'translate-x-0 scale-100' : 'translate-x-full scale-95')
+      }`}>
         <div className="h-full p-6 flex flex-col">
-          <div className="bg-transparent rounded-xl p-6 h-full overflow-y-auto">
+          <div className={`bg-transparent rounded-xl p-6 h-full overflow-y-auto transition-all duration-500 ${
+            isManuallyPaused 
+              ? (showImpactData ? 'opacity-100 scale-100' : 'opacity-0 scale-95')
+              : (showAnalysisPanels ? 'opacity-100 scale-100' : 'opacity-0 scale-95')
+          }`}>
             <div className="space-y-6">
               {/* Header */}
-              <div className="text-center border-b border-red-500/30 pb-4">
-                <h2 className="text-2xl font-bold text-red-400 mb-2">🚨 Collision Analysis</h2>
-                <p className="text-sm text-red-300">Real-time NEO PHA Tracking</p>
+              <div className={`text-center border-b border-red-500/30 pb-4 transition-all duration-500 ${
+                isManuallyPaused 
+                  ? (showImpactData ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95')
+                  : (showAnalysisPanels ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95')
+              }`} style={{transitionDelay: isManuallyPaused && showImpactData ? '50ms' : '0ms'}}>
+                <h2 className="text-2xl font-bold text-red-400 mb-2">
+                  {isManuallyPaused ? '💥 Impact Data' : '🚨 Collision Analysis'}
+                </h2>
+                <p className="text-sm text-red-300">
+                  {isManuallyPaused ? 'Collins-Melosh-Marcus Parameters' : 'Real-time NEO PHA Tracking'}
+                </p>
               </div>
 
-              {/* NEO PHA Status */}
-              <div className="bg-red-900/20 border border-red-500/40 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-red-300 mb-3 flex items-center">
-                  <span className="mr-2">⚠️</span>
-                  NEO PHA Classification
-                </h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Status:</span>
-                    <span className="text-red-400 font-semibold">POTENTIALLY HAZARDOUS</span>
+              {isManuallyPaused ? (
+                // Panel de datos de impacto (cuando está pausado)
+                <>
+                  {/* Impact Parameters for Collins-Melosh-Marcus */}
+                  <div className={`bg-red-900/20 border border-red-500/40 rounded-lg p-4 transition-all duration-500 ${
+                    showImpactData ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                  }`} style={{transitionDelay: showImpactData ? '100ms' : '0ms'}}>
+                    <h3 className="text-lg font-semibold text-red-300 mb-3 flex items-center">
+                      <span className="mr-2">🌍</span>
+                      Target Parameters
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Target:</span>
+                        <span className="text-red-400 font-semibold">Earth</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Density:</span>
+                        <span className="text-yellow-400">2.7 g/cm³ (continental)</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Gravity:</span>
+                        <span className="text-yellow-400">9.81 m/s²</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Atmosphere:</span>
+                        <span className="text-yellow-400">Present (100 km)</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">MOID:</span>
-                    <span className="text-yellow-400">{impactorData?.moid_au || 0.0} AU</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Magnitude (H):</span>
-                    <span className="text-yellow-400">{impactorData?.absolute_magnitude_h || 18.5}</span>
-                  </div>
-                </div>
-              </div>
 
-              {/* Constant Tracking */}
-              <div className="bg-blue-900/20 border border-blue-500/40 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-blue-300 mb-3 flex items-center">
-                  <span className="mr-2">📡</span>
-                  Continuous Monitoring
-                </h3>
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <h4 className="font-semibold text-blue-200 mb-1">Ground-Based Telescopes</h4>
-                    <p className="text-gray-300 text-xs">
-                      Automated sky surveys detect and track NEOs using optical telescopes with wide-field cameras.
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-blue-200 mb-1">Radar Observations</h4>
-                    <p className="text-gray-300 text-xs">
-                      Deep Space Network radar provides precise orbital measurements and physical characteristics.
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-blue-200 mb-1">Space-Based Assets</h4>
-                    <p className="text-gray-300 text-xs">
-                      NEOWISE and future missions provide infrared detection capabilities for dark objects.
-                    </p>
-                  </div>
-                </div>
-              </div>
+                  {/* Impactor Parameters */}
+                  <div className={`bg-orange-900/20 border border-orange-500/40 rounded-lg p-4 transition-all duration-500 ${
+                    showImpactData ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                  }`} style={{transitionDelay: showImpactData ? '200ms' : '0ms'}}>
+                    <h3 className="text-lg font-semibold text-orange-300 mb-3 flex items-center">
+                      <span className="mr-2">☄️</span>
+                      Impactor Parameters
+                    </h3>
+                    
+                    {/* Impactor size visualization */}
+                    <div className="mb-4 p-3 bg-orange-800/20 rounded-lg border border-orange-400/30">
+                      <div className="text-center mb-2">
+                        <div className="text-xs text-orange-200 mb-2">Size Comparison</div>
+                        <div className="relative w-full h-16 bg-gray-800/50 rounded border border-orange-300/30">
+                          {/* Earth for scale */}
+                          <div className="absolute bottom-0 left-2 w-8 h-8 bg-blue-400 rounded-full border border-blue-300"></div>
+                          <div className="absolute bottom-0 left-2 -translate-y-10 text-xs text-blue-300">Earth</div>
+                          {/* Impactor */}
+                          <div className="absolute bottom-0 right-4 w-2 h-2 bg-orange-400 rounded-full border border-orange-300 animate-pulse"></div>
+                          <div className="absolute bottom-0 right-4 -translate-y-6 text-xs text-orange-300">IMPACTOR-2025</div>
+                          {/* Scale line */}
+                          <div className="absolute bottom-2 left-10 right-4 h-px bg-gray-400"></div>
+                          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 text-xs text-gray-400">1 km diameter</div>
+                        </div>
+                      </div>
+                    </div>
 
-              {/* Tracking Data */}
-              <div className="bg-green-900/20 border border-green-500/40 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-green-300 mb-3 flex items-center">
-                  <span className="mr-2">📊</span>
-                  Current Tracking Data
-                </h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Last Observation:</span>
-                    <span className="text-green-400">Real-time</span>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Diameter:</span>
+                        <span className="text-orange-400">1.0 km</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Density:</span>
+                        <span className="text-orange-400">3.0 g/cm³ (iron)</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Mass:</span>
+                        <span className="text-orange-400">1.57 × 10¹² kg</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Velocity:</span>
+                        <span className="text-orange-400">11.2 km/s</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Composition:</span>
+                        <span className="text-orange-400">Iron-Nickel</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Observation Arc:</span>
-                    <span className="text-green-400">365+ days</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Uncertainty:</span>
-                    <span className="text-green-400">Low (0.1%)</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Next Close Approach:</span>
-                    <span className="text-yellow-400">TBD</span>
-                  </div>
-                </div>
-              </div>
 
+                  {/* Impact Geometry */}
+                  <div className={`bg-purple-900/20 border border-purple-500/40 rounded-lg p-4 transition-all duration-500 ${
+                    showImpactData ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                  }`} style={{transitionDelay: showImpactData ? '300ms' : '0ms'}}>
+                    <h3 className="text-lg font-semibold text-purple-300 mb-3 flex items-center">
+                      <span className="mr-2">📐</span>
+                      Impact Geometry
+                    </h3>
+                    
+                    {/* Visual representation of impact angle */}
+                    <div className="mb-4 p-3 bg-purple-800/20 rounded-lg border border-purple-400/30">
+                      <div className="text-center mb-2">
+                        <div className="text-xs text-purple-200 mb-1">Entry Trajectory</div>
+                        <div className="relative w-full h-16 bg-gray-800/50 rounded border border-purple-300/30">
+                          {/* Earth surface */}
+                          <div className="absolute bottom-0 left-0 right-0 h-1 bg-green-400"></div>
+                          {/* Impact trajectory */}
+                          <div className="absolute bottom-1 right-4 w-0 h-0 border-l-4 border-r-4 border-b-8 border-l-transparent border-r-transparent border-b-orange-400 transform rotate-45 origin-bottom"></div>
+                          {/* Angle indicator */}
+                          <div className="absolute bottom-2 right-8 text-xs text-orange-300 font-bold">45°</div>
+                          {/* Impact point */}
+                          <div className="absolute bottom-0 right-4 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                        </div>
+                      </div>
+                    </div>
 
-              {/* Monitoring Systems */}
-              <div className="bg-purple-900/20 border border-purple-500/40 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-purple-300 mb-3 flex items-center">
-                  <span className="mr-2">🛰️</span>
-                  Active Monitoring Systems
-                </h3>
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Catalina Sky Survey</span>
-                    <span className="text-green-400">● Active</span>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Entry Angle:</span>
+                        <span className="text-purple-400">45° (optimal)</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Azimuth:</span>
+                        <span className="text-purple-400">Northeast (45°)</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Latitude:</span>
+                        <span className="text-purple-400">40.7128° N</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Longitude:</span>
+                        <span className="text-purple-400">74.0060° W</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Location:</span>
+                        <span className="text-purple-400">New York City</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Pan-STARRS</span>
-                    <span className="text-green-400">● Active</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">ATLAS</span>
-                    <span className="text-green-400">● Active</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">NEOWISE</span>
-                    <span className="text-green-400">● Active</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Goldstone Radar</span>
-                    <span className="text-yellow-400">○ Standby</span>
-                  </div>
-                </div>
-              </div>
 
-              {/* Warning */}
-              <div className="bg-red-900/30 border border-red-600/60 rounded-lg p-4">
-                <div className="text-center">
-                  <p className="text-red-200 text-sm font-semibold">
-                    ⚠️ This object requires continuous monitoring due to its PHA classification and potential impact trajectory.
-                  </p>
-                </div>
-              </div>
+                  {/* Energy Calculations */}
+                  <div className={`bg-blue-900/20 border border-blue-500/40 rounded-lg p-4 transition-all duration-500 ${
+                    showImpactData ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                  }`} style={{transitionDelay: showImpactData ? '400ms' : '0ms'}}>
+                    <h3 className="text-lg font-semibold text-blue-300 mb-3 flex items-center">
+                      <span className="mr-2">⚡</span>
+                      Energy Calculations
+                    </h3>
+                    
+                    {/* Energy comparison visualization */}
+                    <div className="mb-4 p-3 bg-blue-800/20 rounded-lg border border-blue-400/30">
+                      <div className="text-center mb-2">
+                        <div className="text-xs text-blue-200 mb-2">Energy Comparison</div>
+                        <div className="space-y-1">
+                          {/* Hiroshima bomb bar */}
+                          <div className="flex items-center">
+                            <span className="text-xs text-gray-300 w-16">Hiroshima:</span>
+                            <div className="flex-1 bg-gray-700 rounded h-2">
+                              <div className="bg-red-400 h-2 rounded" style={{width: '1px'}}></div>
+                            </div>
+                            <span className="text-xs text-red-400 ml-2">15 kt</span>
+                          </div>
+                          {/* TNT equivalent bar */}
+                          <div className="flex items-center">
+                            <span className="text-xs text-gray-300 w-16">TNT:</span>
+                            <div className="flex-1 bg-gray-700 rounded h-2">
+                              <div className="bg-yellow-400 h-2 rounded" style={{width: '2%'}}></div>
+                            </div>
+                            <span className="text-xs text-yellow-400 ml-2">23.5 Mt</span>
+                          </div>
+                          {/* Impact energy bar */}
+                          <div className="flex items-center">
+                            <span className="text-xs text-gray-300 w-16">Impact:</span>
+                            <div className="flex-1 bg-gray-700 rounded h-3">
+                              <div className="bg-blue-400 h-3 rounded animate-pulse" style={{width: '100%'}}></div>
+                            </div>
+                            <span className="text-xs text-blue-400 ml-2">9.85×10¹⁹ J</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Kinetic Energy:</span>
+                        <span className="text-blue-400">9.85 × 10¹⁹ J</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">TNT Equivalent:</span>
+                        <span className="text-blue-400">23.5 Megatons</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Hiroshima:</span>
+                        <span className="text-blue-400">1,570 × H-bomb</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Environmental Effects Preview */}
+                  <div className={`bg-green-900/20 border border-green-500/40 rounded-lg p-4 transition-all duration-500 ${
+                    showImpactData ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                  }`} style={{transitionDelay: showImpactData ? '500ms' : '0ms'}}>
+                    <h3 className="text-lg font-semibold text-green-300 mb-3 flex items-center">
+                      <span className="mr-2">🌪️</span>
+                      Expected Effects
+                    </h3>
+                    
+                    {/* Crater visualization */}
+                    <div className="mb-4 p-3 bg-green-800/20 rounded-lg border border-green-400/30">
+                      <div className="text-center mb-2">
+                        <div className="text-xs text-green-200 mb-2">Impact Crater Scale</div>
+                        <div className="relative w-full h-20 bg-gray-800/50 rounded border border-green-300/30">
+                          {/* Crater */}
+                          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-8 bg-gray-600 rounded-full border-2 border-yellow-400"></div>
+                          {/* Scale indicators */}
+                          <div className="absolute bottom-0 left-2 text-xs text-yellow-300">0 km</div>
+                          <div className="absolute bottom-0 right-2 text-xs text-yellow-300">15 km</div>
+                          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 -translate-y-1 text-xs text-yellow-300">7.5 km</div>
+                          {/* Fireball radius */}
+                          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-8 h-8 border-2 border-orange-400 rounded-full animate-pulse opacity-60"></div>
+                          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-orange-300">Fireball</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Effects zones visualization */}
+                    <div className="mb-4 p-3 bg-green-800/20 rounded-lg border border-green-400/30">
+                      <div className="text-center mb-2">
+                        <div className="text-xs text-green-200 mb-2">Destruction Zones</div>
+                        <div className="relative w-full h-16 bg-gray-800/50 rounded border border-green-300/30">
+                          {/* Center point */}
+                          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-red-500 rounded-full"></div>
+                          {/* Zone 1 - Crater */}
+                          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 border border-red-400 rounded-full"></div>
+                          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -translate-y-6 text-xs text-red-400">Crater</div>
+                          {/* Zone 2 - Fireball */}
+                          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 border border-orange-400 rounded-full"></div>
+                          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -translate-y-8 text-xs text-orange-400">Fireball</div>
+                          {/* Zone 3 - Ejecta */}
+                          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 border border-yellow-400 rounded-full"></div>
+                          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -translate-y-10 text-xs text-yellow-400">Ejecta</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Crater Diameter:</span>
+                        <span className="text-green-400">~15 km</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Fireball Radius:</span>
+                        <span className="text-green-400">~8 km</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Earthquake:</span>
+                        <span className="text-green-400">7.2 Richter</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Ejecta Distance:</span>
+                        <span className="text-green-400">~500 km</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Affected Area:</span>
+                        <span className="text-green-400">~785,000 km²</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Impact Location */}
+                  <div className={`bg-indigo-900/20 border border-indigo-500/40 rounded-lg p-4 transition-all duration-500 ${
+                    showImpactData ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                  }`} style={{transitionDelay: showImpactData ? '600ms' : '0ms'}}>
+                    <h3 className="text-lg font-semibold text-indigo-300 mb-3 flex items-center">
+                      <span className="mr-2">📍</span>
+                      Impact Location
+                    </h3>
+                    
+                    {/* Geographic visualization */}
+                    <div className="mb-4 p-3 bg-indigo-800/20 rounded-lg border border-indigo-400/30">
+                      <div className="text-center mb-2">
+                        <div className="text-xs text-indigo-200 mb-2">Impact Site</div>
+                        <div className="relative w-full h-20 bg-gray-800/50 rounded border border-indigo-300/30">
+                          {/* Map representation */}
+                          <div className="absolute inset-2 bg-gradient-to-br from-green-600/30 to-blue-600/30 rounded"></div>
+                          {/* Impact point */}
+                          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-red-500 rounded-full animate-pulse border-2 border-yellow-400"></div>
+                          {/* Coordinates */}
+                          <div className="absolute top-1 left-1 text-xs text-yellow-300">40.7°N</div>
+                          <div className="absolute bottom-1 right-1 text-xs text-yellow-300">74.0°W</div>
+                          {/* City label */}
+                          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-6 text-xs text-white font-bold">NYC</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Coordinates:</span>
+                        <span className="text-indigo-400">40.7128° N, 74.0060° W</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">City:</span>
+                        <span className="text-indigo-400">New York City</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Population:</span>
+                        <span className="text-indigo-400">8.4 million</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Terrain:</span>
+                        <span className="text-indigo-400">Urban/Coastal</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Collins-Melosh-Marcus Reference */}
+                  <div className={`bg-slate-900/30 border border-slate-600/50 rounded-lg p-4 transition-all duration-500 ${
+                    showImpactData ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                  }`} style={{transitionDelay: showImpactData ? '700ms' : '0ms'}}>
+                    <div className="flex items-start">
+                      <span className="text-blue-400 text-lg mr-3">📚</span>
+                      <div>
+                        <h4 className="text-blue-300 font-semibold mb-2">Reference</h4>
+                        <p className="text-blue-200 text-xs leading-relaxed">
+                          Collins, G. S., Melosh, H. J., & Marcus, R. A. (2005). 
+                          "Earth Impact Effects Program: A web-based computer program 
+                          for calculating the regional environmental consequences of 
+                          a meteoroid impact on Earth."
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                // Panel de análisis de colisión (cuando está en análisis activo)
+                <>
+                  {/* NEO PHA Status */}
+                  <div className="bg-red-900/20 border border-red-500/40 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-red-300 mb-3 flex items-center">
+                      <span className="mr-2">⚠️</span>
+                      NEO PHA Classification
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Status:</span>
+                        <span className="text-red-400 font-semibold">POTENTIALLY HAZARDOUS</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">MOID:</span>
+                        <span className="text-yellow-400">{impactorData?.moid_au || 0.0} AU</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Magnitude (H):</span>
+                        <span className="text-yellow-400">{impactorData?.absolute_magnitude_h || 18.5}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Constant Tracking */}
+                  <div className="bg-blue-900/20 border border-blue-500/40 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-blue-300 mb-3 flex items-center">
+                      <span className="mr-2">📡</span>
+                      Continuous Monitoring
+                    </h3>
+                    <div className="space-y-3 text-sm">
+                      <div>
+                        <h4 className="font-semibold text-blue-200 mb-1">Ground-Based Telescopes</h4>
+                        <p className="text-gray-300 text-xs">
+                          Automated sky surveys detect and track NEOs using optical telescopes with wide-field cameras.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-blue-200 mb-1">Radar Observations</h4>
+                        <p className="text-gray-300 text-xs">
+                          Deep Space Network radar provides precise orbital measurements and physical characteristics.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-blue-200 mb-1">Space-Based Assets</h4>
+                        <p className="text-gray-300 text-xs">
+                          NEOWISE and future missions provide infrared detection capabilities for dark objects.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tracking Data */}
+                  <div className="bg-green-900/20 border border-green-500/40 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-green-300 mb-3 flex items-center">
+                      <span className="mr-2">📊</span>
+                      Current Tracking Data
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Last Observation:</span>
+                        <span className="text-green-400">Real-time</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Observation Arc:</span>
+                        <span className="text-green-400">365+ days</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Uncertainty:</span>
+                        <span className="text-green-400">Low (0.1%)</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Next Close Approach:</span>
+                        <span className="text-yellow-400">TBD</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Monitoring Systems */}
+                  <div className="bg-purple-900/20 border border-purple-500/40 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-purple-300 mb-3 flex items-center">
+                      <span className="mr-2">🛰️</span>
+                      Active Monitoring Systems
+                    </h3>
+                    <div className="space-y-2 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Catalina Sky Survey</span>
+                        <span className="text-green-400">● Active</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Pan-STARRS</span>
+                        <span className="text-green-400">● Active</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">ATLAS</span>
+                        <span className="text-green-400">● Active</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">NEOWISE</span>
+                        <span className="text-green-400">● Active</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Goldstone Radar</span>
+                        <span className="text-yellow-400">○ Standby</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Warning */}
+                  <div className="bg-red-900/30 border border-red-600/60 rounded-lg p-4">
+                    <div className="text-center">
+                      <p className="text-red-200 text-sm font-semibold">
+                        ⚠️ This object requires continuous monitoring due to its PHA classification and potential impact trajectory.
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Botón de siguiente fase - Parte inferior izquierda */}
+      <div className={`fixed bottom-6 left-6 z-30 transition-all duration-700 ease-out ${
+        showNextPhaseButton 
+          ? 'opacity-100 translate-y-0 scale-100' 
+          : 'opacity-0 translate-y-4 scale-95'
+      }`} style={{transitionDelay: showNextPhaseButton ? '500ms' : '0ms'}}>
+        <button
+          onClick={handleNextPhase}
+          className="px-6 py-3 bg-gradient-to-r from-purple-600/90 to-pink-600/90 hover:from-purple-500/90 hover:to-pink-500/90 text-white rounded-lg transition-all duration-300 font-semibold border border-purple-400/60 shadow-lg hover:shadow-purple-900/40 transform hover:scale-105 active:scale-95"
+        >
+          <span className="flex items-center space-x-2">
+            <span>🚀</span>
+            <span>Pasar a la Siguiente Fase</span>
+          </span>
+        </button>
       </div>
     </div>
   );

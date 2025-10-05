@@ -328,9 +328,8 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{SIAER(Simulador de Impactos de Asteroides y Evaluación de Riesgos): Una
-	herramienta web para calcular las consecuencias medioambientales de impactos de
-	asteroides en la Tierra}
+\title{MISRA (Meteor Impact Simulator and Risk Assessment): A
+	web tool to compute the environmental consequences of meteor impacts on Earth}
 
 
 % author names and affiliations
@@ -338,32 +337,18 @@
 % affiliations
 \author{
 	\IEEEauthorblockN{Bendezu Pastrana, Tommy}
-	\IEEEauthorblockA{Dept. de Ing. Mecatrónica\\
+	\IEEEauthorblockA{Dept. of Mechatronics Engineering\\
 		Universidad Continental\\
-		Huancayo, Perú\\
+		Huancayo, Peru\\
 		\href{mailto:tommyhanss007@gmail.com}{tommyhanss007@gmail.com}}
 
 	\and
 
-	\IEEEauthorblockN{Meza Millan, Martin}
-	\IEEEauthorblockA{Dept. de Ing. Civil\\
-		Universidad Continental\\
-		Huancayo, Perú\\
-		\href{mailto:mezamilland@gmail.com}{mezamilland@gmail.com}}
-
-	\and
-
 	\IEEEauthorblockN{Ildefonso Santos, Steve}
-	\IEEEauthorblockA{Dept. de Computer Science\\
+	\IEEEauthorblockA{Dept. of Computer Science\\
 		UTEC\\
-		Huancayo, Perú\\
+		Huancayo, Peru\\
 		\href{mailto:steve.ildefonso@utec.edu.pe}{steve.ildefonso@utec.edu.pe}}
-
-	\and
-
-	\IEEEauthorblockN{Carhuanta Piélago, Mijael}
-	\IEEEauthorblockA{Huancayo, Perú\\
-		\href{mailto:carhuamantaanyelo159753@gmail.com}{carhuamantaanyelo159753@gmail.com}}
 }
 
 % conference papers do not typically use \thanks and this command
@@ -404,23 +389,20 @@
 % in the abstract
 \begin{abstract}
 
-	El NASA Space Apps Challenge 2025 plantea el reto \textit{"Meteor Madness"}, que busca
-	desarrollar una herramienta para simular el impacto de asteroides en la Tierra,
-	evaluando las consecuencias y ayudando a las autoridades pertinentes a tomar
-	medidas preventivas. Este proyecto tiene como objetivo crear una página web
-	interactiva que permite a los usuarios ingresar parámetros específicos de un
-	asteroide, como su tamaño, velocidad y ángulo de entrada, para calcular y
-	visualizar las consecuencias medioambientales. La herramienta integra datos
-	reales de la NASA Near-Earth Object (NEO) API y de USGS, lo que proporciona
-	una base científica sólida para los cálculos. Los resultados incluyen
-	estimaciones sobre la extensión del área afectada, la magnitud de la onda
-	expansiva, la generación de tsunamis y otros efectos secundarios. Además, se
-	incluye una sección educativa que explica los fundamentos científicos detrás de
-	los impactos de asteroides y las medidas de mitigación. Este proyecto no solo
-	tiene un impacto directo en la seguridad planetaria, sino que también sirve
-	como un punto de partida para futuras investigaciones en la predicción de
-	fenómenos astronómicos peligrosos, apoyándose en datos reales y modelos
-	científicos.
+	The NASA Space Apps Challenge 2025 introduces the \textit{"Meteor Madness"}
+	challenge, which seeks to develop a tool capable of simulating meteor impacts on
+	Earth, assessing their consequences, and helping the relevant authorities implement
+	preventive measures. This project aims to build an interactive web application that
+	enables users to enter specific meteor parameters, such as size, velocity, and
+	entry angle, to compute and visualize environmental consequences. The tool
+	integrates real data from the NASA Near-Earth Object (NEO) API and the USGS,
+	providing a solid scientific foundation for the calculations. The results include
+	estimates of the extent of the affected area, the magnitude of the blast wave,
+	tsunami generation, and other secondary effects. The application also features an
+	educational section that explains the scientific principles behind meteor impacts
+	and mitigation measures. Beyond its direct contribution to planetary safety, the
+	project serves as a starting point for future research on predicting hazardous
+	astronomical phenomena, leveraging real data and scientific models.
 
 \end{abstract}
 
@@ -439,122 +421,128 @@
 % creates the second title. It will be ignored for other modes.
 \IEEEpeerreviewmaketitle
 
-% --- INTRODUCCION ---
-\section{Introducción}
+% --- INTRODUCTION ---
+\section{Introduction}
 
-El NASA Space Apps Challenge 2025, a través del reto \textit{Meteor Madness},
-invita a la comunidad global a desarrollar soluciones innovadoras para entender
-y mitigar los riesgos que representan los asteroides cercanos a la Tierra.
-Aunque los impactos de asteroides son eventos poco frecuentes, su potencial
-destructivo es significativo, con efectos que incluyen tsunamis, terremotos y
-alteraciones atmosféricas. A lo largo de la historia, impactos de este tipo han
+The NASA Space Apps Challenge 2025, through the \textit{Meteor Madness} prompt,
+invites the global community to develop innovative solutions that help
+understand and mitigate the risks posed by near-Earth meteors. Although
+meteor impacts are rare events, their destructive potential is significant,
+with effects that include tsunamis, earthquakes, and atmospheric disturbances.
+Throughout history, impacts of this kind have produced devastating
+consequences, such as the Chicxulub event, which is believed to have
+contributed to the extinction of the dinosaurs. This threat underscores the
+importance of tools that allow us to understand and evaluate these risks
+\cite{ward2000,melosh1989}.
 
-tenido consecuencias devastadoras, como el evento de Chicxulub, que se cree que
-contribuyó a la extinción de los dinosaurios. Esta amenaza subraya la
-importancia de contar con herramientas que nos permitan comprender y evaluar
-estos riesgos \cite{ward2000,melosh1989}.
+Interactive simulation tools play a crucial role in visualizing these risks,
+because they allow users to explore different impact scenarios and the
+associated environmental consequences. These tools not only raise awareness
+among the public and decision-makers regarding the magnitude of impacts, but
+also make it possible to test mitigation strategies such as meteor
+deflection. The ability to simulate how changes in a meteor's parameters
+(size, velocity, trajectory) affect the outcome can provide valuable
+information for planetary protection planning \cite{collins2005}.
 
-Las herramientas interactivas de simulación juegan un papel crucial en la visualización de estos riesgos, ya que permiten explorar diferentes escenarios de impacto y sus consecuencias medioambientales. Estas herramientas no solo ayudan a concienciar al público y a los responsables de la toma de decisiones sobre la magnitud de los impactos, sino que también permiten probar estrategias de mitigación, como la desviación de asteroides. La capacidad de simular cómo los cambios en los parámetros de un asteroide (tamaño, velocidad, trayectoria) afectan el impacto puede proporcionar información valiosa para la planificación de la protección planetaria \cite{collins2005}.
+In response to this challenge, this preliminary project proposes the
+development of an educational web simulator that calculates and visualizes the
+environmental consequences of an impact. By integrating real data from the NASA
+Near-Earth Object (NEO) API and the USGS, the simulator will estimate the
+extent of the affected area, the magnitude of the blast wave, crater formation,
+and tsunami generation, all grounded in established scientific models. The
+simulator will also include an educational section that explains the scientific
+principles behind meteor impacts and mitigation measures
+\cite{collins2005,wuennemann2010}.
 
-En respuesta a este reto, este anteproyecto propone el desarrollo de un simulador web educativo que permite calcular y visualizar las consecuencias medioambientales de su impacto. Integrando datos reales de la NASA Near-Earth Object (NEO) API y del USGS, el simulador proporcionará estimaciones sobre la extensión del área afectada, la magnitud de la onda expansiva, la formación de cráteres y la generación de tsunamis, todo basado en modelos científicos establecidos. Además, el simulador incluirá una sección educativa que explicará los fundamentos científicos detrás de los impactos de asteroides y las medidas de mitigación \cite{collins2005,wuennemann2010}.
 
+% --- OBJECTIVES ---
+\section{Objectives}
 
-% --- OBJETIVOS ---
-\section{Objetivos}
+\textbf{General objective}: Develop an interactive web tool that simulates the
+impact of near-Earth meteors, allowing users to visualize environmental
+consequences and explore mitigation strategies using real data from
+\textit{NASA} and the \textit{USGS}.
 
-\textbf{Objetivo general}: Desarrollar una herramienta web interactiva que
-simule el impacto de asteroides cercanos a la Tierra, permitiendo a los usuarios
-visualizar las consecuencias medioambientales y explorar estrategias de
-mitigación, utilizando datos reales de la \textit{NASA} y el \textit{USGS}.
-
-\textbf{Objetivos específicos}:
+\textbf{Specific objectives}:
 \begin{enumerate}
-	\item \textbf{Simular la trayectoria de asteroides cercanos a la Tierra}:
+	\item \textbf{Simulate the trajectory of near-Earth meteors}:
 	      \begin{itemize}
-		      \item{ Implementar un modelo orbital que permita calcular y
-		            visualizar la trayectoria de un asteroide basándose en
-		            parámetros Keplerianos.}
+		      \item{ Implement an orbital model that calculates and visualizes an
+		            meteor's trajectory based on Keplerian parameters.}
 	      \end{itemize}
 
-	\item \textbf{Visualizar los efectos medioambientales de un impacto}:
+	\item \textbf{Visualize the environmental effects of an impact}:
 	      \begin{itemize}
-		      \item{Calcular, mediante modelos científicos, y mostrar las
-		            consecuencias de un impacto de asteroide, tales como la
-		            formación de cráteres, la generación de tsunamis, la actividad
-		            sísmica asociada, utilizando datos y modelos científicos existentes.}
+		      \item{ Compute, using scientific models, and display the consequences
+		            of a meteor impact, such as crater formation, tsunami
+		            generation, and associated seismic activity, relying on existing
+		            scientific data and models.}
 	      \end{itemize}
 
-	\item \textbf{Integrar datos reales de la \textit{NASA} y el \textit{USGS}}:
+	\item \textbf{Integrate real data from \textit{NASA} and the \textit{USGS}}:
 	      \begin{itemize}
-		      \item{Utilizar la NASA Near-Earth Object (NEO) API para obtener
-		            información sobre asteroides cercanos y la USGS Earthquake
-		            Catalog para modelar los efectos sísmicos, generando así una
-		            simulación realista y precisa.}
+		      \item{ Use the NASA Near-Earth Object (NEO) API to retrieve
+		            information about nearby meteors and the USGS Earthquake
+		            Catalog to model seismic effects, producing a realistic and
+		            accurate simulation.}
 	      \end{itemize}
 
-	\item \textbf{Incluir una sección educativa sobre impactos de asteroides}:
+	\item \textbf{Include an educational section on meteor impacts}:
 	      \begin{itemize}
-
-		      \item{Desarrollar una sección educativa dentro de la herramienta
-		            que explique los fundamentos científicos detrás de los
-		            impactos de asteroides, las posibles consecuencias
-		            medioambientales y las estrategias de mitigación.}
-	      \end{itemize}
-	\item\textbf{Proveer una interfaz interactiva y accesible para usuarios no expertos}:
-	      \begin{itemize}
-		      \item{Crear una interfaz amigable que permita a los usuarios
-		            modificar parámetros (como el tamaño y la velocidad del
-		            asteroide) y ver los resultados en tiempo real, asegurando que la
-		            herramienta sea accesible tanto para científicos como para el
-		            público general.}
-
-
+		      \item{ Develop an educational section within the tool that explains the
+		            scientific foundations behind meteor impacts, the potential
+		            environmental consequences, and mitigation strategies.}
 	      \end{itemize}
 
-	\item\textbf{Evaluar y visualizar estrategias de mitigación de impactos}:
+	\item \textbf{Provide an interactive and accessible interface for non-expert users}:
 	      \begin{itemize}
-		      \item{Implementar la simulación de estrategias de mitigación,
-		            como la desviación de asteroides, y permitir a los usuarios
-		            visualizar cómo estas estrategias afectan la trayectoria del
-		            asteroide y los efectos del impacto.}
+		      \item{ Create a user-friendly interface that allows users to adjust
+		            parameters (such as meteor size and velocity) and see results
+		            in real time, ensuring the tool is accessible to both scientists
+		            and the general public.}
+	      \end{itemize}
 
+	\item \textbf{Evaluate and visualize impact mitigation strategies}:
+	      \begin{itemize}
+		      \item{ Implement the simulation of mitigation strategies, such as
+		            meteor deflection, and allow users to visualize how these
+		            strategies affect the meteor's trajectory and the resulting
+		            impact effects.}
 	      \end{itemize}
 \end{enumerate}
 
-% --- METODOLOGIA ---
-\section{Metodología}
-\subsection{Enfoque del Proyecto}
-El proyecto seguirá un enfoque \textbf{iterativo} dividido en varias fases
-clave, que se llevarán a cabo de forma paralela cuando sea posible, para
-maximizar la eficiencia. Usando la herramienta \textbf{GitHub} tendremos una
-evolución paralela en cada aspecto de la app(Frontend, Backend, etc) y
-luego se integrarán en un solo producto.
+% --- METHODOLOGY ---
+\section{Methodology}
+\subsection{Project Approach}
+The project will follow an \textbf{iterative} approach divided into several key
+phases that will be executed in parallel whenever possible to maximize
+efficiency. Using \textbf{GitHub}, we will evolve each aspect of the app (frontend,
+backend, etc.) in parallel and then integrate them into a single product.
 
-\subsection{Desarrollo de la Simulación}
-La simulación se desarrollará en dos partes principales: la \textbf{trayectoria
-	de asteroide} y los \textbf{efectos del impacto}.
+\subsection{Simulation Development}
+The simulation will be developed in two main parts: the \textbf{meteor
+	trajectory} and the \textbf{impact effects}.
 \begin{itemize}
-	\item \textbf{Simulación de la Trayectoria}: Basándonos en la metodología de
-	      diseño de órbitas elípticas de NASA Mission Visualization,
-	      se definirán los elementos orbitales del
-	      asteroide (semi-eje mayor, excentricidad, inclinación, longitud del nodo
-	      ascendente y argumento del periastro) para inicializar la simulación. La
-	      propagación temporal se realizará resolviendo la ecuación de Kepler,
+	\item \textbf{Trajectory Simulation}: Building on the elliptical orbit design
+	      methodology from NASA Mission Visualization, we will define the meteor's
+	      orbital elements (semi-major axis, eccentricity, inclination, right
+	      ascension of the ascending node, and argument of periapsis) to initialize
+	      the simulation. Temporal propagation will be performed by solving Kepler's
+	      equation,
 	      \begin{align}
 		      M(t) & = n\,(t - t_0) = E - e \sin E, \label{eq:kepler}
 	      \end{align}
-	      para obtener la anomalía excéntrica $E$. La anomalía verdadera $\nu$ se
-	      calculará mediante
+	      to obtain the eccentric anomaly $E$. The true anomaly $\nu$ will be
+	      computed via
 	      \begin{align}
 		      \tan\frac{\nu}{2} & = \sqrt{\frac{1 + e}{1 - e}}\,\tan\frac{E}{2},
 	      \end{align}
-	      mientras que la distancia al foco se deriva de
+	      while the distance to the focus follows
 	      \begin{align}
 		      r & = a\,(1 - e \cos E).
 	      \end{align}
-	      Con estas magnitudes se evaluará el vector de posición en un marco
-	      centrado en la Tierra aplicando las rotaciones de Euler sobre el plano de
-	      la órbita,
+	      With these magnitudes we will evaluate the position vector in an
+	      Earth-centered frame by applying Euler rotations over the orbital plane,
 	      \begin{align}
 		      \mathbf{r}_{\text{ECI}} & =
 		      R_3(-\Omega)\,R_1(-i)\,R_3(-\omega)
@@ -564,55 +552,54 @@ La simulación se desarrollará en dos partes principales: la \textbf{trayectori
 			      0
 		      \end{bmatrix},
 	      \end{align}
-	      lo que permitirá calcular la posición y la velocidad en un marco centrado
-	      en la Tierra. Con estas magnitudes se generará la trayectoria en tres
-	      dimensiones y se estimará el punto de impacto considerando la rotación
-	      terrestre, la velocidad de llegada y diferentes ángulos de entrada.
-	      \cite{nasaEllipticalOrbit}
-	\item \textbf{Simulación de los Efectos del Impacto}: Se seguirá el flujo
-	      establecido en el Earth Impact Effects Program \cite{collins2005},
-	      complementado con las referencias de ingeniería de explosiones. Las
-	      propiedades iniciales del proyectil se definen como
+	      which will allow us to compute position and velocity in an Earth-centered
+	      frame. These quantities will generate the three-dimensional trajectory and
+	      estimate the impact point by accounting for Earth's rotation, the arrival
+	      velocity, and different entry angles \cite{nasaEllipticalOrbit}.
+	\item \textbf{Impact Effects Simulation}: We will follow the workflow
+	      established in the Earth Impact Effects Program \cite{collins2005},
+	      complemented with blast engineering references. The initial projectile
+	      properties are defined as
 	      \begin{align}
 		      m   & = \tfrac{\pi}{6}\,\rho_i D_i^3,          &
 		      R_i & = \tfrac{D_i}{2}, \label{eq:impact-mass}
 	      \end{align}
-	      y la evolución atmosférica se integra resolviendo las ecuaciones de
-	      deceleración y ablación \cite{collins2005},
+	      and the atmospheric evolution will be integrated by solving the
+	      deceleration and ablation equations \cite{collins2005},
 	      \begin{align}
 		      \frac{dv}{dt} & = -\frac{C_D A \rho_{\text{atm}}(h)}{2 m}\,v^2 - g\sin\gamma, \label{eq:drag} \\
 		      \frac{dm}{dt} & = -\frac{C_h A \rho_{\text{atm}}(h)}{2 Q^*}\,v^3, \label{eq:ablation}
 	      \end{align}
-	      evaluando la ruptura cuando la presión dinámica supera la resistencia del
-	      material siguiendo
+	      evaluating breakup when the dynamic pressure exceeds the material
+	      strength according to
 	      \begin{align}
 		      q(h) & = \tfrac{1}{2}\,\rho_{\text{atm}}(h)\,v^2 \ge \sigma_c. \label{eq:breakup}
 	      \end{align}
-	      Si el cuerpo alcanza el suelo, se calcula la energía cinética y su
-	      equivalente en kilotones de TNT
+	      If the body reaches the ground, we compute the kinetic energy and its
+	      equivalent in kilotons of TNT
 	      \begin{align}
-		      E_k           & = \tfrac{1}{2} m v_{\text{impacto}}^2,                          &
+		      E_k           & = \tfrac{1}{2} m v_{\text{impact}}^2,                           &
 		      W_{\text{kt}} & = \frac{E_k}{4.184 \times 10^{12}\ \text{J}}, \label{eq:energy}
 	      \end{align}
-	      distribuyendo la energía entre fracciones sísmica, térmica y de onda de
-	      choque según las eficiencias \cite{collins2005,glasstone1977}. Para el
-	      dimensionamiento del cráter se aplican las leyes de escala
-	      pi-adimensionales de Holsapple adoptadas por \cite{collins2005}:
+	      distributing the energy among seismic, thermal, and blast fractions
+	      following the efficiencies in \cite{collins2005,glasstone1977}. For crater
+	      sizing we apply Holsapple's dimensionless pi-scaling laws adopted by
+	      \cite{collins2005}:
 	      \begin{align}
-		      \pi_2 & = \frac{g R_i}{v_{\text{impacto}}^2},                           &
-		      \pi_3 & = \frac{Y_t}{\rho_t v_{\text{impacto}}^2}, \label{eq:pi-groups}
+		      \pi_2 & = \frac{g R_i}{v_{\text{impact}}^2},                           &
+		      \pi_3 & = \frac{Y_t}{\rho_t v_{\text{impact}}^2}, \label{eq:pi-groups}
 	      \end{align}
-	      con $Y_t$ la resistencia del objetivo. El radio del cráter transitorio se
-	      obtiene tomando el máximo entre los regímenes de gravedad y de resistencia
+	      with $Y_t$ representing target strength. The transient crater radius is
+	      obtained by taking the maximum of the gravity and strength regimes
 	      \cite{collins2005,holsapple1993},
 	      \begin{align}
 		      R_t^{(g)} & = K_g R_i \Bigl(\frac{\rho_i}{\rho_t}\Bigr)^{1/3}\pi_2^{-\mu_g}, \label{eq:rt-gravity}  \\
 		      R_t^{(s)} & = K_s R_i \Bigl(\frac{\rho_i}{\rho_t}\Bigr)^{1/3}\pi_3^{-\mu_s}, \label{eq:rt-strength} \\
 		      R_t       & = \max\bigl(R_t^{(g)}, R_t^{(s)}\bigr), \label{eq:rt-final}
 	      \end{align}
-	      con coeficientes $K_g = 1.161$, $\mu_g = 0.22$, $K_s = 1.03$ y
-	      $\mu_s = 0.275$ para objetivos rocosos. El diámetro final distingue entre
-	      cráter simple y complejo \cite{collins2005,herrick1997},
+	      with coefficients $K_g = 1.161$, $\mu_g = 0.22$, $K_s = 1.03$, and
+	      $\mu_s = 0.275$ for rocky targets. The final diameter distinguishes
+	      between simple and complex craters \cite{collins2005,herrick1997},
 	      \begin{align}
 		      D_f & =
 		      \begin{cases}
@@ -620,454 +607,451 @@ La simulación se desarrollará en dos partes principales: la \textbf{trayectori
 			      1.17\,D_t^{1.13} D_{\text{sc}}^{-0.13}, & D_t > D_{\text{sc}},
 		      \end{cases}\label{eq:final-crater}
 	      \end{align}
-	      donde $D_t = 2 R_t$ y $D_{\text{sc}}$ es el umbral local de transición
-	      simple-complejo. La eyección balística se modelará con las leyes de
-	      decaimiento radial del programa \cite{collins2005,herrick2006},
+	      where $D_t = 2 R_t$ and $D_{\text{sc}}$ is the local simple-to-complex
+	      transition threshold. Ballistic ejecta will be modeled with the radial
+	      decay laws from the program \cite{collins2005,herrick2006},
 	      \begin{align}
 		      h_e(r) & = 0.14 R_t \Bigl(\frac{R_t}{r}\Bigr)^3, \label{eq:ejecta-thickness} \\
 		      v_e(r) & = \sqrt{2 g R_t}\Bigl(\frac{R_t}{r}\Bigr)^{3/2},
 	      \end{align}
-	      que permiten estimar espesores de manta y velocidades de deposición. Para
-	      los efectos atmosféricos se adopta la eficiencia de acoplamiento explosivo
-	      $\eta_b$ propuesta en \cite{collins2005} y se emplea el escalado de
-	      Kingery--Bulmash \cite{ufc334002} sobre la carga equivalente
-	      $W_{\text{eq}} = \eta_b W_{\text{kt}}$,
+	      which provide mantle thickness estimates and deposition velocities. For
+	      atmospheric effects we adopt the explosive coupling efficiency $\eta_b$
+	      proposed in \cite{collins2005} and use the Kingery--Bulmash scaling
+	      \cite{ufc334002} on the equivalent charge $W_{\text{eq}} = \eta_b
+		      W_{\text{kt}}$,
 	      \begin{align}
 		      Z           & = \frac{R}{W_{\text{eq}}^{1/3}},                  \\
 		      \Delta P(Z) & = \exp\Biggl(\sum_{i=0}^{5} a_i (\ln Z)^i\Biggr), \\
 		      I(Z)        & = \exp\Biggl(\sum_{i=0}^{5} b_i (\ln Z)^i\Biggr)
 	      \end{align}
-	      evaluando la carga dinámica estructural mediante
+	      assessing the dynamic structural load through
 	      \begin{align}
-		      q_{\text{din}} & = \Delta P(Z) + \tfrac{1}{2} \rho_{\text{aire}} U_s^2(Z),
+		      q_{\text{din}} & = \Delta P(Z) + \tfrac{1}{2} \rho_{\text{air}} U_s^2(Z),
 	      \end{align}
-	      donde $U_s(Z)$ proviene de la relación de Rankine--Hugoniot
-	      \cite{ufc334002}. La componente térmica utiliza la eficiencia luminosa
-	      $\eta_L$ tabulada en \cite{collins2005},
+	      where $U_s(Z)$ comes from the Rankine--Hugoniot relation
+	      \cite{ufc334002}. The thermal component uses the luminous efficiency
+	      $\eta_L$ tabulated in \cite{collins2005},
 	      \begin{align}
 		      H(R) & = \eta_L\,\frac{E_k}{4 \pi R^2 \tau},
 	      \end{align}
-	      integrando la exposición sobre la duración $\tau$ para derivar dosis
-	      por estadio. En impactos oceánicos se conserva la modelación de cavidad y
-	      tsunami de Ward y Asphaug \cite{ward2000},
+	      integrating the exposure over duration $\tau$ to derive stage-specific
+	      doses. For ocean impacts we retain the cavity and tsunami modeling by Ward
+	      and Asphaug \cite{ward2000},
 	      \begin{align}
 		      r_c     & = \Biggl(\frac{3 E_k}{2 \pi \rho_w g}\Biggr)^{1/3}, &
 		      \eta(r) & = \eta_0 \frac{r_c}{r}\,
 		      \exp\Bigl(-\frac{r - r_c}{L_d}\Bigr),
 	      \end{align}
-	      propagando el \textit{run-up} costero mediante la ley de Green,
+	      propagating the coastal \textit{run-up} through Green's law,
 	      \begin{align}
 		      R_{\text{run-up}} & = \eta(r_s)
 		      \Biggl(\frac{h_s}{h(r_s)}\Biggr)^{1/4}.
 	      \end{align}
-	      Esta cadena de modelos cubre los escenarios de estallido atmosférico,
-	      impacto terrestre u oceánico y entrega mapas de daño térmico, estructural
-	      e inundación consistentes con las referencias empleadas.
+	      This chain of models covers atmospheric burst, land, and ocean impact
+	      scenarios and delivers thermal, structural, and inundation damage maps
+	      consistent with the referenced sources.
 \end{itemize}
 
-\subsection{Interactividad y Visualización}
-La interfaz se diseñará para permitir que el usuario ingrese, ajuste y
-visualice los parámetros del asteroide y los resultados de la simulación en
-tiempo real.
+\subsection{Interactivity and Visualization}
+The interface will be designed to let users input, adjust, and visualize the
+meteor parameters and simulation results in real time.
 \begin{itemize}
-	\item \textbf{Entrada de Parámetros}: Los usuarios podrán modificar parámetros
-	      como \textbf{tamaño}, \textbf{velocidad}, \textbf{ángulo de entrada}, mediante
-	      \textbf{sliders} y \textbf{campos de texto}.
-	\item \textbf{Visualización en 3D}: Se utilizará \textbf{Three.js} para
-	      renderizar la \textbf{trayectoria del asteroide} en un entorno 3D
-	      interactivo, permitiendo rotar, acercar y alejar la vista.
-	\item \textbf{Visualización en 2D}: Se empleará \textbf{D3.js} para crear gráficos y mapas que
-	      representen los \textbf{efectos del impacto}, como la extensión del área afectada,
-	      la magnitud de la onda expansiva y la generación de tsunamis.
-	\item \textbf{Actualización en tiempo real}: Los resultados de la simulación se
-	      actualizarán dinámicamente a medida que el usuario modifique los parámetros,
-	      proporcionando retroalimentación inmediata.
-	\item \textbf{Sección Educativa}: Se incluirá una sección con información
-	      científica sobre los impactos de asteroides, explicando los modelos y
-	      datos utilizados en la simulación. A medida que ambas simulaciones se
-	      completen, se explicaran conceptos científicos y matemáticos relevantes
-	      usados.
+	\item \textbf{Parameter Input}: Users will be able to modify parameters such as
+	      \textbf{size}, \textbf{velocity}, and \textbf{entry angle} through
+	      \textbf{sliders} and \textbf{text fields}.
+	\item \textbf{3D Visualization}: \textbf{Three.js} will render the
+	      \textbf{meteor trajectory} in an interactive 3D environment, allowing
+	      users to rotate, zoom in, and zoom out.
+	\item \textbf{2D Visualization}: \textbf{D3.js} will produce charts and maps
+	      that represent the \textbf{impact effects}, such as the extent of the
+	      affected area, blast-wave magnitude, and tsunami generation.
+	\item \textbf{Real-time Updates}: Simulation results will update dynamically as
+	      users modify the parameters, providing immediate feedback.
+	\item \textbf{Educational Section}: A section with scientific information on
+	      meteor impacts will explain the models and data used in the simulation.
+	      As both simulations are completed, we will describe the relevant
+	      scientific and mathematical concepts employed.
 \end{itemize}
-\subsection{Validación de Resultados}
-Para asegurar la precisión y confiabilidad de la simulación, se llevará a cabo
-un proceso de \textbf{validación} de los resultados obtenidos.
+\subsection{Result Validation}
+To ensure the accuracy and reliability of the simulation, we will conduct a
+\textbf{validation} process on the results obtained.
 \begin{itemize}
-	\item \textbf{Calibración con Modelos Reconocidos}: Se replicarán escenarios de referencia del Earth Impact
-	      Effects Program \cite{collins2005} y de los estudios de tsunamis de
-	      Ward y Asphaug \cite{ward2000,wuennemann2010}, verificando que los perfiles
-	      de cráter, sobrepresión y run-up coincidan dentro de tolerancias del 5
-	      al 10\%.
-	\item \textbf{Validación Orbital}: Las trayectorias propagadas se contrastarán con efemérides de
-	      NASA Mission Visualization y catálogos JPL Horizons, midiendo el error
-	      cuadrático medio en posición y velocidad para garantizar consistencia
-	      dinámica \cite{nasaEllipticalOrbit}.
-	\item \textbf{Casos Históricos}: Se simularán eventos documentados como Tunguska
-	      \cite{chyba1993} y Chelyabinsk \cite{popova2013}; los resultados se
-	      confrontarán con observables publicados (radios de daño, intensidades de
-	      onda de choque, luminosidad) calculando métricas de error relativas.
-	\item \textbf{Reproductibilidad y Auditoría}: Se versionarán los conjuntos de
-	      parámetros y se publicarán cuadernos de verificación automatizados para
-	      que terceros puedan repetir las simulaciones y revisar los balances de
-	      energía y momento en cada etapa.
+	\item \textbf{Calibration with Recognized Models}: We will reproduce reference
+	      scenarios from the Earth Impact Effects Program \cite{collins2005} and
+	      tsunami studies by Ward and Asphaug \cite{ward2000,wuennemann2010},
+	      verifying that crater, overpressure, and run-up profiles agree within
+	      5--10\% tolerances.
+	\item \textbf{Orbital Validation}: Propagated trajectories will be contrasted
+	      with ephemerides from NASA Mission Visualization and JPL Horizons
+	      catalogs, measuring the root-mean-square error in position and velocity to
+	      guarantee dynamic consistency \cite{nasaEllipticalOrbit}.
+	\item \textbf{Historical Cases}: Documented events such as Tunguska
+	      \cite{chyba1993} and Chelyabinsk \cite{popova2013} will be simulated;
+	      the results will be compared with published observations (damage radii,
+	      shock-wave intensities, luminosity) calculating relative error metrics.
+	\item \textbf{Reproducibility and Auditability}: Parameter sets will be
+	      versioned and automated verification notebooks will be published so that
+	      third parties can repeat the simulations and review energy and momentum
+	      balances at each stage.
 \end{itemize}
-\subsection{Optimización y Rendimiento}
-Para mantener tiempos de respuesta interactivos se adoptarán estrategias de
-\textbf{optimización} en todas las capas de la aplicación.
+\subsection{Optimization and Performance}
+To maintain interactive response times we will adopt \textbf{optimization}
+strategies across every layer of the application.
 \begin{itemize}
-	\item \textbf{Integración adaptativa}: El integrador orbital y el motor de
-	      efectos usarán pasos de tiempo variables guiados por el error local para
-	      reducir cómputo en intervalos suaves y concentrarlo en eventos críticos.
-	\item \textbf{Computación paralela}: Se delegarán cálculos independientes (p.ej.
-	      barridos Monte Carlo y propagación de eyección) a hilos dedicados o Web
-	      Workers, manteniendo fluida la interfaz principal.
-	\item \textbf{Uso de GPU}: La renderización volumétrica y los mapas de daño se
-	      implementarán con WebGL, aprovechando shaders para interpolación y
-	      sombreado en tiempo real.
-	\item \textbf{Cachés numéricas}: Resultados recurrentes como curvas de
-	      Kingery--Bulmash y tablas pi-escaladas se almacenarán en memoria para
-	      evitar recomputaciones.
-	\item \textbf{Perfilado continuo}: Se instrumentará la aplicación con
-	      herramientas de monitoreo (Chrome DevTools, Flamegraphs) para detectar
-	      cuellos de botella y establecer presupuestos de fotogramado y memoria.
+	\item \textbf{Adaptive Integration}: The orbital integrator and the effects
+	      engine will use variable time steps driven by local error to reduce
+	      computation in smooth intervals and focus effort on critical events.
+	\item \textbf{Parallel Computing}: Independent calculations (e.g., Monte Carlo
+	      sweeps and ejecta propagation) will be delegated to dedicated threads or
+	      Web Workers, keeping the main interface responsive.
+	\item \textbf{GPU Utilization}: Volumetric rendering and damage maps will be
+	      implemented with WebGL, leveraging shaders for real-time interpolation and
+	      shading.
+	\item \textbf{Numerical Caching}: Recurrent results such as Kingery--Bulmash
+	      curves and pi-scaled tables will be stored in memory to avoid
+	      recomputation.
+	\item \textbf{Continuous Profiling}: The application will be instrumented with
+	      monitoring tools (Chrome DevTools, flame graphs) to detect bottlenecks and
+	      establish frame-rate and memory budgets.
 \end{itemize}
 
-\subsection{Documentación y Presentación}
-La entrega incluirá materiales orientados a usuarios finales y revisores
-técnicos.
+\subsection{Documentation and Presentation}
+The delivery will include materials aimed at end users and technical reviewers.
 \begin{itemize}
-	\item \textbf{Manual de Usuario}: Guía ilustrada que explica configuración de
-	      escenarios, interpretación de resultados y límites del modelo.
-	\item \textbf{Documento Técnico}: Especificación de modelos físicos,
-	      supuestos, validaciones y referencias bibliográficas, enlazando cada
-	      fórmula con su implementación.
-	\item \textbf{API y Datos}: Descripción de endpoints, contratos de datos y
-	      esquemas de exportación (GeoJSON, CSV) para integrar la simulación con
-	      otras herramientas.
-	\item \textbf{Cuadernos de Verificación}: Jupyter/Markdown que replican casos
-	      de prueba y muestran comparativas con estudios de referencia.
-	\item \textbf{Elevator Pitch}: Diapositivas con los hallazgos clave,
-	      capturas de la interfaz y recomendaciones basadas en los escenarios
-	      evaluados.
+	\item \textbf{User Manual}: An illustrated guide explaining scenario setup,
+	      result interpretation, and model limitations.
+	\item \textbf{Technical Document}: A specification of physical models,
+	      assumptions, validations, and references, linking each equation to its
+	      implementation.
+	\item \textbf{API and Data}: A description of endpoints, data contracts, and
+	      export schemes (GeoJSON, CSV) to integrate the simulation with other
+	      tools.
+	\item \textbf{Verification Notebooks}: Jupyter/Markdown artifacts that
+	      replicate test cases and present comparisons with reference studies.
+	\item \textbf{Elevator Pitch}: Slides summarizing key findings, interface
+	      screenshots, and recommendations based on the evaluated scenarios.
 \end{itemize}
 
-% --- ARQUITECTURA---
-\section{Arquitectura}
-El sistema propuesto sigue una \textbf{arquitectura cliente-servidor} donde
-el \textbf{frontend} interactúa con el \textbf{backend} a través de una API RESTful.
-Esta estructura modular permite que los distintos componentes del sistema trabajen
-de manera eficiente y escalable. A continuación, se detallan los componentes y
-flujo de datos.
-\subsection{Descripción General}
-La arquitectura se compone de los siguientes módulos principales:
+% --- ARCHITECTURE ---
+\section{Architecture}
+The proposed system follows a \textbf{client-server architecture} where the
+\textbf{frontend} interacts with the \textbf{backend} through a RESTful API. This
+modular structure enables the different components of the system to operate
+efficiently and scale. The following subsections describe the components and
+data flow in detail.
+\subsection{Overview}
+The architecture consists of the following main modules:
 \begin{enumerate}
-	\item \textbf{Frontend}: Responsable de la interacción con el usuario,
-	      mostrando las simulaciones y permitiendo la entrada de datos (como parámetros del asteroide).
-	\item \textbf{Backend}: Se encarga de realizar los cálculos de la simulación
-	      (trayectoria, impacto, efectos secundarios) y de integrar los datps de las
-	      APIs externas de \textit{NASA} y \textit{USGS}.
+	\item \textbf{Frontend}: Responsible for user interaction, displaying the
+	      simulations, and enabling data input (such as meteor parameters).
+	\item \textbf{Backend}: Handles the simulation computations (trajectory,
+	      impact, secondary effects) and integrates external data from
+	      \textit{NASA} and the \textit{USGS} APIs.
 \end{enumerate}
 
-\subsection{Componentes del Backend}
-El backend estará basado en \textbf{Flask}, un framework ligero de Python, adecuado para
-manejar solicitudes HTTP y ejecutar cálculos de simulación. Los principales
-componentes del backend son:
+\subsection{Backend Components}
+The backend will be built with \textbf{Flask}, a lightweight Python framework
+well suited for handling HTTP requests and running simulation calculations. The
+main backend components are:
 \begin{itemize}
-	\item \textbf{Tecnologías utilizadas}:
+	\item \textbf{Technologies used}:
 	      \begin{itemize}
-		      \item \textbf{Flask}: Se utilizará para desarrollar la API RESTful que
-		            procesará las solicitudes del frontend, ejecutará los cálculos de
-		            la simulación y devolverá los resultados.
-		      \item \textbf{Python}: El lenguaje principal para las simulaciones y
-		            procesamiento de datos. Se utilizarán bibliotecas como \textbf{NumPy} y
-		            \textbf{SciPy} para cálculos numéricos y \textbf{AstroPy} para cálculos astronómicos.
-		      \item \textbf{APIs externas}:
+		      \item \textbf{Flask}: Used to develop the RESTful API that processes
+		            frontend requests, executes the simulation calculations, and
+		            returns the results.
+		      \item \textbf{Python}: The primary language for simulations and data
+		            processing. Libraries such as \textbf{NumPy} and \textbf{SciPy}
+		            will support numerical work, while \textbf{AstroPy} will cover
+		            astronomical computations.
+		      \item \textbf{External APIs}:
 		            \begin{itemize}
-			            \item \textbf{NASA NEO API}: Para obtener datos sobre asteroides
-			                  cercanos a la Tierra, como órbitas y tamaños.
-			            \item \textbf{USGS Earthquake Catalog}: Para modelar los efectos
-			                  sísmicos asociados a impactos (terremotos, tsunamis, etc.).
+			            \item \textbf{NASA NEO API}: Provides data about near-Earth
+			                  meteors, including orbits and sizes.
+			            \item \textbf{USGS Earthquake Catalog}: Supplies seismic data
+			                  associated with impacts (earthquakes, tsunamis, etc.).
 		            \end{itemize}
 	      \end{itemize}
-	\item \textbf{Flujo de datos}:
+	\item \textbf{Data flow}:
 	      \begin{itemize}
-		      \item El \textbf{frontend} enviará parámetros como tamaño,
-		            velocidad y ángulo de entrada del asteroide al backend mediante
-		            solicitudes \textbf{POST} a la API.
-		      \item El \textbf{backend} procesará estos parámetros, realizará los
-		            cálculos de simulación y consultará las APIs externas para obtener
-		            datos adicionales. Devolverá los resultados al frontend en formato \textbf{JSON}.
+		      \item The \textbf{frontend} will send parameters such as size,
+		            velocity, and entry angle to the backend through \textbf{POST}
+		            requests to the API.
+		      \item The \textbf{backend} will process these parameters, perform the
+		            simulation calculations, and query the external APIs for
+		            additional data, returning the results to the frontend in
+		            \textbf{JSON} format.
 	      \end{itemize}
 \end{itemize}
 
-\subsection{Componentes del Frontend}
-El \textbf{frontend} se desarrollará utilizando \textbf{React} y \textbf{Vite}
-para crear una interfaz de usuario interactiva y eficiente. Los principales
-componentes del frontend son:
+\subsection{Frontend Components}
+The \textbf{frontend} will be developed with \textbf{React} and \textbf{Vite} to
+deliver an interactive and efficient user interface. The main frontend
+components are:
 \begin{itemize}
-	\item \textbf{Tecnologías utilizadas}:
+	\item \textbf{Technologies used}:
 	      \begin{itemize}
-		      \item \textbf{React}: Framework de JavaScript para construir una
-		            interfaz interactiva y gestionada por estado. Será el núcleo del
-		            frontend, permitiendo la creación de componentes reutilizables para
-		            mostrar la simulación, los resultados y los controles de entrada.
-		      \item \textbf{Vite}: Utilizado para la construcción y el desarrollo
-		            rápido del frontend. Vite es un \textbf{bundler} de última generación que
-		            proporciona tiempos de recarga rápidos y una experiencia de
-		            desarrollo eficiente.
-		      \item \textbf{Three.js}: Biblioteca para renderizar gráficos 3D en el
-		            navegador, utilizada para visualizar la trayectoria del asteroide
-		            y los efectos del impacto.
-		      \item \textbf{D3.js}: Biblioteca para crear gráficos y visualizaciones
-		            de datos en 2D, utilizada para mostrar mapas de daño y otros
-		            efectos secundarios.
+		      \item \textbf{React}: JavaScript framework for building an interactive,
+		            state-managed interface. It will serve as the core of the frontend
+		            and enable reusable components to display the simulation, results,
+		            and input controls.
+		      \item \textbf{Vite}: Provides fast development and build workflows.
+		            Vite is a next-generation \textbf{bundler} that offers rapid
+		            reload times and an efficient developer experience.
+		      \item \textbf{Three.js}: Library used to render 3D graphics in the
+		            browser, enabling visualization of the meteor trajectory and
+		            impact effects.
+		      \item \textbf{D3.js}: Library for creating 2D data visualizations and
+		            maps to portray damage footprints and other secondary effects.
 	      \end{itemize}
-	\item \textbf{Comunicación con el Backend}:
+	\item \textbf{Communication with the Backend}:
 	      \begin{itemize}
-		      \item El frontend enviará solicitudes \textbf{POST} a la API del backend
-		            con los parámetros del asteroide ingresados por el usuario.
+		      \item The frontend will send \textbf{POST} requests to the backend API
+		            containing the meteor parameters entered by the user.
 	      \end{itemize}
 \end{itemize}
 
-\subsection{Flujo de Datos entre Frontend y Backend}
-El \textbf{flujo de datos} entre el frontend y el backend se gestionará de la siguiente manera:
+\subsection{Data Flow Between Frontend and Backend}
+The \textbf{data flow} between the frontend and backend will be managed as
+follows:
 \begin{itemize}
-	\item El \textbf{frontend} enviará los parámetros seleccionados por el usuario
-	      (tamaño, velocidad, ángulo de entrada) al backend a través de una solicitud
-	      \textbf{POST} a la API RESTful.
-	\item El \textbf{backend} recibirá estos parámetros, los procesará utilizando los
-	      modelos científicos para calcular la \textbf{trayectoria} del asteroide y los
-	      efectos del impacto. Luego, enviará los resultados de vuelta al
-	      frontend en formato \textbf{JSON}.
-	\item El \textbf{frontend} actualizará las visualizaciones (en 3D y 2D)
-	      en tiempo real a medida que los resultados se reciben del backend.
+	\item The \textbf{frontend} will send the parameters selected by the user
+	      (size, velocity, entry angle) to the backend through a \textbf{POST}
+	      request to the RESTful API.
+	\item The \textbf{backend} will receive these parameters, process them using the
+	      scientific models to compute the meteor \textbf{trajectory} and impact
+	      effects, and then return the results to the frontend in \textbf{JSON}
+	      format.
+	\item The \textbf{frontend} will update the visualizations (3D and 2D) in real
+	      time as results are received from the backend.
 \end{itemize}
 
-\subsection{Seguridad y Manejo de Errores}
-Para garantizar la seguridad y estabilidad del sistema, se implementarán las siguientes medidas:
+\subsection{Security and Error Handling}
+To guarantee system security and stability, the following measures will be
+implemented:
 \begin{itemize}
-	\item \textbf{Seguridad}:
+	\item \textbf{Security}:
 	      \begin{itemize}
-		      \item \textbf{Validación de entradas}: El backend validará todos los parámetros
-		            recibidos del frontend para asegurarse de que sean correctos y estén dentro de
-		            los rangos aceptables.
-		      \item \textbf{Protección contra inyecciones}: Se implementarán medidas para prevenir ataques de inyección
-		            SQL o XSS, asegurando que todas las entradas del usuario sean
-		            correctamente sanitizadas.
+		      \item \textbf{Input validation}: The backend will validate all
+		            parameters received from the frontend to ensure they are correct
+		            and within acceptable ranges.
+		      \item \textbf{Injection protection}: Measures will be implemented to
+		            prevent SQL or XSS injection attacks, ensuring that all user
+		            inputs are properly sanitized.
 	      \end{itemize}
-	\item \textbf{Manejo de errores}:
+	\item \textbf{Error handling}:
 	      \begin{itemize}
-		      \item \textbf{Manejo de excepciones}: El backend manejará todas las
-		            excepciones y errores que puedan ocurrir durante los cálculos o
-		            las consultas a las APIs externas, devolviendo mensajes de error
-		            claros al frontend.
-		      \item \textbf{Notificaciones al usuario}: El frontend mostrará mensajes
-		            de error amigables en caso de que ocurra algún problema, como
-		            parámetros inválidos o fallos en la comunicación con el backend.
-	      \end{itemize}
-\end{itemize}
-
-
-% --- DATOS ABIERTOS NASA ---
-\section{Datos abiertos (NASA)}
-El desarrollo de este proyecto se basa en la integración de
-\textbf{datos abiertos} proporcionados por \textbf{NASA} y \textbf{USGS}, lo
-que permite crear simulaciones precisas y realistas sobre los impactos de
-asteroides cercanos a la Tierra. Estas fuentes de datos proporcionan
-información esencial sobre los \textbf{asteroides} y los
-\textbf{efectos geológicos} relacionados con un impacto, y su integración
-permite una visualización más detallada y precisa de los riesgos asociados.
-
-\subsection{1. Uso de la \textbf{API de NASA NEO}}
-La \textbf{API de NASA Near-Earth Object (NEO)} proporciona acceso a una
-vasta base de datos sobre \textbf{asteroides cercanos a la Tierra} (NEOs).
-Esta API incluye información crítica como los parámetros orbitales de los
-asteroides, su tamaño, velocidad, y las fechas de aproximación cercanas a la
-Tierra. Para nuestro proyecto, estos datos se utilizarán para calcular y
-simular la \textbf{trayectoria orbital} de los asteroides, lo cual es
-fundamental para predecir su impacto en la Tierra.
-
-\begin{itemize}
-	\item \textbf{Datos Utilizados}:
-	      \begin{itemize}
-		      \item \textbf{Parámetros Orbitales}: Semi-eje mayor, excentricidad,
-		            inclinación, entre otros.
-		      \item \textbf{Tamaño del Asteroide}: Para estimar la energía cinética
-		            del impacto.
-		      \item \textbf{Fecha y Distancia de Aproximación}: Para simular la
-		            trayectoria en el tiempo y predecir el impacto.
+		      \item \textbf{Exception management}: The backend will handle all
+		            exceptions and errors that may occur during calculations or when
+		            querying external APIs, returning clear error messages to the
+		            frontend.
+		      \item \textbf{User notifications}: The frontend will display
+		            user-friendly error messages if problems arise, such as invalid
+		            parameters or communication failures with the backend.
 	      \end{itemize}
 \end{itemize}
 
-La API de NASA proporciona los datos necesarios para crear simulaciones
-precisas y determinar la zona de impacto y los posibles efectos secundarios del asteroide.
 
-\subsection{2. Uso de la API de USGS Earthquake Catalog}
-La \textbf{API de USGS Earthquake Catalog} ofrece acceso a un catálogo
-global de \textbf{datos sísmicos}, incluyendo información sobre la ubicación, magnitud y profundidad de los terremotos. Estos datos serán fundamentales para modelar los efectos sísmicos generados por un impacto de asteroide en la Tierra. Además, se utilizarán los \textbf{modelos de propagación sísmica} para simular las ondas sísmicas generadas por el impacto.
+% --- NASA OPEN DATA ---
+\section{Open Data (NASA)}
+The development of this project relies on integrating \textbf{open data}
+provided by \textbf{NASA} and the \textbf{USGS}, which enables precise and
+realistic simulations of near-Earth meteor impacts. These data sources offer
+essential information about \textbf{meteors} and the \textbf{geological
+	effects} associated with an impact, making it possible to visualize the related
+risks in greater detail.
+
+\subsection{1. Use of the \textbf{NASA NEO API}}
+The \textbf{NASA Near-Earth Object (NEO) API} provides access to a vast
+database of \textbf{near-Earth meteors} (NEOs). This API includes critical
+information such as orbital parameters, size, velocity, and close approach dates
+to Earth. For our project, these data will be used to calculate and simulate the
+meteors' \textbf{orbital trajectories}, which is fundamental for predicting an
+impact on Earth.
 
 \begin{itemize}
-	\item \textbf{Datos Utilizados}:
+	\item \textbf{Data used}:
 	      \begin{itemize}
-		      \item \textbf{Magnitud de los Terremotos}: Para estimar la fuerza de
-		            las ondas sísmicas.
-		      \item \textbf{Ubicación y Profundidad}: Para modelar la propagación de
-		            las ondas sísmicas en el terreno afectado.
-		      \item \textbf{Impacto en Zonas Geográficas}: Para simular los efectos
-		            en áreas cercanas al lugar de impacto.
+		      \item \textbf{Orbital parameters}: Semi-major axis, eccentricity,
+		            inclination, and related elements.
+		      \item \textbf{Meteor size}: Needed to estimate the kinetic energy of
+		            the impact.
+		      \item \textbf{Approach date and distance}: Supports time-dependent
+		            trajectory simulations and impact prediction.
 	      \end{itemize}
 \end{itemize}
 
-\subsection{3. Integración y Transparencia de Datos}
-La integración de estos datos será clave para asegurar que las simulaciones
-sean lo más precisas posible. Durante el desarrollo del proyecto, se asegurará
-que los datos sean procesados de manera \textbf{transparente}, permitiendo que
-los usuarios comprendan cómo se obtienen los datos y cómo afectan los
-resultados de las simulaciones. Además, se implementarán mecanismos para
-verificar la \textbf{precisión} y \textbf{actualización} de los datos en
-tiempo real, utilizando la \textbf{API de NASA NEO} para obtener la
-información más actualizada sobre asteroides cercanos y la
-\textbf{API de USGS} para obtener los últimos registros sísmicos.
+The NASA API provides the data required to create accurate simulations and to
+determine the impact zone and potential secondary effects of the meteor.
 
-\subsection{4. Aplicación en la Simulación}
-Los datos obtenidos a través de estas APIs se integrarán en el \textbf{backend}
-del sistema para realizar los cálculos de la trayectoria y los efectos del
-impacto. El \textbf{frontend} se encargará de mostrar estos resultados en
-tiempo real, permitiendo a los usuarios explorar los diferentes escenarios de
-impacto y visualizar cómo los cambios en los parámetros afectan las áreas de
-impacto y las consecuencias medioambientales.
+\subsection{2. Use of the USGS Earthquake Catalog API}
+The \textbf{USGS Earthquake Catalog API} provides access to a global catalog of
+\textbf{seismic data}, including information about earthquake location,
+magnitude, and depth. These data are essential for modeling the seismic effects
+generated by a meteor impact on Earth. We will also employ \textbf{seismic
+	propagation models} to simulate the waves caused by the impact.
 
-% --- ALCANCE ---
-\section{Alcance}
-Este anteproyecto define el alcance funcional y técnico de la plataforma
-\textbf{Meteor Madness}. El desarrollo cubrirá los siguientes aspectos:
 \begin{itemize}
-	\item \textbf{Simulación física}: Propagación orbital, entrada atmosférica e
-	      impacto con generación de mapas de daño para escenarios terrestres y
-	      oceánicos utilizando los modelos descritos en la metodología.
-	\item \textbf{Interfaz interactiva}: Visualizaciones 3D y 2D en navegador con
-	      ajuste de parámetros en tiempo real, indicadores de daño y exportación de
-	      resultados.
-	\item \textbf{Soporte educativo}: Sección explicativa con fundamentos físicos,
-	      referencias y glosario para público no especialista.
-	\item \textbf{Infraestructura}: Backend de servicios para cálculo, almacenamiento
-	      de escenarios y distribución de datos a clientes web.
-\end{itemize}
-\textbf{Fuera de alcance} quedan la integración con sistemas de defensa,
-alertamiento en tiempo real, modelado climático posterior al impacto y
-despliegues móviles nativos; estos requerirían proyectos adicionales.
-
-% --- PLAN DE TRABAJO Y ENTREGABLES ---
-\section{Plan de trabajo (48 h) y entregables}
-El proyecto se llevará a cabo durante un período de \textbf{48 horas}, donde se
-dividirán las actividades en dos días con tareas específicas para lograr un
-progreso continuo y bien organizado. A continuación se detalla el plan de
-trabajo y los entregables esperados en cada fase.
-\subsection{Día 1: Investigación, Diseño y Desarrollo Inicial}
-\subsubsection*{Objetivos del Día 1}
-\begin{itemize}
-	\item Realizar la investigación necesaria sobre los impactos de asteroides y
-	      los modelos científicos relevantes.
-	\item Definir la estructura general del sistema y el diseño de la interfaz.
-	\item Comenzar con el desarrollo de la simulación de la trayectoria del
-	      asteroide y los efectos del impacto.
+	\item \textbf{Data used}:
+	      \begin{itemize}
+		      \item \textbf{Earthquake magnitude}: To estimate the strength of the
+		            seismic waves.
+		      \item \textbf{Location and depth}: To model how seismic waves propagate
+		            through the affected terrain.
+		      \item \textbf{Impact on geographic areas}: To simulate effects in
+		            regions near the impact site.
+	      \end{itemize}
 \end{itemize}
 
-\subsubsection*{Actividades}
+\subsection{3. Data Integration and Transparency}
+Integrating these datasets is key to ensuring the simulations are as accurate as
+possible. Throughout the project we will guarantee that the data are processed
+in a \textbf{transparent} manner, allowing users to understand where the data
+come from and how they influence the simulation outcomes. We will also
+implement mechanisms to verify the \textbf{accuracy} and \textbf{freshness} of
+the data in real time, using the \textbf{NASA NEO API} for the latest near-Earth
+meteor information and the \textbf{USGS API} for recent seismic records.
+
+\subsection{4. Application within the Simulation}
+The data obtained through these APIs will be integrated into the system
+\textbf{backend} to perform the trajectory and impact-effect calculations. The
+\textbf{frontend} will display these results in real time, enabling users to
+explore different impact scenarios and to see how parameter changes affect the
+impact areas and environmental consequences.
+
+% --- SCOPE ---
+\section{Scope}
+This preliminary project defines the functional and technical scope of the
+\textbf{MISRA} platform. Development will cover the following aspects:
+\begin{itemize}
+	\item \textbf{Physical simulation}: Orbital propagation, atmospheric entry, and
+	      impact modeling with damage maps for terrestrial and ocean scenarios
+	      using the models described in the methodology.
+	\item \textbf{Interactive interface}: 3D and 2D browser visualizations with
+	      real-time parameter adjustments, damage indicators, and data export.
+	\item \textbf{Educational support}: An explanatory section with physical
+	      foundations, references, and a glossary for non-specialist audiences.
+	\item \textbf{Infrastructure}: A service backend for computation, scenario
+	      storage, and data distribution to web clients.
+\end{itemize}
+\textbf{Out of scope} are integration with defense systems, real-time alerting,
+post-impact climate modeling, and native mobile deployments; these would require
+additional projects.
+
+% --- WORK PLAN AND DELIVERABLES ---
+\section{Work Plan (48 h) and Deliverables}
+The project will be executed over a \textbf{48-hour} period, splitting the
+activities into two days with specific tasks to maintain steady, well-organized
+progress. The following sections describe the work plan and the expected
+deliverables for each phase.
+\subsection{Day 1: Research, Design, and Initial Development}
+\subsubsection*{Day 1 Objectives}
+\begin{itemize}
+	\item Conduct the necessary research on meteor impacts and the relevant
+	      scientific models.
+	\item Define the overall system structure and interface design.
+	\item Begin developing the meteor trajectory simulation and the impact
+	      effects module.
+\end{itemize}
+
+\subsubsection*{Activities}
 \begin{enumerate}
-	\item \textbf{Investigación y Revisión de Modelos Científicos}
+	\item \textbf{Research and Review of Scientific Models}
 	      \begin{itemize}
-		      \item Revisión de modelos de simulación orbital y efectos de impacto
-		            (como la formación de cráteres y tsunamis).
-		      \item Estudio de las APIs de NASA y USGS para integrar datos sobre
-		            asteroides y efectos sísmicos.
+		      \item Review orbital simulation models and impact effects (such as crater
+		            formation and tsunamis).
+		      \item Study the NASA and USGS APIs to integrate meteor and seismic
+		            data.
 	      \end{itemize}
-	\item \textbf{Definición de la Arquitectura}
+	\item \textbf{Architecture Definition}
 	      \begin{itemize}
-		      \item Diseño de la arquitectura cliente-servidor.
-		      \item Selección de tecnologías para el frontend (React, Vite,
-		            Three.js, D3.js) y backend (Flask, Python).
-		      \item Diseño preliminar de la API RESTful para la comunicación entre
-		            frontend y backend.
+		      \item Design the client-server architecture.
+		      \item Select technologies for the frontend (React, Vite, Three.js,
+		            D3.js) and backend (Flask, Python).
+		      \item Draft the RESTful API that will connect frontend and backend.
 	      \end{itemize}
-	\item \textbf{Desarrollo de la Simulación de Trayectoria Orbital}
+	\item \textbf{Orbital Trajectory Simulation Development}
 	      \begin{itemize}
-		      \item Implementación de la propagación orbital utilizando los parámetros y
-		            ecuaciones de Kepler.
-		      \item Validación inicial de la simulación con datos de referencia.
-		      \item Configuración de la API de NASA NEO para obtener datos de asteroides cercanos.
+		      \item Implement orbital propagation using Keplerian parameters and
+		            equations.
+		      \item Perform an initial validation of the simulation with reference
+		            data.
+		      \item Configure the NASA NEO API to retrieve near-Earth meteor data.
 	      \end{itemize}
-	\item \textbf{Diseño Inicial del Frontend}
+	\item \textbf{Initial Frontend Design}
 	      \begin{itemize}
-		      \item Creación de una interfaz básica con React y Vite.
-		      \item Implementación de la estructura básica para la visualización
-		            de la trayectoria orbital en 3D utilizando Three.js.
-
+		      \item Create a basic interface with React and Vite.
+		      \item Implement the foundational structure for 3D trajectory
+		            visualization using Three.js.
 	      \end{itemize}
 \end{enumerate}
 
-\subsubsection*{Entregables del Día 1}
+\subsubsection*{Day 1 Deliverables}
 \begin{itemize}
-	\item Prototipo funcional básico con la interfaz de usuario inicial y un
-	      esbozo de la visualización en 3D de la trayectoria del asteroide.
-	\item Documentación técnica preliminar sobre el diseño y la arquitectura del sistema.
-	\item Resultados iniciales de simulación de la trayectoria orbital del asteroide.
-	\item Código inicial del backend con la simulación de la trayectoria
-	      orbital y la integración con la API de NASA NEO.
+	\item Basic functional prototype with the initial user interface and an early
+	      3D visualization of the meteor trajectory.
+	\item Preliminary technical documentation describing the system design and
+	      architecture.
+	\item Initial orbital trajectory simulation results.
+	\item Initial backend code covering the trajectory simulation and integration
+	      with the NASA NEO API.
 \end{itemize}
 
 
-\subsection{Día 2: Desarrollo Completo, Validación y Documentación}
-\subsubsection*{Objetivos del Día 2}
+\subsection{Day 2: Complete Development, Validation, and Documentation}
+\subsubsection*{Day 2 Objectives}
 \begin{itemize}
-	\item Completar el desarrollo de los efectos del impacto (cráter, tsunamis, terremotos).
-	\item Integrar las APIs de NASA y USGS para los datos de asteroides y los efectos sísmicos.
-	\item Implementar la interactividad en tiempo real.
-	\item Realizar pruebas y optimizar el rendimiento.
+	\item Complete development of the impact effects (crater, tsunamis,
+	      earthquakes).
+	\item Integrate the NASA and USGS APIs for meteor and seismic data.
+	\item Implement real-time interactivity.
+	\item Execute testing and optimize performance.
 \end{itemize}
 
-\subsubsection*{Actividades}
+\subsubsection*{Activities}
 \begin{enumerate}
-	\item \textbf{Desarrollo de los Efectos del Impacto}
+	\item \textbf{Impact Effects Development}
 	      \begin{itemize}
-		      \item Implementación de cálculos para la formación de cráteres y el
-		            cálculo de la energía cinética del asteroide.
-		      \item Simulación de los efectos secundarios del impacto: tsunamis y
-		            actividad sísmica, utilizando los datos de USGS.
+		      \item Implement calculations for crater formation and meteor kinetic
+		            energy.
+		      \item Simulate secondary impact effects (tsunamis and seismic activity)
+		            using USGS data.
 	      \end{itemize}
-	\item \textbf{Integración de Datos de NASA y USGS}
+	\item \textbf{Integration of NASA and USGS Data}
 	      \begin{itemize}
-		      \item Integración de la API de NASA NEO para obtener datos en
-		            tiempo real de asteroides cercanos.
-		      \item Integración de la API de USGS Earthquake Catalog para modelar
-		            los efectos sísmicos y geológicos del impacto.
+		      \item Integrate the NASA NEO API to fetch near-Earth meteor data in
+		            real time.
+		      \item Integrate the USGS Earthquake Catalog API to model the seismic and
+		            geological effects of the impact.
 	      \end{itemize}
-	\item \textbf{Desarrollo de la Interactividad y Visualización}
+	\item \textbf{Interactivity and Visualization Development}
 	      \begin{itemize}
-		      \item Creación de sliders interactivos para que los usuarios ajusten
-		            parámetros del asteroide (tamaño, velocidad, etc.).
-		      \item Implementación de la visualización en 3D de la trayectoria del
-		            asteroide y los efectos del impacto.
-		      \item Actualización en tiempo real de los mapas 2D con zonas
-		            afectadas por tsunamis y terremotos.
+		      \item Build interactive sliders so users can adjust meteor parameters
+		            (size, velocity, etc.).
+		      \item Implement 3D visualization of the meteor trajectory and impact
+		            effects.
+		      \item Update 2D maps in real time to display tsunami- and
+		            earthquake-affected areas.
 	      \end{itemize}
-	\item \textbf{Pruebas y Optimización}
+	\item \textbf{Testing and Optimization}
 	      \begin{itemize}
-		      \item Pruebas de usabilidad para asegurar que la herramienta sea
-		            fácil de usar y entender.
-		      \item Optimización del rendimiento, tanto en el frontend
-		            (visualización en 3D) como en los cálculos de simulación.
+		      \item Conduct usability tests to ensure the tool is easy to use and
+		            understand.
+		      \item Optimize performance in both the frontend (3D visualization) and
+		            the simulation calculations.
 	      \end{itemize}
 \end{enumerate}
 
-\subsubsection*{Entregables del Día 2}
+\subsubsection*{Day 2 Deliverables}
 \begin{itemize}
-	\item Simulación completa de la trayectoria del asteroide y los efectos del
-	      impacto (formación de cráteres, tsunamis, terremotos).
-	\item Interfaz interactiva con sliders para modificar parámetros y ver
-	      resultados en tiempo real.
-	\item Prototipo final de la herramienta web con visualización 3D y mapas 2D interactivos.
-	\item Pruebas de usabilidad y optimización de rendimiento.
-	\item Documentación final del proyecto, incluyendo instrucciones de uso y detalles técnicos.
+	\item Complete simulation of the meteor trajectory and impact effects
+	      (crater formation, tsunamis, earthquakes).
+	\item Interactive interface with sliders to modify parameters and view
+	      real-time results.
+	\item Final prototype of the web tool with 3D visualization and interactive
+	      2D maps.
+	\item Usability testing outcomes and performance optimizations.
+	\item Final project documentation, including usage instructions and technical
+	      details.
 \end{itemize}
 % --- REFERENCIAS BIBLIOGRAFICAS ---
 \begin{thebibliography}{00}
@@ -1100,7 +1084,7 @@ trabajo y los entregables esperados en cada fase.
 	T. R. McGetchin, M. Settle, and J. W. Head, ``Lunar impact ejection and crater growth,'' \textit{Journal of Geophysical Research}, vol. 78, no. 11, pp. 10847--10863, 1973. doi:10.1029/JB078i023p10847
 
 	\bibitem{chyba1993}
-	C. F. Chyba, P. J. Thomas, and K. J. Zahnle, ``The 1908 Tunguska explosion: Atmospheric disruption of a stony asteroid,'' \textit{Nature}, vol. 361, pp. 40--44, 1993. doi:10.1038/361040a0
+	C. F. Chyba, P. J. Thomas, and K. J. Zahnle, ``The 1908 Tunguska explosion: Atmospheric disruption of a stony meteor,'' \textit{Nature}, vol. 361, pp. 40--44, 1993. doi:10.1038/361040a0
 
 	\bibitem{popova2013}
 	O. P. Popova et al., ``Chelyabinsk Airburst, Damage Assessment, Meteorite Recovery, and Characterization,'' \textit{Science}, vol. 342, no. 6162, pp. 1069--1073, 2013. doi:10.1126/science.1242642
@@ -1115,7 +1099,7 @@ trabajo y los entregables esperados en cada fase.
 	S. Glasstone and P. J. Dolan, \textit{The Effects of Nuclear Weapons}. U.S. Department of Defense and U.S. Department of Energy, 1977.
 
 	\bibitem{ward2000}
-	S. N. Ward and E. Asphaug, ``Asteroid impact tsunami: A probabilistic hazard assessment,'' \textit{Icarus}, vol. 145, pp. 64--78, 2000. doi:10.1006/icar.1999.6336
+	S. N. Ward and E. Asphaug, ``Meteor impact tsunami: A probabilistic hazard assessment,'' \textit{Icarus}, vol. 145, pp. 64--78, 2000. doi:10.1006/icar.1999.6336
 
 	\bibitem{nasaEllipticalOrbit}
 	NASA Goddard Space Flight Center, ``Elliptical Orbit Design,'' Mission Visualization \url{https://nasa.github.io/mission-viz/RMarkdown/Elliptical_Orbit_Design.html}, accessed Oct. 2024.

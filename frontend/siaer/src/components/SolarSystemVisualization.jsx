@@ -616,6 +616,7 @@ function PlanetBody({
   const billboardRef = useRef();
   const ringRef = useRef();
   const textRef = useRef();
+  const [showLabel, setShowLabel] = useState(true);
   const isNeo = Boolean(planet.isNeo);
   const isImpactor = Boolean(planet.isImpactor);
   const isEarth =
@@ -646,7 +647,7 @@ function PlanetBody({
         : planet.color || "#ffffff";
   const bodyRadius = Math.max(
     (planet.radiusKm || 1000) * SCALE_FACTOR,
-    isImpactor || isNeo ? 0.28 : isEarth ? 0.32 : 0.25,
+    isImpactor ? 0.15 : isNeo ? 0.28 : isEarth ? 0.32 : 0.25,
   );
   const textureUrl =
     planet.textureUrl || planet.surfaceTexture || planet.textureMap;
@@ -762,7 +763,12 @@ function PlanetBody({
       const visibility = labelsAlwaysVisible
         ? 1
         : computeLabelVisibility(planet, camera, maxOrbitDistance);
-      billboardRef.current.visible = visibility > 0.05;
+      
+      // Ocultar nombres cuando la cámara esté muy cerca (especialmente para Tierra y meteorito)
+      const closeDistanceThreshold = isEarth || isImpactor ? 0.5 : 0.2; // Distancia más grande para Tierra y meteorito
+      const isTooClose = distance < closeDistanceThreshold;
+      
+      billboardRef.current.visible = visibility > 0.05 && !isTooClose;
 
       if (ringRef.current?.material) {
         ringRef.current.material.opacity =
@@ -771,12 +777,12 @@ function PlanetBody({
 
       if (textRef.current) {
         if (textRef.current.material) {
-          textRef.current.material.opacity = visibility;
+          textRef.current.material.opacity = isTooClose ? 0 : visibility;
         }
         if (typeof textRef.current.outlineOpacity === "number") {
-          textRef.current.outlineOpacity = visibility;
+          textRef.current.outlineOpacity = isTooClose ? 0 : visibility;
         }
-        textRef.current.visible = visibility > 0.05;
+        textRef.current.visible = visibility > 0.05 && !isTooClose;
       }
     }
   });
@@ -850,13 +856,13 @@ function PlanetBody({
           </mesh>
           <Text
             ref={textRef}
-            position={[labelOffset, 0, 0]}
-            fontSize={smallIndicators ? 0.15 : 0.7}
+            position={smallIndicators ? [-labelOffset, 0, 0] : [labelOffset, 0, 0]}
+            fontSize={smallIndicators ? 0.05 : 0.7}
             color={labelColor}
-            anchorX="left"
+            anchorX={smallIndicators ? "right" : "left"}
             anchorY="middle"
             outlineWidth={smallIndicators 
-              ? (isImpactor ? 0.01 : isNeo ? 0.008 : 0.006)
+              ? (isImpactor ? 0.002 : isNeo ? 0.0015 : 0.001)
               : (isImpactor ? 0.05 : isNeo ? 0.04 : 0.03)
             }
             outlineColor="#000000"
